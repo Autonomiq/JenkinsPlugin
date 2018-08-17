@@ -25,18 +25,18 @@ public class HelloWorldBuilderTest {
         jenkins.assertEqualDataBoundBeans(new HelloWorldBuilder(name), project.getBuildersList().get(0));
     }
 
-    @Test
-    public void testConfigRoundtripFrench() throws Exception {
-        FreeStyleProject project = jenkins.createFreeStyleProject();
-        HelloWorldBuilder builder = new HelloWorldBuilder(name);
-        builder.setUseFrench(true);
-        project.getBuildersList().add(builder);
-        project = jenkins.configRoundtrip(project);
-
-        HelloWorldBuilder lhs = new HelloWorldBuilder(name);
-        lhs.setUseFrench(true);
-        jenkins.assertEqualDataBoundBeans(lhs, project.getBuildersList().get(0));
-    }
+//    @Test
+//    public void testConfigRoundtripFrench() throws Exception {
+//        FreeStyleProject project = jenkins.createFreeStyleProject();
+//        HelloWorldBuilder builder = new HelloWorldBuilder(name);
+//        builder.setUseFrench(true);
+//        project.getBuildersList().add(builder);
+//        project = jenkins.configRoundtrip(project);
+//
+//        HelloWorldBuilder lhs = new HelloWorldBuilder(name);
+//        lhs.setUseFrench(true);
+//        jenkins.assertEqualDataBoundBeans(lhs, project.getBuildersList().get(0));
+//    }
 
     @Test
     public void testBuild() throws Exception {
@@ -48,17 +48,17 @@ public class HelloWorldBuilderTest {
         jenkins.assertLogContains("Hello, " + name, build);
     }
 
-    @Test
-    public void testBuildFrench() throws Exception {
-
-        FreeStyleProject project = jenkins.createFreeStyleProject();
-        HelloWorldBuilder builder = new HelloWorldBuilder(name);
-        builder.setUseFrench(true);
-        project.getBuildersList().add(builder);
-
-        FreeStyleBuild build = jenkins.buildAndAssertSuccess(project);
-        jenkins.assertLogContains("Bonjour, " + name, build);
-    }
+//    @Test
+//    public void testBuildFrench() throws Exception {
+//
+//        FreeStyleProject project = jenkins.createFreeStyleProject();
+//        HelloWorldBuilder builder = new HelloWorldBuilder(name);
+//        builder.setUseFrench(true);
+//        project.getBuildersList().add(builder);
+//
+//        FreeStyleBuild build = jenkins.buildAndAssertSuccess(project);
+//        jenkins.assertLogContains("Bonjour, " + name, build);
+//    }
 
     @Test
     public void testScriptedPipeline() throws Exception {
