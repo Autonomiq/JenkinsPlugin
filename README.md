@@ -9,3 +9,10 @@ Install maven on macOS:
 ```bash
 $ brew install maven
 ```
+# Build
+To build the plugin
+```bash
+$ mvn package
+```
+Plugin file is in:
+`target/AutonomiqBuilder.hpi`
