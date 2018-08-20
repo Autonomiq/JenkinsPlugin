@@ -8,7 +8,7 @@
         <relativePath />
     </parent>
     <groupId>io.jenkins.plugins</groupId>
-    <artifactId>testbuild</artifactId>
+    <artifactId>AutonomiqBuilder</artifactId>
     <version>0.1</version>
     <packaging>hpi</packaging>
     <properties>
@@ -21,8 +21,8 @@
           ~ stapler-plugin.version: The Stapler Maven plugin version required by the plugin.
      -->
     </properties>
-    <name>DemoBuild</name>
-    <description>Demo Build</description>
+    <name>Autonomiq Builder</name>
+    <description>Builder plugin to run Autonomiq tests</description>
     <!-- The default licence for Jenkins OSS Plugins is MIT. Substitute for the applicable one if needed. -->
     <licenses>
         <license>

@@ -1,10 +1,13 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:c="/lib/credentials" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
-    <f:entry title="${%Name}" field="name">
+    <f:entry title="${%Login}" field="login">
         <f:textbox />
     </f:entry>
-    <f:entry field="credentialsId" title="${%Credentials}">
-        <c:select/>
+    <f:entry title="${%Password}" field="password">
+        <f:password />
+    </f:entry>
+    <f:entry title="${%Project}" field="project">
+        <f:textbox />
     </f:entry>
 </j:jelly>
