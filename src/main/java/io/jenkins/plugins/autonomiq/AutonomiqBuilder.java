@@ -2,7 +2,7 @@ package io.jenkins.plugins.autonomiq;
 
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
-import com.google.gson.Gson;
+
 import hudson.Launcher;
 import hudson.Extension;
 import hudson.FilePath;
@@ -18,8 +18,7 @@ import org.kohsuke.stapler.QueryParameter;
 
 import javax.servlet.ServletException;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+
 
 import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
@@ -83,52 +82,16 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         log.println("Logging in to Autonomiq service: " + aiqUrl);
         log.println("as user: " + login);
 
-        AuthenticateUserBody authBody = new AuthenticateUserBody(login, password);
-
-        Gson gson = new Gson();
-        String authJson = gson.toJson(authBody);
-
-        // log.println("auth json " + authJson);
-
-        HttpURLConnection con = null;
+        ServiceAccess svc = null;
 
         try {
 
-            URL myurl = new URL(aiqUrl + authenticatePath);
-            con = (HttpURLConnection) myurl.openConnection();
-
-            con.setDoOutput(true);
-            con.setRequestMethod("POST");
-            con.setRequestProperty("User-Agent", "Java client");
-            con.setRequestProperty("Content-Type", "application/json");
-
-            try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
-                wr.write(authJson.getBytes());
-            }
-
-            StringBuilder content;
-
-            try (BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()))) {
-
-                String line;
-                content = new StringBuilder();
-
-                while ((line = in.readLine()) != null) {
-                    content.append(line);
-                    content.append(System.lineSeparator());
-                }
-            }
-
-            log.println("Login Response:");
-            log.println(content.toString());
+             svc = new ServiceAccess(log, aiqUrl, login, password);
 
         } catch (Exception e) {
             ok = false;
-            log.println(getExceptionTrace(e));
-        } finally {
-
-            if (con != null) con.disconnect();
+            log.println("Authentication failed");
+            log.println(AiqUtil.getExceptionTrace(e));
         }
 
 
@@ -138,14 +101,6 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             run.setResult(Result.FAILURE);
         }
 
-    }
-
-    private String getExceptionTrace(Exception e) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        String sStackTrace = sw.toString();
-        return sStackTrace;
     }
 
     @Symbol("greet")
@@ -263,21 +218,4 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 //        return FormValidation.ok();
 //    }
 
-    class AuthenticateUserBody {
-        private String username;
-        private String password;
-
-        public AuthenticateUserBody(String username, String password) {
-            this.username = username;
-            this.password = password;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-    }
 }
