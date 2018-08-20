@@ -4,13 +4,17 @@
     <f:entry title="${%AiqUrl}" field="aiqUrl">
         <f:textbox />
     </f:entry>
+
     <f:entry title="${%Login}" field="login">
         <f:textbox />
     </f:entry>
+
     <f:entry title="${%Password}" field="password">
         <f:password />
     </f:entry>
+
     <f:entry title="${%Project}" field="project">
         <f:textbox />
     </f:entry>
+
 </j:jelly>

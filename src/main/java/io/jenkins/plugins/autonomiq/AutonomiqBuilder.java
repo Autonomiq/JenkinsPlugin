@@ -18,6 +18,7 @@ import org.kohsuke.stapler.QueryParameter;
 
 import javax.servlet.ServletException;
 import java.io.*;
+import java.util.List;
 
 
 import jenkins.tasks.SimpleBuildStep;
@@ -94,7 +95,14 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             log.println(AiqUtil.getExceptionTrace(e));
         }
 
+        if (ok) {
+            try {
+                List<String> names = svc.getProjectNames();
+            } catch (Exception e) {
+                ok = false;
 
+            }
+        }
         if (ok) {
             run.setResult(Result.SUCCESS);
         } else {
