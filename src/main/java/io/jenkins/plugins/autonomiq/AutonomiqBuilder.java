@@ -1,24 +1,26 @@
 package io.jenkins.plugins.autonomiq;
 
-import com.cloudbees.plugins.credentials.CredentialsProvider;
-import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
-
+import com.google.common.collect.Lists;
 import hudson.Launcher;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.*;
+import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.tasks.Builder;
 import hudson.tasks.BuildStepDescriptor;
+
 import hudson.util.ListBoxModel;
-import jenkins.model.Jenkins;
-import org.kohsuke.stapler.AncestorInPath;
+import hudson.util.ListBoxModel.Option;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.servlet.ServletException;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 import jenkins.tasks.SimpleBuildStep;
@@ -30,9 +32,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     private String aiqUrl;
     private String login;
     private String password;
-    private String project;
-
-    private final String authenticatePath = ":8005/authenticate/basic";
+    private String project; // json of ProjectData
 
     @DataBoundConstructor
     public AutonomiqBuilder(String aiqUrl, String login, String password, String project) {
@@ -53,9 +53,6 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         return project;
     }
 
-//    public boolean isUseFrench() {
-//        return useFrench;
-//    }
 
     @DataBoundSetter
     public void setAiqUrl(String aiqUrl) {
@@ -70,7 +67,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         this.password = password;
     }
     @DataBoundSetter
-    public void setProject(String project) {
+    public void setProjectId(String project) {
         this.project = project;
     }
 
@@ -80,8 +77,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         boolean ok = true;
         PrintStream log = listener.getLogger();
 
-        log.println("Logging in to Autonomiq service: " + aiqUrl);
-        log.println("as user: " + login);
+        log.printf("Logging in as user '%s' to Autonomiq service at: %s\n", login, aiqUrl);
 
         ServiceAccess svc = null;
 
@@ -89,20 +85,16 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
              svc = new ServiceAccess(log, aiqUrl, login, password);
 
+             ProjectData pd = AiqUtil.gson.fromJson(project, ProjectData.class);
+
+             log.printf("Running tests from project '%s'\n", pd.projectName);
+
         } catch (Exception e) {
             ok = false;
             log.println("Authentication failed");
             log.println(AiqUtil.getExceptionTrace(e));
         }
 
-        if (ok) {
-            try {
-                List<String> names = svc.getProjectNames();
-            } catch (Exception e) {
-                ok = false;
-
-            }
-        }
         if (ok) {
             run.setResult(Result.SUCCESS);
         } else {
@@ -162,6 +154,73 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return Messages.AutonomiqBuilder_DescriptorImpl_DisplayName();
         }
 
+        public ListBoxModel doFillProjectItems(@QueryParameter String aiqUrl,
+                                               @QueryParameter String login,
+                                               @QueryParameter String password) {
+
+            // make sure other fields have been filled in
+            if (aiqUrl.length() > 0 && login.length() > 0 && password.length() > 0) {
+
+                try {
+
+                    Option[] options = getProjectOptions(aiqUrl, login, password);
+                    //List<String> projects = getProjectList(aiqUrl, login, password);
+
+//                    String[] vals = { "Yellow Submarine","Only a Northern Song","All You Need Is Love" };
+//
+//                    Option[] options = new Option[3];
+//                    int index = 0;
+//                    for (String val : vals) {
+//                        options[index] = new Option(val, val);
+//                        index++;
+//                    }
+
+                    return new ListBoxModel(options);
+
+                    //return new ListBoxModel((String[]) projects.toArray());
+                } catch (Exception e) {
+                    // logger not available?
+                }
+            }
+
+            return new ListBoxModel();
+
+        }
+
+        public Option[] getProjectOptions(String aiqUrl, String login, String password) throws ServiceException {
+
+
+            Option[] ret;
+
+            try {
+                ServiceAccess svc = new ServiceAccess(null, aiqUrl, login, password);
+
+                List<ServiceAccess.DiscoveryResponse> dataList = svc.getProjectData();
+
+                ret = new Option[dataList.size() + 1];
+
+                ret[0] = new Option("-- select project --", "");
+
+                int index = 1;
+                for (ServiceAccess.DiscoveryResponse data : dataList) {
+
+                    ProjectData pd = new ProjectData(data.getProjectId(), data.getProjectName());
+
+                    Option op = new Option(data.getProjectName(), AiqUtil.gson.toJson(pd));
+                    ret[index] = op;
+
+                    index++;
+                }
+
+
+            } catch (Exception e) {
+                throw new ServiceException("Exception getting project list");
+            }
+
+            return ret;
+        }
+
+
 //        public ListBoxModel doFillCredentialsIdItems(
 //                @AncestorInPath Item item,
 //                @QueryParameter String credentialsId) {
@@ -183,6 +242,23 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
     }
 
+    private static class ProjectData {
+        private Long projectId;
+        private String projectName;
+
+        public ProjectData(Long projectId, String projectName) {
+            this.projectId = projectId;
+            this.projectName = projectName;
+        }
+
+        public Long getProjectId() {
+            return projectId;
+        }
+
+        public String getProjectName() {
+            return projectName;
+        }
+    }
 
 //    public void xx() {
 //        CredentialsProvider.listCredentials(

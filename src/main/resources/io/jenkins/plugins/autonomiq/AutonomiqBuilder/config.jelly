@@ -14,7 +14,7 @@
     </f:entry>
 
     <f:entry title="${%Project}" field="project">
-        <f:textbox />
+        <f:select />
     </f:entry>
 
 </j:jelly>

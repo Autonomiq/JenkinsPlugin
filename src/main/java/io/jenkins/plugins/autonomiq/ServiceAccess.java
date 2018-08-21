@@ -14,12 +14,11 @@ import java.util.List;
 public class ServiceAccess {
 
     private final String authenticatePath = ":8005/authenticate/basic";
-    private final String listProjectsPath = "/discovery/%s"; // accountId
+    private final String listProjectsPath = ":8005/discovery/%s"; // accountId
 
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
     private final OkHttpClient client;
-    private final Gson gson;
     private final PrintStream log;
     private final String aiqUrl;
     private Long userId;
@@ -32,18 +31,17 @@ public class ServiceAccess {
 
         this.log = log;
         this.aiqUrl = aiqUrl;
-        gson = new Gson();
 
         client = new OkHttpClient();
 
         AuthenticateUserBody authBody = new AuthenticateUserBody(login, password);
-        String authJson = gson.toJson(authBody);
+        String authJson = AiqUtil.gson.toJson(authBody);
 
         try {
 
             String resp = post(aiqUrl + authenticatePath, authJson);
 
-            AuthenticateUserResponse r = gson.fromJson(resp, AuthenticateUserResponse.class);
+            AuthenticateUserResponse r = AiqUtil.gson.fromJson(resp, AuthenticateUserResponse.class);
             userId = r.getUserId();
             accountId = r.getUserAccount();
 
@@ -53,22 +51,15 @@ public class ServiceAccess {
 
     }
 
-    public List<String> getProjectNames() throws ServiceException {
+    public List<DiscoveryResponse> getProjectData() throws ServiceException {
 
         String url = aiqUrl + String.format(listProjectsPath, accountId);
 
         try {
+
             String resp = get(url);
-
-            List<DiscoveryResponse> discoveryList = gson.fromJson(resp, new TypeToken<List<DiscoveryResponse>>(){}.getType());
-
-            List<String> ret = new ArrayList<>(discoveryList.size());
-
-            for (DiscoveryResponse discovery : discoveryList) {
-                ret.add(discovery.projectName);
-            }
-
-            return ret;
+            List<DiscoveryResponse> discoveryList = AiqUtil.gson.fromJson(resp, new TypeToken<List<DiscoveryResponse>>(){}.getType());
+            return discoveryList;
 
         } catch (Exception e) {
             throw new ServiceException("Exception getting project list", e);
