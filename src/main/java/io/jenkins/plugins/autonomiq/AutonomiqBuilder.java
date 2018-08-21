@@ -67,7 +67,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         this.password = password;
     }
     @DataBoundSetter
-    public void setProjectId(String project) {
+    public void setProject(String project) {
         this.project = project;
     }
 
