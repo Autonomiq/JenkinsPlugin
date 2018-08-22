@@ -144,6 +144,19 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return FormValidation.ok();
         }
 
+        public String getDefaultAiqUrl() {
+            String ret = AutonomiqConfiguration.get().getDefaultAiqUrl();
+            return ret;
+        }
+        public String getDefaultLogin() {
+            String ret = AutonomiqConfiguration.get().getDefaultLogin();
+            return ret;
+        }
+        public String getDefaultPassword() {
+            String ret = AutonomiqConfiguration.get().getDefaultPassword();
+            return ret;
+        }
+
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
             return true;
