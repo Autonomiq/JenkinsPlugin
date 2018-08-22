@@ -8,6 +8,8 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
+import java.io.IOException;
+
 /**
  * Example of Jenkins global configuration.
  */
@@ -79,6 +81,34 @@ public class AutonomiqConfiguration extends GlobalConfiguration {
             return FormValidation.warning("Please specify a default password.");
         }
         return FormValidation.ok();
+    }
+
+    // Form validation
+    @SuppressWarnings({"ThrowableResultOfMethodCallIgnored", "unused"})
+    public FormValidation doTestConnection(@QueryParameter(DEFAULT_AIQ_URL) final String defaultAiqUrl,
+                                           @QueryParameter(DEFAULT_LOGIN) final String defaultLogin,
+                                           @QueryParameter(DEFAULT_PASSWORD) final String defaultPassword) {
+
+        if (AiqUtil.isNullOrEmpty(defaultAiqUrl)) {
+            return FormValidation.error("Default Autonomiq URL is empty!");
+        }
+        if (AiqUtil.isNullOrEmpty(defaultLogin)) {
+            return FormValidation.error("Default username is empty!");
+        }
+        if (AiqUtil.isNullOrEmpty(defaultPassword)) {
+            return FormValidation.error("Default password is empty!");
+        }
+
+        try {
+
+            new ServiceAccess(null, defaultAiqUrl, defaultLogin, defaultPassword);
+
+        } catch (Exception e) {
+            return FormValidation.error("Unable to authenticate with Autonomiq service");
+        }
+
+        return FormValidation.ok("Successfully authenticated to Autonomiq service");
+
     }
 
 }
