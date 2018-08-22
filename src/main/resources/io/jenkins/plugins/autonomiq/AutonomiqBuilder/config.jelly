@@ -10,7 +10,7 @@
     </f:entry>
 
     <f:entry title="${%Password}" field="password">
-        <f:password default="${descriptor.getDefaultPassword()}" />
+        <f:textbox default="${descriptor.getDefaultPassword()}" />
     </f:entry>
 
     <f:entry title="${%Project}" field="project">
