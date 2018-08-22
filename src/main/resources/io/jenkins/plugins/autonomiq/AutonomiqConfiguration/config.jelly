@@ -15,7 +15,7 @@
             <f:password/>
         </f:entry>
 
-        <f:validateButton title="${%Test Connection}" progress="${%Testing connection to Autonomiq...}"
+        <f:validateButton title="${%TestConnection}" progress="${%Testing connection to Autonomiq...}"
                     method="testConnection" with="defaultAiqUrl,defaultLogin,defaultPassword"/>
 
     </f:section>

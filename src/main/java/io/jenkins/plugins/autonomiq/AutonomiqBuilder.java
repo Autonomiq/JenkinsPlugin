@@ -32,27 +32,61 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     private String aiqUrl;
     private String login;
     private String password;
-    private String project; // json of ProjectData
+    private String project; // json of ProjectData class
 
     @DataBoundConstructor
     public AutonomiqBuilder(String aiqUrl, String login, String password, String project) {
+
         this.aiqUrl = aiqUrl;
         this.login = login;
         this.password = password;
         this.project = project;
     }
 
+    @SuppressWarnings("unused")
     public String getAiqUrl() { return aiqUrl; }
+
+    @SuppressWarnings("unused")
     public String getLogin() {
         return login;
     }
+
+    @SuppressWarnings("unused")
     public String getPassword() {
         return password;
     }
+
+    @SuppressWarnings("unused")
     public String getProject() {
         return project;
     }
 
+    @SuppressWarnings("unused")
+    public String getAiqUrlValueOrDefault() {
+        if (aiqUrl != null) {
+            return aiqUrl;
+        } else {
+            return AutonomiqConfiguration.get().getDefaultAiqUrl();
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public String getLoginValueOrDefault() {
+        if (login != null) {
+            return login;
+        } else {
+            return AutonomiqConfiguration.get().getDefaultLogin();
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public String getPasswordValueOrDefault() {
+        if (password != null) {
+            return password;
+        } else {
+            return AutonomiqConfiguration.get().getDefaultPassword();
+        }
+    }
 
     @DataBoundSetter
     public void setAiqUrl(String aiqUrl) {
@@ -107,15 +141,18 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
+        @SuppressWarnings("unused")
         public FormValidation doCheckAiqUrl(@QueryParameter String value, @QueryParameter String aiqUrl)
                 throws IOException, ServletException {
             if (value.length() == 0)
                 return FormValidation.error(Messages.AutonomiqBuilder_DescriptorImpl_errors_missingAiqUrl());
-            if (! (value.startsWith("http://") || value.startsWith("https://")))
+            if (!(value.startsWith("http://") || value.startsWith("https://")))
                 return FormValidation.warning(Messages.AutonomiqBuilder_DescriptorImpl_errors_notUrl());
 
             return FormValidation.ok();
         }
+
+        @SuppressWarnings("unused")
         public FormValidation doCheckLogin(@QueryParameter String value, @QueryParameter String login)
                 throws IOException, ServletException {
             if (value.length() == 0)
@@ -125,6 +162,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             return FormValidation.ok();
         }
+
+        @SuppressWarnings("unused")
         public FormValidation doCheckPassword(@QueryParameter String value, @QueryParameter String password)
                 throws IOException, ServletException {
             if (value.length() == 0)
@@ -134,6 +173,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             return FormValidation.ok();
         }
+
+        @SuppressWarnings("unused")
         public FormValidation doCheckProject(@QueryParameter String value, @QueryParameter String project)
                 throws IOException, ServletException {
             if (value.length() == 0)
@@ -144,14 +185,19 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return FormValidation.ok();
         }
 
+        @SuppressWarnings("unused")
         public String getDefaultAiqUrl() {
             String ret = AutonomiqConfiguration.get().getDefaultAiqUrl();
             return ret;
         }
+
+        @SuppressWarnings("unused")
         public String getDefaultLogin() {
             String ret = AutonomiqConfiguration.get().getDefaultLogin();
             return ret;
         }
+
+        @SuppressWarnings("unused")
         public String getDefaultPassword() {
             String ret = AutonomiqConfiguration.get().getDefaultPassword();
             return ret;
@@ -167,6 +213,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return Messages.AutonomiqBuilder_DescriptorImpl_DisplayName();
         }
 
+        @SuppressWarnings("unused")
         public ListBoxModel doFillProjectItems(@QueryParameter String aiqUrl,
                                                @QueryParameter String login,
                                                @QueryParameter String password) {
@@ -177,22 +224,11 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 try {
 
                     Option[] options = getProjectOptions(aiqUrl, login, password);
-                    //List<String> projects = getProjectList(aiqUrl, login, password);
-
-//                    String[] vals = { "Yellow Submarine","Only a Northern Song","All You Need Is Love" };
-//
-//                    Option[] options = new Option[3];
-//                    int index = 0;
-//                    for (String val : vals) {
-//                        options[index] = new Option(val, val);
-//                        index++;
-//                    }
 
                     return new ListBoxModel(options);
 
-                    //return new ListBoxModel((String[]) projects.toArray());
                 } catch (Exception e) {
-                    // logger not available?
+                    //
                 }
             }
 
@@ -200,7 +236,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         }
 
-        public Option[] getProjectOptions(String aiqUrl, String login, String password) throws ServiceException {
+        private Option[] getProjectOptions(String aiqUrl, String login, String password) throws ServiceException {
 
 
             Option[] ret;
@@ -233,26 +269,6 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return ret;
         }
 
-
-//        public ListBoxModel doFillCredentialsIdItems(
-//                @AncestorInPath Item item,
-//                @QueryParameter String credentialsId) {
-//
-//            StandardListBoxModel result = new StandardListBoxModel();
-//            if (item == null) {
-//                if (!Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
-//                    return result.includeCurrentValue(credentialsId);
-//                }
-//            } else {
-//                if (!item.hasPermission(Item.EXTENDED_READ)
-//                        && !item.hasPermission(CredentialsProvider.USE_ITEM)) {
-//                    return result.includeCurrentValue(credentialsId);
-//                }
-//            }
-//            return result
-//                    .includeCurrentValue(credentialsId);
-//        }
-
     }
 
     private static class ProjectData {
@@ -272,47 +288,5 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return projectName;
         }
     }
-
-//    public void xx() {
-//        CredentialsProvider.listCredentials(
-//                StandardUsernamePasswordCredentials.class,
-//                job,
-//                Jenkins.getAuthentication(),
-//                URIRequirementBuilder.fromUri(scmUrl),
-//                null
-//        )
-//    }
-
-//    public FormValidation doCheckCredentialsId(
-//            @AncestorInPath Item item,
-//    @QueryParameter String value) {
-//
-//        if (item == null) {
-//            if (!Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
-//                return FormValidation.ok();
-//            }
-//        } else {
-//            if (!item.hasPermission(Item.EXTENDED_READ)
-//                    && !item.hasPermission(CredentialsProvider.USE_ITEM)) {
-//                return FormValidation.ok();
-//            }
-//        }
-////        if (StringUtils.isBlank(value)) { (4)
-////            return FormValidation.; (4)
-////        }
-////        if (value.startWith("${") && value.endsWith("}")) { (5)
-////            return FormValidation.warning("Cannot validate expression based credentials");
-////        }
-//
-//        CredentialsMatchers.firstOrNull(CredentialsProvider.lookupCredentials(…​), withId(value))
-//
-//        if (CredentialsProvider.listCredentials(
-//    ...,
-//        CredentialsMatchers.withId(value)
-//  ).isEmpty()) {
-//            return FormValidation.error("Cannot find currently selected credentials");
-//        }
-//        return FormValidation.ok();
-//    }
 
 }
