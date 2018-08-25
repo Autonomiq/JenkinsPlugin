@@ -5,6 +5,7 @@ import io.jenkins.plugins.autonomiq.service.ServiceException;
 import io.jenkins.plugins.autonomiq.service.types.TestCasesResponse;
 import io.jenkins.plugins.autonomiq.service.types.TestScriptResponse;
 import io.jenkins.plugins.autonomiq.util.AiqUtil;
+import io.jenkins.plugins.autonomiq.util.TimeStampedLogger;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -18,7 +19,7 @@ public class RunTests {
     }
 
     private ServiceAccess svc;
-    private PrintStream log;
+    private TimeStampedLogger log;
     private ProjectData pd;
     private Long pollingIntervalMs;
 
@@ -27,7 +28,7 @@ public class RunTests {
     private Map<Long, TestScriptResponse> testScriptByTestCaseId;
 
     public RunTests(ServiceAccess svc,
-                    PrintStream log,
+                    TimeStampedLogger log,
                     ProjectData pd,
                     Long pollingIntervalMs) {
         this.svc = svc;
@@ -41,12 +42,6 @@ public class RunTests {
      * @return returns true if all tests execute successfully
      */
     public Boolean runAllTestsForProject(Boolean generateScripts) {
-
-        if (generateScripts) {
-            log.printf("Generating all test scripts from project '%s'\n", pd.getProjectName());
-        }
-
-        log.printf("Running all test cases from project '%s'\n", pd.getProjectName());
 
         try {
             getAllTestCases(pd.getProjectId(), pd.getDiscoveryId());
@@ -75,15 +70,19 @@ public class RunTests {
 
         }
 
+//        log.println();
+//        log.printf("Running all test cases from project '%s'\n", pd.getProjectName());
+
+
         return true;
     }
 
     private void logTestCaseNames() {
+        log.println();
         log.println("==== Found these test cases:");
         for (String name : testCasesByName.keySet()) {
             log.println(name);
         }
-        log.println();
     }
 
     private void getAllTestCases(Long projectId, Long discoveryId) throws ServiceException {
@@ -100,6 +99,7 @@ public class RunTests {
     private void startScriptGenerations() throws ServiceException {
         testScriptByTestCaseId = new HashMap<>();
 
+        log.println();
         log.printf("Starting script generation for %d test cases.\n", testCasesById.size());
 
         List<TestScriptResponse> tsr = svc.startTestScripGeneration(pd.getProjectId(), testCasesById.keySet());

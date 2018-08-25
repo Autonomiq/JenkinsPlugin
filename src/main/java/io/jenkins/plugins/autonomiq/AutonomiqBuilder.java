@@ -17,6 +17,7 @@ import io.jenkins.plugins.autonomiq.service.types.DiscoveryResponse;
 import io.jenkins.plugins.autonomiq.service.types.TestCasesResponse;
 import io.jenkins.plugins.autonomiq.service.types.TestScriptResponse;
 import io.jenkins.plugins.autonomiq.util.AiqUtil;
+import io.jenkins.plugins.autonomiq.util.TimeStampedLogger;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -118,13 +119,15 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
 
+        TimeStampedLogger log = new TimeStampedLogger(listener.getLogger());
+
         Boolean generateScripts = true;
 
         boolean ok = true;
-        PrintStream log = listener.getLogger();
 
         AiqUtil.gson.fromJson(project, ProjectData.class);
 
+        log.println();
         log.printf("Logging in as user '%s' to Autonomiq service at: %s\n", login, aiqUrl);
 
         ProjectData pd;
@@ -143,9 +146,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             log.println(AiqUtil.getExceptionTrace(e));
         }
 
-        RunTests rt = new RunTests(svc, log, pd, pollingIntervalMs);
-
-        ok = rt.runAllTestsForProject(generateScripts);
+        if (ok) {
+            RunTests rt = new RunTests(svc, log, pd, pollingIntervalMs);
+            ok = rt.runAllTestsForProject(generateScripts);
+        }
 
         if (ok) {
             run.setResult(Result.SUCCESS);
