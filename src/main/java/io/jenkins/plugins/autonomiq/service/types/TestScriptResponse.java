@@ -3,7 +3,7 @@ package io.jenkins.plugins.autonomiq.service.types;
 import java.util.Date;
 
 public class TestScriptResponse {
-    private Long testScriptId;
+    private Long testScriptid;
     private Long projectId;
     private Long testCaseId;
     private Long discoveryId;
@@ -19,12 +19,12 @@ public class TestScriptResponse {
     private Date lastExecutedTime;
     private Long executionId;
 
-    public TestScriptResponse(Long testScriptId, Long projectId, Long testCaseId, Long discoveryId,
+    public TestScriptResponse(Long testScriptid, Long projectId, Long testCaseId, Long discoveryId,
                               Long userId, String testScriptName, String testScriptDownloadLink,
                               String testScriptGenerationStatus, String errorMessage,
                               String stepsErrorMessages, String initiatedBy, Date initiatedTime,
                               Date generationTime, Date lastExecutedTime, Long executionId) {
-        this.testScriptId = testScriptId;
+        this.testScriptid = testScriptid;
         this.projectId = projectId;
         this.testCaseId = testCaseId;
         this.discoveryId = discoveryId;
@@ -41,8 +41,8 @@ public class TestScriptResponse {
         this.executionId = executionId;
     }
     @SuppressWarnings("unused")
-    public Long getTestScriptId() {
-        return testScriptId;
+    public Long getTestScriptid() {
+        return testScriptid;
     }
     @SuppressWarnings("unused")
     public Long getProjectId() {

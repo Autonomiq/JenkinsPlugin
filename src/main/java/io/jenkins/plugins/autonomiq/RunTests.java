@@ -79,10 +79,11 @@ public class RunTests {
     }
 
     private void logTestCaseNames() {
-        log.println("Found test cases");
+        log.println("==== Found these test cases:");
         for (String name : testCasesByName.keySet()) {
             log.println(name);
         }
+        log.println();
     }
 
     private void getAllTestCases(Long projectId, Long discoveryId) throws ServiceException {
@@ -99,6 +100,8 @@ public class RunTests {
     private void startScriptGenerations() throws ServiceException {
         testScriptByTestCaseId = new HashMap<>();
 
+        log.printf("Starting script generation for %d test cases.\n", testCasesById.size());
+
         List<TestScriptResponse> tsr = svc.startTestScripGeneration(pd.getProjectId(), testCasesById.keySet());
         for (TestScriptResponse t : tsr) {
             testScriptByTestCaseId.put(t.getTestCaseId(), t);
@@ -111,7 +114,16 @@ public class RunTests {
         Set<Long> gensSucceededCaseId = new HashSet<>();
 
         while (testCasesInProgress.size() > 0) {
-            log.printf("Checking %d test cases still in progress\n", testCasesInProgress.size());
+
+            // pause
+            try {
+                Thread.sleep(pollingIntervalMs);
+            } catch (InterruptedException e) {
+                log.println("Check scripts generation sleep interrupted");
+            }
+
+            log.println();
+            log.printf("==== Checking %d test cases still in progress\n", testCasesInProgress.size());
 
             Iterator<Long> i = testCasesInProgress.iterator();
             while (i.hasNext()) {
@@ -124,20 +136,20 @@ public class RunTests {
                 String testCaseName = testCasesById.get(testCaseId).getTestCaseName();
 
                 for (TestScriptResponse script : scripts) {
-                    if (script.getTestScriptId().equals(scriptStart.getTestScriptId())) {
+                    if (script.getTestScriptid().equals(scriptStart.getTestScriptid())) {
 
                         if (Progress.INPROGRESS.name().equals(script.getTestScriptGenerationStatus())) {
-                            log.printf("Script generation for test case %s still in progress",
+                            log.printf("Script generation for test case %s still in progress\n",
                                     testCaseName);
 
                         } else if (Progress.ERROR.name().equals(script.getTestScriptGenerationStatus())) {
 
-                            log.printf("Script generation for test case %s failed", testCaseName);
+                            log.printf("Script generation for test case %s failed\n", testCaseName);
                             i.remove();
 
                         } else { // must be SUCCESS
 
-                            log.printf("Script generation for test case %s succeeded", testCaseName);
+                            log.printf("Script generation for test case %s succeeded\n", testCaseName);
                             gensSucceededCaseId.add(testCaseId);
                             i.remove();
 
@@ -146,17 +158,9 @@ public class RunTests {
                 }
             }
 
-            // pause of any generations still in progress
-            if (testCasesInProgress.size() > 0) {
-                try {
-                    Thread.sleep(pollingIntervalMs);
-                } catch (InterruptedException e) {
-                    log.println("Check scripts generation sleep interrupted");
-                }
-            }
-
         }
 
+        log.println();
         return gensSucceededCaseId;
 
     }
