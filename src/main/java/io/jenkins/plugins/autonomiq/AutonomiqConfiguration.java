@@ -2,13 +2,13 @@ package io.jenkins.plugins.autonomiq;
 
 import hudson.Extension;
 import hudson.util.FormValidation;
+import io.jenkins.plugins.autonomiq.service.ServiceAccess;
+import io.jenkins.plugins.autonomiq.util.AiqUtil;
 import jenkins.model.GlobalConfiguration;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
-
-import java.io.IOException;
 
 /**
  * Example of Jenkins global configuration.
@@ -101,7 +101,7 @@ public class AutonomiqConfiguration extends GlobalConfiguration {
 
         try {
 
-            new ServiceAccess(null, defaultAiqUrl, defaultLogin, defaultPassword);
+            new ServiceAccess(defaultAiqUrl, defaultLogin, defaultPassword);
 
         } catch (Exception e) {
             return FormValidation.error("Unable to authenticate with Autonomiq service");

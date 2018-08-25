@@ -1,0 +1,86 @@
+package io.jenkins.plugins.autonomiq.service.types;
+
+import java.util.Date;
+
+public class TestCasesResponse {
+    private String testSuiteName;
+    private Long testCaseId;
+    private String testCaseName;
+    private Date createdTime;
+    private String s3URL;
+    private Long discoveryId;
+    private BrokenDownInstruction testSteps[];
+    private Instruction recoverTestSteps[];
+    private TestScriptResponse testScripts[];
+    private Boolean unmetDependency;
+    private String dependentFiles[];
+    private String src;
+
+    public TestCasesResponse(String testSuiteName, Long testCaseId, String testCaseName,
+                             Date createdTime, String s3URL, Long discoveryId,
+                             BrokenDownInstruction[] testSteps, Instruction[] recoverTestSteps,
+                             TestScriptResponse[] testScripts, Boolean unmetDependency,
+                             String dependentFiles[], String src) {
+        this.testSuiteName = testSuiteName;
+        this.testCaseId = testCaseId;
+        this.testCaseName = testCaseName;
+        this.createdTime = createdTime;
+        this.s3URL = s3URL;
+        this.discoveryId = discoveryId;
+        this.testSteps = testSteps;
+        this.recoverTestSteps = recoverTestSteps;
+        this.testScripts = testScripts;
+        this.unmetDependency = unmetDependency;
+        this.dependentFiles = dependentFiles;
+        this.src = src;
+    }
+    @SuppressWarnings("unused")
+    public String getTestSuiteName() {
+        return testSuiteName;
+    }
+    @SuppressWarnings("unused")
+    public Long getTestCaseId() {
+        return testCaseId;
+    }
+    @SuppressWarnings("unused")
+    public String getTestCaseName() {
+        return testCaseName;
+    }
+    @SuppressWarnings("unused")
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+    @SuppressWarnings("unused")
+    public String getS3URL() {
+        return s3URL;
+    }
+    @SuppressWarnings("unused")
+    public Long getDiscoveryId() {
+        return discoveryId;
+    }
+    @SuppressWarnings("unused")
+    public BrokenDownInstruction[] getTestSteps() {
+        return testSteps;
+    }
+    @SuppressWarnings("unused")
+    public Instruction[] getRecoverTestSteps() {
+        return recoverTestSteps;
+    }
+    @SuppressWarnings("unused")
+    public TestScriptResponse[] getTestScripts() {
+        return testScripts;
+    }
+    @SuppressWarnings("unused")
+    public Boolean getUnmetDependency() {
+        return unmetDependency;
+    }
+    @SuppressWarnings("unused")
+    public String[] getDependentFiles() {
+        return dependentFiles;
+    }
+    @SuppressWarnings("unused")
+    public String getSrc() {
+        return src;
+    }
+}
+

@@ -1,26 +1,29 @@
 package io.jenkins.plugins.autonomiq;
 
-import com.google.common.collect.Lists;
 import hudson.Launcher;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.*;
-import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.tasks.Builder;
 import hudson.tasks.BuildStepDescriptor;
 
 import hudson.util.ListBoxModel;
 import hudson.util.ListBoxModel.Option;
+import io.jenkins.plugins.autonomiq.service.ServiceAccess;
+import io.jenkins.plugins.autonomiq.service.ServiceException;
+import io.jenkins.plugins.autonomiq.service.types.AutInformation;
+import io.jenkins.plugins.autonomiq.service.types.DiscoveryResponse;
+import io.jenkins.plugins.autonomiq.service.types.TestCasesResponse;
+import io.jenkins.plugins.autonomiq.service.types.TestScriptResponse;
+import io.jenkins.plugins.autonomiq.util.AiqUtil;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.servlet.ServletException;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 import jenkins.tasks.SimpleBuildStep;
@@ -34,6 +37,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     private String password;
     private String project; // json of ProjectData class
 
+    private Long pollingIntervalMs = 5000L;
+
     @DataBoundConstructor
     public AutonomiqBuilder(String aiqUrl, String login, String password, String project) {
 
@@ -44,7 +49,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     }
 
     @SuppressWarnings("unused")
-    public String getAiqUrl() { return aiqUrl; }
+    public String getAiqUrl() {
+        return aiqUrl;
+    }
 
     @SuppressWarnings("unused")
     public String getLogin() {
@@ -92,14 +99,17 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public void setAiqUrl(String aiqUrl) {
         this.aiqUrl = aiqUrl;
     }
+
     @DataBoundSetter
     public void setLogin(String login) {
         this.login = login;
     }
+
     @DataBoundSetter
     public void setPassword(String password) {
         this.password = password;
     }
+
     @DataBoundSetter
     public void setProject(String project) {
         this.project = project;
@@ -108,33 +118,40 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
 
+        Boolean generateScripts = true;
+
         boolean ok = true;
         PrintStream log = listener.getLogger();
 
+        AiqUtil.gson.fromJson(project, ProjectData.class);
+
         log.printf("Logging in as user '%s' to Autonomiq service at: %s\n", login, aiqUrl);
 
-        ServiceAccess svc = null;
-
+        ProjectData pd;
         try {
+            pd = AiqUtil.gson.fromJson(project, ProjectData.class);
+        } catch (Exception e) {
+            throw new IOException("Exception unpacking project data", e);
+        }
 
-             svc = new ServiceAccess(log, aiqUrl, login, password);
-
-             ProjectData pd = AiqUtil.gson.fromJson(project, ProjectData.class);
-
-             log.printf("Running tests from project '%s'\n", pd.projectName);
-
+        ServiceAccess svc = null;
+        try {
+            svc = new ServiceAccess(aiqUrl, login, password);
         } catch (Exception e) {
             ok = false;
-            log.println("Authentication failed");
+            log.println("Authentication with Autonomiq service failed");
             log.println(AiqUtil.getExceptionTrace(e));
         }
+
+        RunTests rt = new RunTests(svc, log, pd, pollingIntervalMs);
+
+        ok = rt.runAllTestsForProject(generateScripts);
 
         if (ok) {
             run.setResult(Result.SUCCESS);
         } else {
             run.setResult(Result.FAILURE);
         }
-
     }
 
     @Symbol("greet")
@@ -242,18 +259,24 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             Option[] ret;
 
             try {
-                ServiceAccess svc = new ServiceAccess(null, aiqUrl, login, password);
+                ServiceAccess svc = new ServiceAccess(aiqUrl, login, password);
 
-                List<ServiceAccess.DiscoveryResponse> dataList = svc.getProjectData();
+                List<DiscoveryResponse> dataList = svc.getProjectData();
 
                 ret = new Option[dataList.size() + 1];
 
                 ret[0] = new Option("-- select project --", "");
 
                 int index = 1;
-                for (ServiceAccess.DiscoveryResponse data : dataList) {
+                for (DiscoveryResponse data : dataList) {
 
-                    ProjectData pd = new ProjectData(data.getProjectId(), data.getProjectName());
+                    Long discoveryId = 0L;
+                    List<AutInformation> aut = data.getAutInformations();
+                    if (aut != null && aut.size() > 0) {
+                        discoveryId = aut.get(0).getDiscoveryId();
+                    }
+
+                    ProjectData pd = new ProjectData(data.getProjectId(), discoveryId, data.getProjectName());
 
                     Option op = new Option(data.getProjectName(), AiqUtil.gson.toJson(pd));
                     ret[index] = op;
@@ -269,24 +292,6 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return ret;
         }
 
-    }
-
-    private static class ProjectData {
-        private Long projectId;
-        private String projectName;
-
-        public ProjectData(Long projectId, String projectName) {
-            this.projectId = projectId;
-            this.projectName = projectName;
-        }
-
-        public Long getProjectId() {
-            return projectId;
-        }
-
-        public String getProjectName() {
-            return projectName;
-        }
     }
 
 }

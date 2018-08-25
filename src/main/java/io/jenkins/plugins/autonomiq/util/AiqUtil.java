@@ -1,4 +1,4 @@
-package io.jenkins.plugins.autonomiq;
+package io.jenkins.plugins.autonomiq.util;
 
 import com.google.gson.Gson;
 
@@ -20,5 +20,6 @@ public class AiqUtil {
     public static boolean isNullOrEmpty(String string) {
         return string == null || string.isEmpty();
     }
+
 
 }
