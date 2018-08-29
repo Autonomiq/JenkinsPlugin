@@ -36,16 +36,23 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     private String login;
     private String password;
     private String project; // json of ProjectData class
+    private Boolean genScripts;
+    private Boolean runTestCases;
+    private String platform;
 
     private Long pollingIntervalMs = 5000L;
 
     @DataBoundConstructor
-    public AutonomiqBuilder(String aiqUrl, String login, String password, String project) {
+    public AutonomiqBuilder(String aiqUrl, String login, String password, String project,
+                            Boolean genScripts/*, Boolean runTestCases, String platform*/) {
 
         this.aiqUrl = aiqUrl;
         this.login = login;
         this.password = password;
         this.project = project;
+        this.genScripts = genScripts;
+//        this.runTestCases = runTestCases;
+//        this.platform = platform;
     }
 
     @SuppressWarnings("unused")
@@ -66,6 +73,21 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     @SuppressWarnings("unused")
     public String getProject() {
         return project;
+    }
+
+    @SuppressWarnings("unused")
+    public Boolean isGenScripts() {
+        return genScripts;
+    }
+
+    @SuppressWarnings("unused")
+    public Boolean isRunTestCases() {
+        return runTestCases;
+    }
+
+    @SuppressWarnings("unused")
+    public String getPlatform() {
+        return platform;
     }
 
     @SuppressWarnings("unused")
@@ -95,21 +117,25 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
     }
 
+    @SuppressWarnings("unused")
     @DataBoundSetter
     public void setAiqUrl(String aiqUrl) {
         this.aiqUrl = aiqUrl;
     }
 
+    @SuppressWarnings("unused")
     @DataBoundSetter
     public void setLogin(String login) {
         this.login = login;
     }
 
+    @SuppressWarnings("unused")
     @DataBoundSetter
     public void setPassword(String password) {
         this.password = password;
     }
 
+    @SuppressWarnings("unused")
     @DataBoundSetter
     public void setProject(String project) {
         this.project = project;

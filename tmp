@@ -1,0 +1,11 @@
+<!--   <f:optionalBlock field="runTestCases" name="dynamic" title="${%RunTestCases}">
+
+        <f:entry name="platform" title="${%Platform}" field="goalType">
+            <select name="platform">
+                <option value="Linux">Linux</option>
+                <option value="Windows">Windows</option>
+            </select>
+        </f:entry>
+
+    </f:optionalBlock>
+-->

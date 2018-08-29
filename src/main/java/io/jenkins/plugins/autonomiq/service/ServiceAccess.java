@@ -15,6 +15,7 @@ public class ServiceAccess {
     private static final String getTestCasesPath = "%s:8005/discovery/%d/%d/%d/testcases"; // userId, projectId, discoveryId
     private static final String genTestScriptsPath = "%s:8005/testScript/project/%d"; // projectId
     private static final String getTestScriptsPath = "%s:8005/testScript/userId/%d/project/%d/testCase/%d/executable"; // userId, projectId, testCaseId
+    private static final String runTestCasesPath = "%s:8005/testScriptExecutions/%s/%s/run"; // userId, projectId
 
     private final String aiqUrl;
     private Long userId;
@@ -65,6 +66,15 @@ public class ServiceAccess {
 
     }
 
+    public void startRunTestCasesPath(Long projectId, List<Integer> scripts, String testExecutionName,
+                                      String platform, String browser, String executionType) {
+
+        String url = String.format(runTestCasesPath, aiqUrl, userId, projectId);
+
+        ExecuteTaskRequest req = new ExecuteTaskRequest(testExecutionName, scripts, platform,
+                browser, executionType);
+
+    }
 
     public List<TestScriptResponse> startTestScripGeneration(Long projectId, Collection<Long> testCaseIds) throws ServiceException {
 
