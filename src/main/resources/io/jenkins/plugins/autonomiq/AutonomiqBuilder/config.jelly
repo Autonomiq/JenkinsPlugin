@@ -17,10 +17,20 @@
         <f:select />
     </f:entry>
 
-    <f:entry title="${%GenScripts}" description="${%GenScriptsDescription}">
-        <f:checkbox name="genScripts" checked="${it.genScripts}"/>
+    <f:entry title="${%GenScripts}" field="genScripts" >
+        <f:checkbox />
     </f:entry>
 
+    <f:optionalBlock inline="true" field="runTestCases" title="${%RunTestCases}" >
 
+        <f:entry title="${%Platform}" field="platform">
+            <f:select />
+        </f:entry>
+
+        <f:entry title="${%Browser}" field="browser">
+            <f:select />
+        </f:entry>
+
+    </f:optionalBlock>
 
 </j:jelly>

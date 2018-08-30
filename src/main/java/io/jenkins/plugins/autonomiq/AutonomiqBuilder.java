@@ -39,82 +39,25 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     private Boolean genScripts;
     private Boolean runTestCases;
     private String platform;
+    private String browser;
 
     private Long pollingIntervalMs = 5000L;
 
     @DataBoundConstructor
     public AutonomiqBuilder(String aiqUrl, String login, String password, String project,
-                            Boolean genScripts/*, Boolean runTestCases, String platform*/) {
+                            Boolean genScripts,
+                            Boolean runTestCases,
+                            String platform, String browser
+    ) {
 
         this.aiqUrl = aiqUrl;
         this.login = login;
         this.password = password;
         this.project = project;
         this.genScripts = genScripts;
-//        this.runTestCases = runTestCases;
-//        this.platform = platform;
-    }
-
-    @SuppressWarnings("unused")
-    public String getAiqUrl() {
-        return aiqUrl;
-    }
-
-    @SuppressWarnings("unused")
-    public String getLogin() {
-        return login;
-    }
-
-    @SuppressWarnings("unused")
-    public String getPassword() {
-        return password;
-    }
-
-    @SuppressWarnings("unused")
-    public String getProject() {
-        return project;
-    }
-
-    @SuppressWarnings("unused")
-    public Boolean isGenScripts() {
-        return genScripts;
-    }
-
-    @SuppressWarnings("unused")
-    public Boolean isRunTestCases() {
-        return runTestCases;
-    }
-
-    @SuppressWarnings("unused")
-    public String getPlatform() {
-        return platform;
-    }
-
-    @SuppressWarnings("unused")
-    public String getAiqUrlValueOrDefault() {
-        if (aiqUrl != null) {
-            return aiqUrl;
-        } else {
-            return AutonomiqConfiguration.get().getDefaultAiqUrl();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public String getLoginValueOrDefault() {
-        if (login != null) {
-            return login;
-        } else {
-            return AutonomiqConfiguration.get().getDefaultLogin();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public String getPasswordValueOrDefault() {
-        if (password != null) {
-            return password;
-        } else {
-            return AutonomiqConfiguration.get().getDefaultPassword();
-        }
+        this.runTestCases = runTestCases;
+        this.platform = platform;
+        this.browser = browser;
     }
 
     @SuppressWarnings("unused")
@@ -124,9 +67,19 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     }
 
     @SuppressWarnings("unused")
+    public String getAiqUrl() {
+        return aiqUrl;
+    }
+
+    @SuppressWarnings("unused")
     @DataBoundSetter
     public void setLogin(String login) {
         this.login = login;
+    }
+
+    @SuppressWarnings("unused")
+    public String getLogin() {
+        return login;
     }
 
     @SuppressWarnings("unused")
@@ -136,13 +89,68 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     }
 
     @SuppressWarnings("unused")
+    public String getPassword() {
+        return password;
+    }
+
+    @SuppressWarnings("unused")
     @DataBoundSetter
     public void setProject(String project) {
         this.project = project;
     }
 
+    @SuppressWarnings("unused")
+    public String getProject() {
+        return project;
+    }
+
+    @DataBoundSetter
+    @SuppressWarnings("unused")
+    public void setGenScripts(Boolean genScripts) {
+        this.genScripts = genScripts;
+    }
+
+    @SuppressWarnings("unused")
+    public Boolean getGenScripts() {
+        return genScripts;
+    }
+
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setRunTestCases(Boolean runTestCases) {
+        this.runTestCases = runTestCases;
+    }
+
+    @SuppressWarnings("unused")
+    public Boolean getRunTestCases() {
+        return runTestCases;
+    }
+
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setPlatform(String platform) {
+        this.platform = platform;
+    }
+
+    @SuppressWarnings("unused")
+    public String getPlatform() {
+        return platform;
+    }
+
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setBrowser(String browser) {
+        this.browser = browser;
+    }
+
+    @SuppressWarnings("unused")
+    public String getBrowser() {
+        return browser;
+    }
+
     @Override
-    public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
+    public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher,
+                        TaskListener listener) throws InterruptedException, IOException {
 
         Boolean generateScripts = true;
 
@@ -180,6 +188,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
     }
 
+    @SuppressWarnings("unused")
     @Symbol("greet")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
@@ -279,8 +288,27 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         }
 
-        private Option[] getProjectOptions(String aiqUrl, String login, String password) throws ServiceException {
+        @SuppressWarnings("unused")
+        public ListBoxModel doFillPlatformItems() {
 
+            String[] values = {"Linux", "Windows"};
+
+            Option[] options = buildSimpleOptions(values);
+
+            return new ListBoxModel(options);
+        }
+
+        @SuppressWarnings("unused")
+        public ListBoxModel doFillBrowserItems() {
+
+            String[] values = {"Chrome", "Firefox"};
+
+            Option[] options = buildSimpleOptions(values);
+
+            return new ListBoxModel(options);
+        }
+
+        private Option[] getProjectOptions(String aiqUrl, String login, String password) throws ServiceException {
 
             Option[] ret;
 
@@ -317,6 +345,23 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             return ret;
         }
+
+        private Option[] buildSimpleOptions(String[] values) {
+
+            Option[] options = new Option[values.length];
+
+            int index = 0;
+            for (String val : values) {
+
+                Option o = new Option(val, val);
+                options[index] = o;
+
+                index++;
+            }
+
+            return options;
+        }
+
 
     }
 
