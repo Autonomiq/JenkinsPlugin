@@ -41,7 +41,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     private String platform;
     private String browser;
 
-    private static Long pollingIntervalMs = 5000L;
+    private static Long pollingIntervalMs = 10000L;
 
     @DataBoundConstructor
     public AutonomiqBuilder(String aiqUrl, String login, String password, String project,

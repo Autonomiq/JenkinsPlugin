@@ -6,6 +6,7 @@ import io.jenkins.plugins.autonomiq.service.types.*;
 import io.jenkins.plugins.autonomiq.util.WebClient;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ServiceAccess {
@@ -89,6 +90,38 @@ public class ServiceAccess {
         } catch (Exception e) {
             throw new ServiceException("Exception running test cases", e);
         }
+    }
+
+    public ExecuteTaskResponse runTestCase(Long projectId, Long scriptId,
+                                            String testExecutionName,
+                                            String platform, String browser,
+                                            String executionType) throws ServiceException {
+
+        String url = String.format(runTestCasesPath, aiqUrl, userId, projectId);
+
+        List<Long> scriptList = listForItem(scriptId);
+
+        ExecuteTaskRequest body = new ExecuteTaskRequest(testExecutionName, scriptList, platform,
+                browser, executionType);
+        String json = AiqUtil.gson.toJson(body);
+
+        try {
+
+            String resp = web.post(url, json);
+
+            ExecuteTaskResponse execResp = AiqUtil.gson.fromJson(resp, ExecuteTaskResponse.class);
+
+            return execResp;
+
+        } catch (Exception e) {
+            throw new ServiceException("Exception running test case", e);
+        }
+    }
+
+    private <T> List<T> listForItem(T item) {
+        List<T> l = new LinkedList<>();
+        l.add(item);
+        return l;
     }
 
     public List<TestScriptResponse> startTestScripGeneration(Long projectId, Collection<Long> testCaseIds) throws ServiceException {
