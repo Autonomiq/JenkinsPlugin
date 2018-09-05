@@ -7,6 +7,7 @@ import io.jenkins.plugins.autonomiq.service.types.ExecutedTaskResponse;
 import io.jenkins.plugins.autonomiq.service.types.TestCasesResponse;
 import io.jenkins.plugins.autonomiq.service.types.TestScriptResponse;
 import io.jenkins.plugins.autonomiq.util.AiqUtil;
+import io.jenkins.plugins.autonomiq.util.TimeStampedLogger;
 
 import javax.xml.ws.Service;
 import java.io.PrintStream;
@@ -47,7 +48,7 @@ public class RunTests {
     private static String executionType = "smoke";
 
     private ServiceAccess svc;
-    private PrintStream log;
+    private TimeStampedLogger log;
     private ProjectData pd;
     private Long pollingIntervalMs;
 
@@ -59,7 +60,7 @@ public class RunTests {
     private Map<Long, TestScriptResponse> scriptGenResponses;
 
     public RunTests(ServiceAccess svc,
-                    PrintStream log,
+                    TimeStampedLogger log,
                     ProjectData pd,
                     Long pollingIntervalMs) {
         this.svc = svc;
@@ -78,12 +79,6 @@ public class RunTests {
             log.println("Neither generate scripts nor run test cases selected, no work to do.");
             return true;
         }
-
-        if (generateScripts) {
-            log.printf("Generating all test scripts from project '%s'\n", pd.getProjectName());
-        }
-
-        log.printf("Running all test cases from project '%s'\n", pd.getProjectName());
 
         try {
             getAllTestCases(pd.getProjectId(), pd.getDiscoveryId());
@@ -162,6 +157,10 @@ public class RunTests {
 
         }
 
+//        log.println();
+//        log.printf("Running all test cases from project '%s'\n", pd.getProjectName());
+
+
         return true;
     }
 
@@ -170,7 +169,6 @@ public class RunTests {
         for (TestCasesResponse r : testCasesById.values()) {
             log.println(r.getTestCaseName());
         }
-        log.println();
     }
 
     private void getAllTestCases(Long projectId, Long discoveryId) throws ServiceException {
@@ -187,7 +185,8 @@ public class RunTests {
     private void startScriptGenerations() throws ServiceException {
         testScriptByTestCaseId = new HashMap<>();
 
-        log.printf("Starting script generation for %d test cases.\n", testCasesById.size());
+        log.println();
+        log.printf("==== Starting script generation for %d test cases.\n", testCasesById.size());
 
         List<TestScriptResponse> tsr = svc.startTestScripGeneration(pd.getProjectId(), testCasesById.keySet());
         for (TestScriptResponse t : tsr) {
@@ -207,7 +206,7 @@ public class RunTests {
         scriptGenResponses = new HashMap<>();
 
         int lastCount = testCasesInProgress.size();
-        log.printf("==== Number of test script generations still in progress:\n");
+        log.printf("Number of test script generations still in progress:\n");
         printCount(lastCount);
 
         while (testCasesInProgress.size() > 0) {
@@ -287,8 +286,8 @@ public class RunTests {
                 default:
             }
 
-            log.printf("Test case '%s' script gen status '%s'\n", testCasesById.get(r.getTestCaseId()).getTestCaseName(),
-                                            r.getTestScriptGenerationStatus());
+//            log.printf("Test case '%s' script gen status '%s'\n", testCasesById.get(r.getTestCaseId()).getTestCaseName(),
+//                                            r.getTestScriptGenerationStatus());
 //            if (r.getTestScriptDownloadLink() != null) {
 //                log.printf("  Script download link: %s\n", r.getTestScriptDownloadLink());
 //            }
@@ -298,6 +297,8 @@ public class RunTests {
         for (TestScriptResponse r : pass) {
             log.printf("%s\n", testCasesById.get(r.getTestCaseId()).getTestCaseName());
         }
+
+        log.println();
 
         log.println("Test script generation failed for test cases:");
         for (TestScriptResponse r : fail) {
