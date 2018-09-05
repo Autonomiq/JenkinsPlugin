@@ -16,6 +16,7 @@ public class ServiceAccess {
     private static final String genTestScriptsPath = "%s:8005/testScript/project/%d"; // projectId
     private static final String getTestScriptsPath = "%s:8005/testScript/userId/%d/project/%d/testCase/%d/executable"; // userId, projectId, testCaseId
     private static final String runTestCasesPath = "%s:8005/testScriptExecutions/%s/%s/run"; // userId, projectId
+    private static final String getTestExecutionPath = "%s:8005/testScriptExecutions/%d/executions"; // executionId
 
     private final String aiqUrl;
     private Long userId;
@@ -66,14 +67,28 @@ public class ServiceAccess {
 
     }
 
-    public void startRunTestCasesPath(Long projectId, List<Integer> scripts, String testExecutionName,
-                                      String platform, String browser, String executionType) {
+    public ExecuteTaskResponse runTestCases(Long projectId, List<Long> scriptIds,
+                                            String testExecutionName,
+                                            String platform, String browser,
+                                            String executionType) throws ServiceException {
 
         String url = String.format(runTestCasesPath, aiqUrl, userId, projectId);
 
-        ExecuteTaskRequest req = new ExecuteTaskRequest(testExecutionName, scripts, platform,
+        ExecuteTaskRequest body = new ExecuteTaskRequest(testExecutionName, scriptIds, platform,
                 browser, executionType);
+        String json = AiqUtil.gson.toJson(body);
 
+        try {
+
+            String resp = web.post(url, json);
+
+            ExecuteTaskResponse execResp = AiqUtil.gson.fromJson(resp, ExecuteTaskResponse.class);
+
+            return execResp;
+
+        } catch (Exception e) {
+            throw new ServiceException("Exception running test cases", e);
+        }
     }
 
     public List<TestScriptResponse> startTestScripGeneration(Long projectId, Collection<Long> testCaseIds) throws ServiceException {
@@ -125,9 +140,21 @@ public class ServiceAccess {
                     }.getType());
             return testScriptList;
         } catch (Exception e) {
-            throw new ServiceException("Exception getting test script for case " + testCaseId);
+            throw new ServiceException("Exception getting test script for case " + testCaseId, e);
         }
     }
 
+    public ExecutedTaskResponse getExecutedTask(Long executionId) throws ServiceException {
+        String url = String.format(getTestExecutionPath, aiqUrl, executionId);
+
+        try {
+            String resp = web.get(url);
+            ExecutedTaskResponse execResp = AiqUtil.gson.fromJson(resp, ExecutedTaskResponse.class);
+            return execResp;
+        } catch (Exception e) {
+            throw new ServiceException("Exception getting executed tasks by project", e);
+        }
+
+    }
 
 }

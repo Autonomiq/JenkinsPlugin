@@ -6,12 +6,12 @@ import java.util.List;
 
 public class ExecuteTaskRequest {
     private String testExecutionName;
-    private List<Integer> scripts;
+    private List<Long> scripts;
     private String platform;
     private String browser;
     private String executionType;
 
-    public ExecuteTaskRequest(String testExecutionName, List<Integer> scripts, String platform, String browser, String executionType) {
+    public ExecuteTaskRequest(String testExecutionName, List<Long> scripts, String platform, String browser, String executionType) {
         this.testExecutionName = testExecutionName;
         this.scripts = scripts;
         this.platform = platform;
@@ -23,7 +23,7 @@ public class ExecuteTaskRequest {
         return testExecutionName;
     }
     @SuppressWarnings("unused")
-    public List<Integer> getScripts() {
+    public List<Long> getScripts() {
         return scripts;
     }
     @SuppressWarnings("unused")

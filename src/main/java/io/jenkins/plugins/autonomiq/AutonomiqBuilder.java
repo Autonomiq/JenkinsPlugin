@@ -41,7 +41,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     private String platform;
     private String browser;
 
-    private Long pollingIntervalMs = 5000L;
+    private static Long pollingIntervalMs = 5000L;
 
     @DataBoundConstructor
     public AutonomiqBuilder(String aiqUrl, String login, String password, String project,
@@ -179,7 +179,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         RunTests rt = new RunTests(svc, log, pd, pollingIntervalMs);
 
-        ok = rt.runAllTestsForProject(generateScripts);
+        ok = rt.runAllTestsForProject(genScripts, runTestCases, platform, browser);
 
         if (ok) {
             run.setResult(Result.SUCCESS);
@@ -361,7 +361,6 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             return options;
         }
-
 
     }
 

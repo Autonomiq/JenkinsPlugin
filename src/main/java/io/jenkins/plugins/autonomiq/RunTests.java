@@ -2,6 +2,8 @@ package io.jenkins.plugins.autonomiq;
 
 import io.jenkins.plugins.autonomiq.service.ServiceAccess;
 import io.jenkins.plugins.autonomiq.service.ServiceException;
+import io.jenkins.plugins.autonomiq.service.types.ExecuteTaskResponse;
+import io.jenkins.plugins.autonomiq.service.types.ExecutedTaskResponse;
 import io.jenkins.plugins.autonomiq.service.types.TestCasesResponse;
 import io.jenkins.plugins.autonomiq.service.types.TestScriptResponse;
 import io.jenkins.plugins.autonomiq.util.AiqUtil;
@@ -14,8 +16,19 @@ public class RunTests {
     enum Progress {
         INPROGRESS,
         SUCCESS,
-        ERROR,
+        ERROR;
+
+        public static Progress getEnumForName(String name) {
+            for (Progress v : values()) {
+                if (name.equals(v.name())) {
+                    return v;
+                }
+            }
+            return null;
+        }
     }
+
+    private static String executionType = "smoke";
 
     private ServiceAccess svc;
     private PrintStream log;
@@ -25,6 +38,8 @@ public class RunTests {
     private Map<Long, TestCasesResponse> testCasesById;
     private Map<String, TestCasesResponse> testCasesByName;
     private Map<Long, TestScriptResponse> testScriptByTestCaseId;
+    private Set<Long> gensSucceededCaseId;
+    private Set<Long> gensFailedCaseId;
 
     public RunTests(ServiceAccess svc,
                     PrintStream log,
@@ -40,7 +55,12 @@ public class RunTests {
      * @param generateScripts
      * @return returns true if all tests execute successfully
      */
-    public Boolean runAllTestsForProject(Boolean generateScripts) {
+    public Boolean runAllTestsForProject(Boolean generateScripts, Boolean runTestCases, String platform, String browser) {
+
+        if (!(generateScripts || runTestCases)) {
+            log.println("Neither generate scripts nor run test cases selected, no work to do.");
+            return true;
+        }
 
         if (generateScripts) {
             log.printf("Generating all test scripts from project '%s'\n", pd.getProjectName());
@@ -57,6 +77,8 @@ public class RunTests {
 
         logTestCaseNames();
 
+        Boolean allGensSuccessful;
+
         if (generateScripts) {
             try {
                 startScriptGenerations();
@@ -65,13 +87,60 @@ public class RunTests {
                 return false;
             }
 
-            Set<Long> scriptGenSucessfullCaseIds;
+
             try {
-                scriptGenSucessfullCaseIds = checkScriptGenerations();
+                allGensSuccessful = checkScriptGenerations();
             } catch (ServiceException e) {
                 log.println(AiqUtil.getExceptionTrace(e));
                 return false;
             }
+
+            if (allGensSuccessful) {
+                log.println("All test script generations succeeded.");
+            } else {
+                log.println("Not all test scripts generations succeeded, ending run.");
+                return false;
+            }
+
+        }
+
+        if (runTestCases) {
+
+            List<Long> testScriptIds = new ArrayList<>();
+
+            if (generateScripts) {
+                // use new generated scripts
+                for (TestScriptResponse r : testScriptByTestCaseId.values()) {
+                    testScriptIds.add(r.getTestScriptid());
+                }
+            } else {
+                for (TestCasesResponse r : testCasesByName.values()) {
+                    TestScriptResponse[] scripts = r.getTestScripts();
+                    TestScriptResponse s = scripts[scripts.length - 1];
+                    testScriptIds.add(s.getTestScriptid());
+                }
+            }
+
+            String testExecutionName = "Jenkins run project " + pd.getProjectId();
+            Integer executionId;
+            try {
+                executionId = runTestExecutions(testScriptIds, testExecutionName, platform, browser);
+            } catch (ServiceException e) {
+                log.println("Exception running test executions.");
+                log.println(AiqUtil.getExceptionTrace(e));
+                return false;
+            }
+
+            Boolean runCheck;
+            try {
+                runCheck = checkRunTests(pd.getProjectId(), executionId);
+            } catch (ServiceException e) {
+                log.println("Exception checking test executions.");
+                log.println(AiqUtil.getExceptionTrace(e));
+                return false;
+            }
+
+            return runCheck;
 
         }
 
@@ -79,7 +148,7 @@ public class RunTests {
     }
 
     private void logTestCaseNames() {
-        log.println("==== Found these test cases:");
+        log.printf("==== Found these %s test cases:\n", testCasesByName.size());
         for (String name : testCasesByName.keySet()) {
             log.println(name);
         }
@@ -108,10 +177,11 @@ public class RunTests {
         }
     }
 
-    private Set<Long> checkScriptGenerations() throws ServiceException {
+    private Boolean checkScriptGenerations() throws ServiceException {
         // copy ids
         Set<Long> testCasesInProgress = new HashSet<>(testScriptByTestCaseId.keySet());
-        Set<Long> gensSucceededCaseId = new HashSet<>();
+        gensSucceededCaseId = new HashSet<>();
+        gensFailedCaseId = new HashSet<>();
 
         while (testCasesInProgress.size() > 0) {
 
@@ -145,6 +215,7 @@ public class RunTests {
                         } else if (Progress.ERROR.name().equals(script.getTestScriptGenerationStatus())) {
 
                             log.printf("Script generation for test case %s failed\n", testCaseName);
+                            gensFailedCaseId.add(testCaseId);
                             i.remove();
 
                         } else { // must be SUCCESS
@@ -161,9 +232,66 @@ public class RunTests {
         }
 
         log.println();
-        return gensSucceededCaseId;
+        return gensFailedCaseId.size() == 0;
 
     }
 
+    private Integer runTestExecutions(List<Long> scriptIds, String testExecutionName, String platform,
+                                      String browser) throws ServiceException {
+
+        ExecuteTaskResponse execResp = svc.runTestCases(pd.getProjectId(), scriptIds,
+                testExecutionName, platform, browser, executionType);
+
+        Integer executionId = execResp.getExecutionId();
+
+        return executionId;
+
+    }
+
+    private Boolean checkRunTests(Long projectId, Integer executionId) throws ServiceException {
+
+        boolean done = false;
+
+        while (!done) {
+
+            // pause
+            try {
+                Thread.sleep(pollingIntervalMs);
+            } catch (InterruptedException e) {
+                log.println("Check run tests sleep interrupted");
+            }
+
+            log.println();
+            log.printf("==== Checking test execution\n");
+
+            boolean foundOngoing = false;
+
+            // search ongoing tasks
+            ExecutedTaskResponse resp = svc.getExecutedTask(projectId);
+            ExecuteTaskResponse[] tasks = resp.getTasks();
+            if (tasks.length != 1) {
+                log.printf("Bad number of tasks in response %d", tasks.length);
+            }
+            ExecuteTaskResponse r = tasks[0];
+
+            Progress stat = Progress.getEnumForName(r.getExecutionStatus());
+
+            switch (stat) {
+                case INPROGRESS:
+                    log.println("Test execution still in progress");
+                    break;
+                case SUCCESS:
+                    log.println("Test execution succeeded");
+                    return true;
+                case ERROR:
+                    log.println("Test execution failed");
+                    return false;
+            }
+
+        }
+
+        return null;
+
+    }
 
 }
