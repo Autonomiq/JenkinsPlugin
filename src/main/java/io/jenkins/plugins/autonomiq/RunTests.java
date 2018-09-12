@@ -3,17 +3,42 @@ package io.jenkins.plugins.autonomiq;
 import io.jenkins.plugins.autonomiq.service.ServiceAccess;
 import io.jenkins.plugins.autonomiq.service.ServiceException;
 import io.jenkins.plugins.autonomiq.service.types.ExecuteTaskResponse;
-import io.jenkins.plugins.autonomiq.service.types.ExecutedTaskResponse;
 import io.jenkins.plugins.autonomiq.service.types.TestCasesResponse;
 import io.jenkins.plugins.autonomiq.service.types.TestScriptResponse;
 import io.jenkins.plugins.autonomiq.util.AiqUtil;
 import io.jenkins.plugins.autonomiq.util.TimeStampedLogger;
 
-import javax.xml.ws.Service;
-import java.io.PrintStream;
 import java.util.*;
 
 public class RunTests {
+
+
+    class RunTestData {
+        private Long testCaseId;
+        private Long testScriptId;
+        private Long executionId;
+
+        public RunTestData(Long testCaseId, Long testScriptId) {
+            this.testCaseId = testCaseId;
+            this.testScriptId = testScriptId;
+        }
+
+        public Long getTestCaseId() {
+            return testCaseId;
+        }
+
+        public Long getTestScriptId() {
+            return testScriptId;
+        }
+
+        public Long getExecutionId() {
+            return executionId;
+        }
+
+        public void setExecutionId(Long executionId) {
+            this.executionId = executionId;
+        }
+    }
 
     enum ExecStatus {
         INPROGRESS,
@@ -58,6 +83,8 @@ public class RunTests {
     private Set<Long> gensSucceededCaseId;
     private Set<Long> gensFailedCaseId;
     private Map<Long, TestScriptResponse> scriptGenResponses;
+    private Set<Long> execSucceededId;
+    private Set<Long> execFailedId;
 
     public RunTests(ServiceAccess svc,
                     TimeStampedLogger log,
@@ -92,6 +119,10 @@ public class RunTests {
         Boolean allGensSuccessful;
 
         if (generateScripts) {
+            log.println();
+            log.printf("==== Starting script generations for project %s\n", pd.getProjectName());
+            log.println();
+
             try {
                 startScriptGenerations();
             } catch (ServiceException e) {
@@ -109,8 +140,10 @@ public class RunTests {
 
             if (allGensSuccessful) {
                 log.println("All test script generations succeeded.");
+                log.println();
             } else {
                 log.println("Not all test scripts generations succeeded, ending run.");
+                log.println();
                 return false;
             }
 
@@ -118,26 +151,28 @@ public class RunTests {
 
         if (runTestCases) {
 
-            List<Long> testScriptIds = new ArrayList<>();
+            List<RunTestData> runTestsData = new ArrayList<>();
 
             if (generateScripts) {
                 // use new generated scripts
                 for (TestScriptResponse r : testScriptByTestCaseId.values()) {
-                    testScriptIds.add(r.getTestScriptid());
+                    runTestsData.add(new RunTestData(r.getTestCaseId(), r.getTestScriptid()));
                 }
             } else {
                 for (TestCasesResponse r : testCasesById.values()) {
                     TestScriptResponse[] scripts = r.getTestScripts();
                     TestScriptResponse s = scripts[scripts.length - 1];
-                    testScriptIds.add(s.getTestScriptid());
+                    runTestsData.add(new RunTestData(r.getTestCaseId(), s.getTestScriptid()));
                 }
             }
 
-            String testExecutionName = "Jenkins run project " + pd.getProjectName();
-            log.printf("==== Starting test execution named '%s'", testExecutionName);
-            Integer executionId;
+            log.println();
+            log.printf("==== Starting test executions for project %s\n", pd.getProjectName());
+            log.println();
+
             try {
-                executionId = runTestExecutions(testScriptIds, testExecutionName, platform, browser);
+                // runTestsData gets updated with execution ids
+                runTestExecutions(runTestsData, platform, browser);
             } catch (ServiceException e) {
                 log.println("Exception running test executions.");
                 log.println(AiqUtil.getExceptionTrace(e));
@@ -146,26 +181,28 @@ public class RunTests {
 
             Boolean runCheck;
             try {
-                runCheck = checkRunTests(pd.getProjectId(), executionId);
+                runCheck = checkRunTests(pd.getProjectId(), runTestsData);
             } catch (ServiceException e) {
                 log.println("Exception checking test executions.");
                 log.println(AiqUtil.getExceptionTrace(e));
                 return false;
             }
 
-            return runCheck;
-
+            if (runCheck) {
+                log.println("All test executions succeeded.");
+                return true;
+            } else {
+                log.println("Not all test executions succeeded.");
+                log.println();
+                return false;
+            }
         }
-
-//        log.println();
-//        log.printf("Running all test cases from project '%s'\n", pd.getProjectName());
-
 
         return true;
     }
 
     private void logTestCaseNames() {
-        log.printf("==== Found these %s test cases:\n", testCasesById.size());
+        log.printf("==== Found these %s test cases in project %s:\n", testCasesById.size(), pd.getProjectName());
         for (TestCasesResponse r : testCasesById.values()) {
             log.println(r.getTestCaseName());
         }
@@ -184,9 +221,6 @@ public class RunTests {
 
     private void startScriptGenerations() throws ServiceException {
         testScriptByTestCaseId = new HashMap<>();
-
-        log.println();
-        log.printf("==== Starting script generation for %d test cases.\n", testCasesById.size());
 
         List<TestScriptResponse> tsr = svc.startTestScripGeneration(pd.getProjectId(), testCasesById.keySet());
         for (TestScriptResponse t : tsr) {
@@ -281,8 +315,10 @@ public class RunTests {
             switch (stat) {
                 case SUCCESS:
                     pass.add(r);
+                    break;
                 case FAILED:
                     fail.add(r);
+                    break;
                 default:
             }
 
@@ -293,79 +329,123 @@ public class RunTests {
 //            }
         }
 
-        log.println("Test script generation passed for test cases:");
-        for (TestScriptResponse r : pass) {
-            log.printf("%s\n", testCasesById.get(r.getTestCaseId()).getTestCaseName());
+        if (pass.size() > 0) {
+            log.println("==== Test script generation passed for test cases:");
+            for (TestScriptResponse r : pass) {
+                log.printf("%s\n", testCasesById.get(r.getTestCaseId()).getTestCaseName());
+            }
+            log.println();
         }
 
-        log.println();
-
-        log.println("Test script generation failed for test cases:");
-        for (TestScriptResponse r : fail) {
-            log.printf("%s\n", testCasesById.get(r.getTestCaseId()).getTestCaseName());
+        if (fail.size() > 0) {
+            log.println("==== Test script generation failed for test cases:");
+            for (TestScriptResponse r : fail) {
+                log.printf("%s\n", testCasesById.get(r.getTestCaseId()).getTestCaseName());
+            }
+            log.println();
         }
 
-        log.println();
         return gensFailedCaseId.size() == 0;
-
     }
 
-    private Integer runTestExecutions(List<Long> scriptIds, String testExecutionName, String platform,
+    private void runTestExecutions(List<RunTestData> runTestsData, String platform,
                                       String browser) throws ServiceException {
 
-        ExecuteTaskResponse execResp = svc.runTestCases(pd.getProjectId(), scriptIds,
-                testExecutionName, platform, browser, executionType);
+        for (RunTestData t : runTestsData) {
 
-        Integer executionId = execResp.getExecutionId();
+            String testExecutionName = String.format("Jenkins_%s", testCasesById.get(t.getTestCaseId()).getTestCaseName());
 
-        return executionId;
+            ExecuteTaskResponse resp = svc.runTestCase(pd.getProjectId(), t.getTestScriptId(),
+                    testExecutionName,
+                    platform, browser,
+                    executionType);
 
+            // save execution id
+            t.setExecutionId(resp.getExecutionId().longValue());
+        }
     }
 
-    private Boolean checkRunTests(Long projectId, Integer executionId) throws ServiceException {
+    private Boolean checkRunTests(Long projectId, List<RunTestData> runTestsData) throws ServiceException {
 
-        boolean done = false;
+        execSucceededId = new HashSet<>();
+        execFailedId = new HashSet<>();
 
-        while (!done) {
+        Map<Long, RunTestData> testMap = new HashMap<>();
+        for (RunTestData r : runTestsData) {
+            testMap.put(r.executionId, r);
+        }
+
+        Set<Long> testExecsInProgress = new HashSet<>(testMap.keySet());
+
+        int lastCount = testExecsInProgress.size();
+        log.printf("Number of test script generations still in progress:\n");
+        printCount(lastCount);
+
+        while (testExecsInProgress.size() > 0) {
 
             // pause
             try {
                 Thread.sleep(pollingIntervalMs);
             } catch (InterruptedException e) {
-                log.println("Check run tests sleep interrupted");
+                log.println("Check scripts generation sleep interrupted");
             }
 
+
+            Iterator<Long> i = testExecsInProgress.iterator();
+            while (i.hasNext()) {
+
+                Long testExecId = i.next();
+
+                ExecuteTaskResponse r = svc.getExecutedTask(testExecId);
+
+                ExecStatus stat = ExecStatus.getEnumForName(r.getExecutionStatus());
+
+                switch (stat) {
+                    case INPROGRESS:
+                        //log.println("Test execution still in progress");
+                        break;
+                    case SUCCESS:
+                        //log.println("Test execution succeeded");
+                        execSucceededId.add(testExecId);
+                        i.remove();
+                    case ERROR:
+                        //log.println("Test execution failed");
+                        execFailedId.add(testExecId);
+                        i.remove();
+                }
+
+
+            }
+
+            int newCount = testExecsInProgress.size();
+            if (newCount != lastCount) {
+                printCount(newCount);
+                lastCount = newCount;
+            }
+        }
+        log.println();
+
+        if (execSucceededId.size() > 0) {
+            log.println("==== Test execution passed for test cases:");
+            for (Long execId : execSucceededId) {
+                RunTestData td = testMap.get(execId);
+                Long tc = td.getTestCaseId();
+                log.printf("%s\n", testCasesById.get(tc).getTestCaseName());
+            }
             log.println();
-            log.printf("==== Checking test execution\n");
-
-            boolean foundOngoing = false;
-
-            // search ongoing tasks
-            ExecutedTaskResponse resp = svc.getExecutedTask(projectId);
-            ExecuteTaskResponse[] tasks = resp.getTasks();
-            if (tasks.length != 1) {
-                log.printf("Bad number of tasks in response %d", tasks.length);
-            }
-            ExecuteTaskResponse r = tasks[0];
-
-            ExecStatus stat = ExecStatus.getEnumForName(r.getExecutionStatus());
-
-            switch (stat) {
-                case INPROGRESS:
-                    log.println("Test execution still in progress");
-                    break;
-                case SUCCESS:
-                    log.println("Test execution succeeded");
-                    return true;
-                case ERROR:
-                    log.println("Test execution failed");
-                    return false;
-            }
-
         }
 
-        return null;
+        if (execFailedId.size() > 0) {
+            log.println("==== Test execution failed for test cases:");
+            for (Long execId : execFailedId) {
+                RunTestData td = testMap.get(execId);
+                Long tc = td.getTestCaseId();
+                log.printf("%s\n", testCasesById.get(tc).getTestCaseName());
+            }
+            log.println();
+        }
 
+        return execFailedId.size() == 0;
     }
 
 }

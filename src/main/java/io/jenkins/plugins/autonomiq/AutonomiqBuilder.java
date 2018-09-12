@@ -163,6 +163,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         log.println();
         log.printf("Logging in as user '%s' to Autonomiq service at: %s\n", login, aiqUrl);
+        log.println();
 
         ProjectData pd;
         try {

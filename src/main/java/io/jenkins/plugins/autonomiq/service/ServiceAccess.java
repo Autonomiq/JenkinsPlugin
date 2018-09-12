@@ -177,12 +177,12 @@ public class ServiceAccess {
         }
     }
 
-    public ExecutedTaskResponse getExecutedTask(Long executionId) throws ServiceException {
+    public ExecuteTaskResponse getExecutedTask(Long executionId) throws ServiceException {
         String url = String.format(getTestExecutionPath, aiqUrl, executionId);
 
         try {
             String resp = web.get(url);
-            ExecutedTaskResponse execResp = AiqUtil.gson.fromJson(resp, ExecutedTaskResponse.class);
+            ExecuteTaskResponse execResp = AiqUtil.gson.fromJson(resp, ExecuteTaskResponse.class);
             return execResp;
         } catch (Exception e) {
             throw new ServiceException("Exception getting executed tasks by project", e);
