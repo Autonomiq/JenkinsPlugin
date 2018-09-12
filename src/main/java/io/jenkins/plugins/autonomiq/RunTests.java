@@ -190,6 +190,7 @@ public class RunTests {
 
             if (runCheck) {
                 log.println("All test executions succeeded.");
+                log.println();
                 return true;
             } else {
                 log.println("Not all test executions succeeded.");
@@ -408,10 +409,12 @@ public class RunTests {
                         //log.println("Test execution succeeded");
                         execSucceededId.add(testExecId);
                         i.remove();
+                        break;
                     case ERROR:
                         //log.println("Test execution failed");
                         execFailedId.add(testExecId);
                         i.remove();
+                        break;
                 }
 
 
