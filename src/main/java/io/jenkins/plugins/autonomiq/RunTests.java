@@ -378,7 +378,7 @@ public class RunTests {
         Set<Long> testExecsInProgress = new HashSet<>(testMap.keySet());
 
         int lastCount = testExecsInProgress.size();
-        log.printf("Number of test script generations still in progress:\n");
+        log.printf("Number of test executions still in progress:\n");
         printCount(lastCount);
 
         while (testExecsInProgress.size() > 0) {
