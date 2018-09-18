@@ -14,8 +14,7 @@ import io.jenkins.plugins.autonomiq.service.ServiceAccess;
 import io.jenkins.plugins.autonomiq.service.ServiceException;
 import io.jenkins.plugins.autonomiq.service.types.AutInformation;
 import io.jenkins.plugins.autonomiq.service.types.DiscoveryResponse;
-import io.jenkins.plugins.autonomiq.service.types.TestCasesResponse;
-import io.jenkins.plugins.autonomiq.service.types.TestScriptResponse;
+
 import io.jenkins.plugins.autonomiq.util.AiqUtil;
 import io.jenkins.plugins.autonomiq.util.TimeStampedLogger;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -23,7 +22,7 @@ import org.kohsuke.stapler.QueryParameter;
 
 import javax.servlet.ServletException;
 import java.io.*;
-import java.util.ArrayList;
+
 import java.util.List;
 
 
@@ -158,6 +157,29 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         Boolean generateScripts = true;
 
         boolean ok = true;
+
+        FilePath fPath = workspace.child("testplan");
+
+        if (!fPath.exists()) {
+            log.println();
+            log.println("No test plan specified. All tests from project will run in parallel");
+        } else {
+            InputStream is = fPath.read();
+
+            TestPlanParser parser = null;
+            try {
+                parser = new TestPlanParser(is, log);
+                TestPlanParser.TestSequence seq = parser.parseTestSequence();
+
+                log.println("Test plan parsing completed");
+                //parser.dumpTest(seq);
+            } catch (PluginException e) {
+                log.println("Parsing test plan failed");
+                log.println(AiqUtil.getExceptionTrace(e));
+            } finally {
+                fPath.delete();
+            }
+        }
 
         AiqUtil.gson.fromJson(project, ProjectData.class);
 

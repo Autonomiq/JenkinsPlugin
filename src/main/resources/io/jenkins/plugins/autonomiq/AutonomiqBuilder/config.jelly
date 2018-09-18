@@ -17,9 +17,8 @@
         <f:select />
     </f:entry>
 
-    <f:entry title="${%GenScripts}" field="genScripts" >
-        <f:checkbox />
-    </f:entry>
+    <f:optionalBlock inline="true" field="genScripts" title="${%GenScripts}" >
+    </f:optionalBlock>
 
     <f:optionalBlock inline="true" field="runTestCases" title="${%RunTestCases}" >
 
