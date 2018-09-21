@@ -18,6 +18,8 @@ public class ServiceAccess {
     private static final String getTestScriptsPath = "%s:8005/testScript/userId/%d/project/%d/testCase/%d/executable"; // userId, projectId, testCaseId
     private static final String runTestCasesPath = "%s:8005/testScriptExecutions/%s/%s/run"; // userId, projectId
     private static final String getTestExecutionPath = "%s:8005/testScriptExecutions/%d/executions"; // executionId
+    private static final String getUserVariablePath = "%s:8005/uservariable/find/%d/%d/%s"; // accountId, projectId, key
+    private static final String saveUserVariablePath = "%s:8005/uservariable/save";
 
     private final String aiqUrl;
     private Long userId;
@@ -187,7 +189,30 @@ public class ServiceAccess {
         } catch (Exception e) {
             throw new ServiceException("Exception getting executed tasks by project", e);
         }
+    }
 
+    public UserVariable getUserVariable(Long projectId, String key) throws ServiceException {
+        String url = String.format(getUserVariablePath, aiqUrl, accountId, projectId, key);
+
+        try {
+            String resp =  web.get(url);
+            UserVariable var = AiqUtil.gson.fromJson(resp, UserVariable.class);
+            return var;
+        } catch (Exception e) {
+            throw new ServiceException("Exception getting user variable", e);
+        }
+    }
+
+    public void saveUserVariable(Long projectId, String key, String value) throws ServiceException {
+        String url = String.format(saveUserVariablePath, aiqUrl);
+
+        String json = AiqUtil.gson.toJson(new UserVariable(accountId, projectId, key, value));
+
+        try {
+            web.post(url, json);
+        } catch (Exception e) {
+            throw new ServiceException("Exception starting test script generation", e);
+        }
     }
 
 }

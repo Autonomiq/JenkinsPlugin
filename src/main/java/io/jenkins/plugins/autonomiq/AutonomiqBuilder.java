@@ -15,6 +15,8 @@ import io.jenkins.plugins.autonomiq.service.ServiceException;
 import io.jenkins.plugins.autonomiq.service.types.AutInformation;
 import io.jenkins.plugins.autonomiq.service.types.DiscoveryResponse;
 
+import io.jenkins.plugins.autonomiq.testplan.TestPlan;
+import io.jenkins.plugins.autonomiq.testplan.TestPlanParser;
 import io.jenkins.plugins.autonomiq.util.AiqUtil;
 import io.jenkins.plugins.autonomiq.util.TimeStampedLogger;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -151,7 +153,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher,
                         TaskListener listener) throws InterruptedException, IOException {
-
+        
         TimeStampedLogger log = new TimeStampedLogger(listener.getLogger());
 
         Boolean generateScripts = true;
@@ -159,6 +161,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         boolean ok = true;
 
         FilePath fPath = workspace.child("testplan");
+        TestPlan plan = null;
 
         if (!fPath.exists()) {
             log.println();
@@ -166,16 +169,19 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         } else {
             InputStream is = fPath.read();
 
-            TestPlanParser parser = null;
+            TestPlanParser parser;
             try {
+                log.println("Found a test plan and parsing the file");
                 parser = new TestPlanParser(is, log);
-                TestPlanParser.TestSequence seq = parser.parseTestSequence();
+                plan = parser.parseTestSequence();
 
                 log.println("Test plan parsing completed");
                 //parser.dumpTest(seq);
             } catch (PluginException e) {
-                log.println("Parsing test plan failed");
+                log.println("Parsing test plan file failed");
                 log.println(AiqUtil.getExceptionTrace(e));
+                run.setResult(Result.FAILURE);
+                return;
             } finally {
                 fPath.delete();
             }
@@ -206,7 +212,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         if (ok) {
 
             RunTests rt = new RunTests(svc, log, pd, pollingIntervalMs);
-            ok = rt.runAllTestsForProject(genScripts, runTestCases, platform, browser);
+            ok = rt.runTests(plan, genScripts, runTestCases, platform, browser);
 
         }
 

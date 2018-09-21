@@ -5,30 +5,42 @@ import io.jenkins.plugins.autonomiq.service.ServiceException;
 import io.jenkins.plugins.autonomiq.service.types.ExecuteTaskResponse;
 import io.jenkins.plugins.autonomiq.service.types.TestCasesResponse;
 import io.jenkins.plugins.autonomiq.service.types.TestScriptResponse;
+import io.jenkins.plugins.autonomiq.service.types.UserVariable;
+import io.jenkins.plugins.autonomiq.testplan.TestItem;
+import io.jenkins.plugins.autonomiq.testplan.TestPlan;
+import io.jenkins.plugins.autonomiq.testplan.TestPlanParser;
 import io.jenkins.plugins.autonomiq.util.AiqUtil;
 import io.jenkins.plugins.autonomiq.util.TimeStampedLogger;
 
 import java.util.*;
 
-public class RunTests {
+class RunTests {
 
 
-    class RunTestData {
+    class TestData {
         private Long testCaseId;
         private Long testScriptId;
         private Long executionId;
+        private TestItem testItem;
 
-        public RunTestData(Long testCaseId, Long testScriptId) {
-            this.testCaseId = testCaseId;
-            this.testScriptId = testScriptId;
+        public TestData() {
+
         }
 
         public Long getTestCaseId() {
             return testCaseId;
         }
 
+        public void setTestCaseId(Long testCaseId) {
+            this.testCaseId = testCaseId;
+        }
+
         public Long getTestScriptId() {
             return testScriptId;
+        }
+
+        public void setTestScriptId(Long testScriptId) {
+            this.testScriptId = testScriptId;
         }
 
         public Long getExecutionId() {
@@ -37,6 +49,14 @@ public class RunTests {
 
         public void setExecutionId(Long executionId) {
             this.executionId = executionId;
+        }
+
+        public TestItem getTestItem() {
+            return testItem;
+        }
+
+        public void setTestItem(TestItem testItem) {
+            this.testItem = testItem;
         }
     }
 
@@ -78,13 +98,18 @@ public class RunTests {
     private Long pollingIntervalMs;
 
     private Map<Long, TestCasesResponse> testCasesById;
-    //private Map<String, TestCasesResponse> testCasesByName;
+    private Map<String, TestCasesResponse> testCasesByName;
     private Map<Long, TestScriptResponse> testScriptByTestCaseId;
     private Set<Long> gensSucceededCaseId;
     private Set<Long> gensFailedCaseId;
     private Map<Long, TestScriptResponse> scriptGenResponses;
     private Set<Long> execSucceededId;
     private Set<Long> execFailedId;
+    private List<TestData> testDataList;
+    private Map<Long, TestData> testDataByTestCaseId;
+    private Boolean runSequential;
+    TestPlan plan;
+
 
     public RunTests(ServiceAccess svc,
                     TimeStampedLogger log,
@@ -94,13 +119,19 @@ public class RunTests {
         this.log = log;
         this.pd = pd;
         this.pollingIntervalMs = pollingIntervalMs;
+
+        testScriptByTestCaseId = new HashMap<>();
+
     }
 
     /**
      * @param generateScripts
      * @return returns true if all tests execute successfully
      */
-    public Boolean runAllTestsForProject(Boolean generateScripts, Boolean runTestCases, String platform, String browser) {
+    public Boolean runTests(TestPlan plan, Boolean generateScripts, Boolean runTestCases,
+                            String platform, String browser) {
+
+        this.plan = plan;
 
         if (!(generateScripts || runTestCases)) {
             log.println("Neither generate scripts nor run test cases selected, no work to do.");
@@ -108,7 +139,7 @@ public class RunTests {
         }
 
         try {
-            getAllTestCases(pd.getProjectId(), pd.getDiscoveryId());
+            getTestCases(plan, pd.getProjectId(), pd.getDiscoveryId());
         } catch (ServiceException e) {
             log.println(AiqUtil.getExceptionTrace(e));
             return false;
@@ -116,20 +147,37 @@ public class RunTests {
 
         logTestCaseNames();
 
-        Boolean allGensSuccessful;
-
         if (generateScripts) {
-            log.println();
-            log.printf("==== Starting script generations for project %s\n", pd.getProjectName());
-            log.println();
+            if (!handleScriptGeneration()) {
+                return false;
+            }
+        }
+
+        if (runTestCases) {
+            return handleTestExecutions(generateScripts, platform, browser);
+        }
+
+        return true;
+    }
+
+    private Boolean handleScriptGeneration() {
+
+        log.println();
+        log.printf("==== Starting script generations for project %s\n", pd.getProjectName());
+        log.println();
+
+        if (runSequential) {
+            return runSequentialScriptGenerations();
+        } else {
 
             try {
-                startScriptGenerations();
+                startAllScriptGenerations();
             } catch (ServiceException e) {
                 log.println(AiqUtil.getExceptionTrace(e));
                 return false;
             }
 
+            Boolean allGensSuccessful;
 
             try {
                 allGensSuccessful = checkScriptGenerations();
@@ -146,33 +194,154 @@ public class RunTests {
                 log.println();
                 return false;
             }
-
         }
 
-        if (runTestCases) {
+        return true;
+    }
 
-            List<RunTestData> runTestsData = new ArrayList<>();
+    private void setVariables(List<TestPlanParser.Variable> vars) throws ServiceException {
+        for (TestPlanParser.Variable v : vars) {
+            log.printf("Setting variable '%s' to value '%s'\n", v.getName(), v.getValue());
+            svc.saveUserVariable(pd.getProjectId(), v.getName(), v.getValue());
+        }
+    }
 
-            if (generateScripts) {
-                // use new generated scripts
-                for (TestScriptResponse r : testScriptByTestCaseId.values()) {
-                    runTestsData.add(new RunTestData(r.getTestCaseId(), r.getTestScriptid()));
-                }
+    private void showVariables(List<TestPlanParser.Variable> vars) throws ServiceException {
+        for (TestPlanParser.Variable v : vars) {
+            log.printf("Getting variable '%s'\n", v.getName());
+            UserVariable gotVar = svc.getUserVariable(pd.getProjectId(), v.getName());
+            log.printf("Variable '%s' value is '%s'\n", gotVar.getKey(), gotVar.getValue());
+        }
+    }
+
+    private Boolean validateVariables(List<TestPlanParser.Variable> vars) throws ServiceException {
+        Boolean ret = true;
+
+        for (TestPlanParser.Variable v : vars) {
+            log.printf("Getting variable '%s'\n", v.getName());
+            UserVariable gotVar = svc.getUserVariable(pd.getProjectId(), v.getName());
+            if (v.getValue().equals(gotVar.getValue())) {
+                log.printf("Variable '%s' validate successful '%s'\n", gotVar.getKey(), gotVar.getValue());
             } else {
-                for (TestCasesResponse r : testCasesById.values()) {
-                    TestScriptResponse[] scripts = r.getTestScripts();
-                    TestScriptResponse s = scripts[scripts.length - 1];
-                    runTestsData.add(new RunTestData(r.getTestCaseId(), s.getTestScriptid()));
-                }
+                log.printf("Variable '%s' validate failed, expected '%s' got '%s'\n",
+                            v.getName(), v.getValue(), gotVar.getValue());
+                ret = false;
             }
+        }
 
-            log.println();
-            log.printf("==== Starting test executions for project %s\n", pd.getProjectName());
-            log.println();
+        return ret;
+    }
+
+    private Boolean runSequentialScriptGenerations() {
+
+        Boolean ret = true;
+
+        ret = setInitialVariables(plan.getInitialVars());
+        if (ret == false) {
+            return false;
+        }
+
+        for (TestData testData : testDataList) {
+            Long testCaseId = testData.getTestCaseId();
+            String testCaseName = testCasesById.get(testCaseId).getTestCaseName();
 
             try {
+                log.println();
+                log.printf("=== Starting script generation for test case: %s\n", testCaseName);
+                setVariables(testData.getTestItem().getSetVars());
+
+                // start generation
+                List<Long> caseList = new LinkedList<>();
+                caseList.add(testCaseId);
+                List<TestScriptResponse> tsr = svc.startTestScripGeneration(pd.getProjectId(), caseList);
+                log.println("Script generation started");
+
+                TestScriptResponse resp = tsr.get(0);
+                testScriptByTestCaseId.put(testCaseId, resp);
+                testData.setTestScriptId(resp.getTestScriptid());
+
+                boolean done = false;
+
+                while (!done) {
+
+                    // pause
+                    try {
+                        Thread.sleep(pollingIntervalMs);
+                    } catch (InterruptedException e) {
+                        log.println("Check scripts generation sleep interrupted");
+                    }
+
+                    List<TestScriptResponse> scripts = svc.getTestScript(pd.getProjectId(), testCaseId);
+
+                    TestScriptResponse scriptStart = testScriptByTestCaseId.get(testCaseId);
+
+                    for (TestScriptResponse script : scripts) {
+
+                        if (script.getTestScriptid().equals(scriptStart.getTestScriptid())) {
+
+                            GenStatus p = GenStatus.getEnumForName(script.getTestScriptGenerationStatus());
+
+                            switch (p) {
+                                case INPROGRESS:
+//                                log.printf("Script generation for test case %s still in progress\n",
+//                                        testCaseName);
+                                    break;
+                                case SUCCESS:
+                                    log.printf("Script generation for test case '%s' succeeded\n",
+                                            testCaseName);
+                                    done = true;
+
+                                    showVariables(testData.getTestItem().getShowVars());
+                                    ret = validateVariables(testData.getTestItem().getValidateVars());
+
+                                    break;
+                                case FAILED:
+                                    log.printf("Script generation for test case '%s' failed\n",
+                                            testCaseName);
+                                    done = true;
+                                    break;
+
+                            }
+
+                        }
+                    }
+                }
+
+                // TODO run variable shows/validates
+
+            } catch (Exception e) {
+                log.printf("Exception running test case: %s\n", testCaseName);
+                log.println(AiqUtil.getExceptionTrace(e));
+                ret = false;
+                break;
+            }
+        }
+
+        return ret;
+    }
+
+    private Boolean handleTestExecutions(Boolean generateScripts, String platform, String browser) {
+
+        if (!generateScripts) {
+            // use last test script in current list for test case
+            for (TestCasesResponse r : testCasesById.values()) {
+                TestScriptResponse[] scripts = r.getTestScripts();
+                TestScriptResponse s = scripts[scripts.length - 1];
+                TestData testData = testDataByTestCaseId.get(r.getTestCaseId());
+                testData.setTestScriptId(s.getTestScriptid());
+            }
+        }
+
+        log.println();
+        log.printf("==== Starting test executions for project %s\n", pd.getProjectName());
+        log.println();
+
+        if (runSequential) {
+            return runSequentialTestExecutions(platform, browser);
+        } else {
+            try {
                 // runTestsData gets updated with execution ids
-                runTestExecutions(runTestsData, platform, browser);
+                runTestExecutions(testDataList, platform, browser);
             } catch (ServiceException e) {
                 log.println("Exception running test executions.");
                 log.println(AiqUtil.getExceptionTrace(e));
@@ -181,7 +350,7 @@ public class RunTests {
 
             Boolean runCheck;
             try {
-                runCheck = checkRunTests(pd.getProjectId(), runTestsData);
+                runCheck = checkRunTests(testDataList);
             } catch (ServiceException e) {
                 log.println("Exception checking test executions.");
                 log.println(AiqUtil.getExceptionTrace(e));
@@ -199,33 +368,157 @@ public class RunTests {
             }
         }
 
+    }
+
+
+    private Boolean setInitialVariables(List<TestPlanParser.Variable> vars) {
+        try {
+            log.println("Setting any initial variables.");
+            setVariables(plan.getInitialVars());
+        } catch (ServiceException e) {
+            log.printf("Exception setting initial variables\n");
+            log.println(AiqUtil.getExceptionTrace(e));
+            return false;
+        }
         return true;
     }
 
+    private Boolean runSequentialTestExecutions(String platform, String browser) {
+
+        Boolean ret = true;
+
+        ret = setInitialVariables(plan.getInitialVars());
+        if (ret == false) {
+            return false;
+        }
+
+        for (TestData testData : testDataList) {
+
+            String testCaseName = testCasesById.get(testData.getTestCaseId()).getTestCaseName();
+
+            try {
+                log.println();
+                log.printf("==== Starting execution of test case: %s\n", testCaseName);
+
+                setVariables(testData.getTestItem().getSetVars());
+
+                String testExecutionName = String.format("Jenkins_%s", testCasesById.get(testData.getTestCaseId()).getTestCaseName());
+                ExecuteTaskResponse resp = svc.runTestCase(pd.getProjectId(), testData.getTestScriptId(),
+                        testExecutionName,
+                        platform, browser,
+                        executionType);
+                log.println("Execution started");
+
+                // save execution id
+                Long testExecId = resp.getExecutionId().longValue();
+                testData.setExecutionId(testExecId);
+
+                boolean done = false;
+
+                while (!done) {
+
+                    // pause
+                    try {
+                        Thread.sleep(pollingIntervalMs);
+                    } catch (InterruptedException e) {
+                        log.println("Check execution sleep interrupted");
+                    }
+
+                    ExecuteTaskResponse r = svc.getExecutedTask(testExecId);
+
+                    ExecStatus stat = ExecStatus.getEnumForName(r.getExecutionStatus());
+
+                    switch (stat) {
+                        case INPROGRESS:
+                            //log.println("Test execution still in progress");
+                            break;
+                        case SUCCESS:
+                            log.printf("Test execution for test case '%s' succeeded\n", testCaseName);
+
+                            showVariables(testData.getTestItem().getShowVars());
+                            ret = validateVariables(testData.getTestItem().getValidateVars());
+
+                            done = true;
+                            break;
+                        case ERROR:
+                            log.printf("Test execution for test case '%s' failed", testCaseName);
+                            done = true;
+                            break;
+                    }
+                }
+
+            } catch (ServiceException e) {
+                log.printf("Exception during execution of test case '%s'\n", testCaseName);
+                log.println(AiqUtil.getExceptionTrace(e));
+                ret = false;
+                break;
+            }
+        }
+
+        return ret;
+    }
+
     private void logTestCaseNames() {
-        log.printf("==== Found these %s test cases in project %s:\n", testCasesById.size(), pd.getProjectName());
-        for (TestCasesResponse r : testCasesById.values()) {
-            log.println(r.getTestCaseName());
+        if (plan != null) {
+            log.printf("==== Test case sequence from test plan for project %s:\n", pd.getProjectName());
+
+        } else {
+            log.printf("==== Found these %s test cases in project %s:\n", testCasesById.size(), pd.getProjectName());
+
+        }
+        for (TestData td : testDataList) {
+            log.println(testCasesById.get(td.getTestCaseId()).getTestCaseName());
         }
     }
 
-    private void getAllTestCases(Long projectId, Long discoveryId) throws ServiceException {
+    private void getTestCases(TestPlan plan, Long projectId, Long discoveryId) throws ServiceException {
         testCasesById = new HashMap<>();
-        //testCasesByName = new TreeMap<>();
+        testCasesByName = new TreeMap<>();
 
         List<TestCasesResponse> tc = svc.getTestCasesForProject(projectId, discoveryId);
         for (TestCasesResponse t : tc) {
             testCasesById.put(t.getTestCaseId(), t);
-            //testCasesByName.put(t.getTestCaseName(), t);
+            testCasesByName.put(t.getTestCaseName(), t);
         }
+
+        testDataList = new LinkedList<>();
+        testDataByTestCaseId = new HashMap<>();
+
+        if (plan == null) {
+            runSequential = false;
+
+            for (Long testCaseId : testCasesById.keySet()) {
+                TestData testData = new TestData();
+                testData.setTestCaseId(testCaseId);
+                testDataList.add(testData);
+                testDataByTestCaseId.put(testCaseId, testData);
+            }
+        } else {
+            runSequential = true;
+
+            testDataList = new LinkedList<>();
+            for (TestItem item : plan.getSeq()) {
+                TestCasesResponse testCase = testCasesByName.get(item.getCaseName());
+                if (testCase == null) {
+                    throw new ServiceException(String.format("No test case found for case name from test plan: %s", item.getCaseName()));
+                }
+                TestData testData = new TestData();
+                testData.setTestCaseId(testCase.getTestCaseId());
+                testData.setTestItem(item);
+                testDataList.add(testData);
+                testDataByTestCaseId.put(testCase.getTestCaseId(), testData);
+            }
+        }
+
     }
 
-    private void startScriptGenerations() throws ServiceException {
-        testScriptByTestCaseId = new HashMap<>();
+    private void startAllScriptGenerations() throws ServiceException {
 
         List<TestScriptResponse> tsr = svc.startTestScripGeneration(pd.getProjectId(), testCasesById.keySet());
         for (TestScriptResponse t : tsr) {
             testScriptByTestCaseId.put(t.getTestCaseId(), t);
+            TestData testData = testDataByTestCaseId.get(t.getTestCaseId());
+            testData.setTestScriptId(t.getTestScriptid());
         }
     }
 
@@ -264,8 +557,6 @@ public class RunTests {
 
                 TestScriptResponse scriptStart = testScriptByTestCaseId.get(testCaseId);
 
-                String testCaseName = testCasesById.get(testCaseId).getTestCaseName();
-
                 for (TestScriptResponse script : scripts) {
 
                     if (script.getTestScriptid().equals(scriptStart.getTestScriptid())) {
@@ -291,7 +582,7 @@ public class RunTests {
                                 break;
                             default:
                                 throw new ServiceException(String.format("Unknown script generation status '%s'",
-                                                                    script.getTestScriptGenerationStatus()));
+                                        script.getTestScriptGenerationStatus()));
                         }
 
                     }
@@ -349,10 +640,10 @@ public class RunTests {
         return gensFailedCaseId.size() == 0;
     }
 
-    private void runTestExecutions(List<RunTestData> runTestsData, String platform,
-                                      String browser) throws ServiceException {
+    private void runTestExecutions(List<TestData> runTestsData, String platform,
+                                   String browser) throws ServiceException {
 
-        for (RunTestData t : runTestsData) {
+        for (TestData t : runTestsData) {
 
             String testExecutionName = String.format("Jenkins_%s", testCasesById.get(t.getTestCaseId()).getTestCaseName());
 
@@ -366,13 +657,13 @@ public class RunTests {
         }
     }
 
-    private Boolean checkRunTests(Long projectId, List<RunTestData> runTestsData) throws ServiceException {
+    private Boolean checkRunTests(List<TestData> runTestsData) throws ServiceException {
 
         execSucceededId = new HashSet<>();
         execFailedId = new HashSet<>();
 
-        Map<Long, RunTestData> testMap = new HashMap<>();
-        for (RunTestData r : runTestsData) {
+        Map<Long, TestData> testMap = new HashMap<>();
+        for (TestData r : runTestsData) {
             testMap.put(r.executionId, r);
         }
 
@@ -388,7 +679,7 @@ public class RunTests {
             try {
                 Thread.sleep(pollingIntervalMs);
             } catch (InterruptedException e) {
-                log.println("Check scripts generation sleep interrupted");
+                log.println("Check test executions sleep interrupted");
             }
 
 
@@ -431,7 +722,7 @@ public class RunTests {
         if (execSucceededId.size() > 0) {
             log.println("==== Test execution passed for test cases:");
             for (Long execId : execSucceededId) {
-                RunTestData td = testMap.get(execId);
+                TestData td = testMap.get(execId);
                 Long tc = td.getTestCaseId();
                 log.printf("%s\n", testCasesById.get(tc).getTestCaseName());
             }
@@ -441,7 +732,7 @@ public class RunTests {
         if (execFailedId.size() > 0) {
             log.println("==== Test execution failed for test cases:");
             for (Long execId : execFailedId) {
-                RunTestData td = testMap.get(execId);
+                TestData td = testMap.get(execId);
                 Long tc = td.getTestCaseId();
                 log.printf("%s\n", testCasesById.get(tc).getTestCaseName());
             }

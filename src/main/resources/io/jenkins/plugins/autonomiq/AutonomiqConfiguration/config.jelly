@@ -7,7 +7,7 @@
             <f:textbox/>
         </f:entry>
 
-        <f:entry field="defaultLogin" title="${%DefaultLogin}">
+<!--        <f:entry field="defaultLogin" title="${%DefaultLogin}">
             <f:textbox/>
         </f:entry>
 
@@ -17,6 +17,6 @@
 
         <f:validateButton title="${%TestConnection}" progress="${%Testing connection to Autonomiq...}"
                     method="testConnection" with="defaultAiqUrl,defaultLogin,defaultPassword"/>
-
+-->
     </f:section>
 </j:jelly>

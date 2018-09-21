@@ -1,5 +1,6 @@
-package io.jenkins.plugins.autonomiq;
+package io.jenkins.plugins.autonomiq.testplan;
 
+import io.jenkins.plugins.autonomiq.PluginException;
 import io.jenkins.plugins.autonomiq.util.TimeStampedLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,53 +43,6 @@ public class TestPlanParser {
         }
     }
 
-    public class TestItem {
-        private List<Variable> initialVars;
-        private String caseName;
-        private List<Variable> showVars;
-        private List<Variable> validateVars;
-
-        public TestItem(List<Variable> initialVars, String caseName, List<Variable> showVars, List<Variable> validateVars) {
-            this.initialVars = initialVars;
-            this.caseName = caseName;
-            this.showVars = showVars;
-            this.validateVars = validateVars;
-        }
-
-        public List<Variable> getInitialVars() {
-            return initialVars;
-        }
-
-        public String getCaseName() {
-            return caseName;
-        }
-
-        public List<Variable> getShowVars() {
-            return showVars;
-        }
-
-        public List<Variable> getValidateVars() {
-            return validateVars;
-        }
-    }
-
-    public class TestSequence {
-        private List<Variable> initialVars;
-        private List<TestItem> seq;
-
-        public TestSequence(List<Variable> initialVars, List<TestItem> seq) {
-            this.initialVars = initialVars;
-            this.seq = seq;
-        }
-
-        public List<Variable> getInitialVars() {
-            return initialVars;
-        }
-
-        public List<TestItem> getSeq() {
-            return seq;
-        }
-    }
 
     private Document doc;
     private TimeStampedLogger log;
@@ -109,9 +63,9 @@ public class TestPlanParser {
 
     }
 
-    public TestSequence parseTestSequence() throws PluginException {
+    public TestPlan parseTestSequence() throws PluginException {
 
-        TestSequence ts;
+        TestPlan ts;
 
         try {
 
@@ -138,7 +92,7 @@ public class TestPlanParser {
 
             getTestItems(testList, testItems);
 
-            ts = new TestSequence(initialVars, testItems);
+            ts = new TestPlan(initialVars, testItems);
 
 
         } catch (Exception e) {
@@ -148,7 +102,7 @@ public class TestPlanParser {
         return ts;
     }
 
-    public void dumpTest(TestSequence ts) {
+    public void dumpTest(TestPlan ts) {
 
         log.println("Initial vars:");
         for (Variable v : ts.getInitialVars()) {
@@ -157,9 +111,9 @@ public class TestPlanParser {
 
         log.println("Test cases:");
         for (TestItem i : ts.getSeq()) {
-            log.println("Case: " + i.caseName);
+            log.println("Case: " + i.getCaseName());
             log.println("  Case initial vars:");
-            for (Variable v : i.getInitialVars()) {
+            for (Variable v : i.getSetVars()) {
                 log.println("    " + v.toString());
             }
             log.println("  Case show vars:");
