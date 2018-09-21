@@ -1,4 +1,4 @@
 <?jelly escape-by-default='true'?>
 <div>
-    TODO
+    This plugin provides a build step to run tests on the AutonomiQ service.
 </div>
