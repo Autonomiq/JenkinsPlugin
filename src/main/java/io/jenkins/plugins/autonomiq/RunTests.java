@@ -520,14 +520,14 @@ class RunTests {
                 switch (status) {
                     case SUCCESS:
                     case SUCCESS2:
-                        log.printf("Step %s %s %s: Status %s\n", stepNumber, step.getInstruction(), step.getData(), TestStepStatus.SUCCESS.name());
+                        log.printf("Step %s %s-%s: Status %s\n", stepNumber, step.getInstruction(), step.getData(), TestStepStatus.SUCCESS.name());
                         break;
                     case WARNING:
                     case FAILURE:
                     case IN_PROGRESS:
                     case NOT_YET_CHECKED:
                     case STOPPED:
-                        log.printf("Step %s %s %s: Status %s\n", stepNumber, step.getInstruction(), step.getData(), status.name());
+                        log.printf("Step %s %s-%s: Status %s\n", stepNumber, step.getInstruction(), step.getData(), status.name());
                         break;
                 }
             }
