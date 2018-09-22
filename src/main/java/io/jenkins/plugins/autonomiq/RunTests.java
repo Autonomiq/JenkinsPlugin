@@ -2,10 +2,7 @@ package io.jenkins.plugins.autonomiq;
 
 import io.jenkins.plugins.autonomiq.service.ServiceAccess;
 import io.jenkins.plugins.autonomiq.service.ServiceException;
-import io.jenkins.plugins.autonomiq.service.types.ExecuteTaskResponse;
-import io.jenkins.plugins.autonomiq.service.types.TestCasesResponse;
-import io.jenkins.plugins.autonomiq.service.types.TestScriptResponse;
-import io.jenkins.plugins.autonomiq.service.types.UserVariable;
+import io.jenkins.plugins.autonomiq.service.types.*;
 import io.jenkins.plugins.autonomiq.testplan.TestItem;
 import io.jenkins.plugins.autonomiq.testplan.TestPlan;
 import io.jenkins.plugins.autonomiq.testplan.TestPlanParser;
@@ -57,6 +54,40 @@ class RunTests {
 
         public void setTestItem(TestItem testItem) {
             this.testItem = testItem;
+        }
+    }
+
+    enum TestStepStatus {
+        SUCCESS("0"),
+        SUCCESS2("1"),
+        WARNING("2"),
+        FAILURE("3"),
+        IN_PROGRESS("4"),
+        NOT_YET_CHECKED("5"),
+        STOPPED("6");
+
+        String val;
+
+        TestStepStatus(String val) {
+            this.val = val;
+        }
+
+        public static TestStepStatus getEnumForName(String name) throws ServiceException {
+            for (TestStepStatus v : values()) {
+                if (name.equals(v.name())) {
+                    return v;
+                }
+            }
+            throw new ServiceException("Unknown test step status name: " + name);
+        }
+
+        public static TestStepStatus getEnumForValue(String val) throws ServiceException {
+            for (TestStepStatus v : values()) {
+                if (v.val.equals(val)) {
+                    return v;
+                }
+            }
+            throw new ServiceException("Unknown test step status value: " + val);
         }
     }
 
@@ -224,7 +255,7 @@ class RunTests {
                 log.printf("Variable '%s' validate successful '%s'\n", gotVar.getKey(), gotVar.getValue());
             } else {
                 log.printf("Variable '%s' validate failed, expected '%s' got '%s'\n",
-                            v.getName(), v.getValue(), gotVar.getValue());
+                        v.getName(), v.getValue(), gotVar.getValue());
                 ret = false;
             }
         }
@@ -241,6 +272,7 @@ class RunTests {
             return false;
         }
 
+        foreachtest:
         for (TestData testData : testDataList) {
             Long testCaseId = testData.getTestCaseId();
             String testCaseName = testCasesById.get(testCaseId).getTestCaseName();
@@ -291,6 +323,8 @@ class RunTests {
                                             testCaseName);
                                     done = true;
 
+                                    showTestStepsForCase(testData.getTestCaseId());
+
                                     showVariables(testData.getTestItem().getShowVars());
                                     ret = validateVariables(testData.getTestItem().getValidateVars());
 
@@ -298,8 +332,11 @@ class RunTests {
                                 case FAILED:
                                     log.printf("Script generation for test case '%s' failed\n",
                                             testCaseName);
-                                    done = true;
-                                    break;
+
+                                    showTestStepsForCase(testData.getTestCaseId());
+
+                                    ret = false;
+                                    break foreachtest;
 
                             }
 
@@ -392,6 +429,7 @@ class RunTests {
             return false;
         }
 
+        foreachtest:
         for (TestData testData : testDataList) {
 
             String testCaseName = testCasesById.get(testData.getTestCaseId()).getTestCaseName();
@@ -434,16 +472,14 @@ class RunTests {
                             break;
                         case SUCCESS:
                             log.printf("Test execution for test case '%s' succeeded\n", testCaseName);
-
                             showVariables(testData.getTestItem().getShowVars());
                             ret = validateVariables(testData.getTestItem().getValidateVars());
-
                             done = true;
                             break;
                         case ERROR:
                             log.printf("Test execution for test case '%s' failed", testCaseName);
-                            done = true;
-                            break;
+                            ret = false;
+                            break foreachtest;
                     }
                 }
 
@@ -456,6 +492,52 @@ class RunTests {
         }
 
         return ret;
+    }
+
+    private void showTestStepsForCase(Long testCaseId) throws ServiceException {
+        TestCasesResponse testCase = svc.getTestCase(pd.getProjectId(), pd.getDiscoveryId(),
+                testCaseId);
+        showTestSteps("", testCase.getTestSteps());
+    }
+
+    private void showTestSteps(String stepNumPrefix, BrokenDownInstruction[] testSteps) {
+        int index = 1;
+        for (BrokenDownInstruction step : testSteps) {
+
+            String stepNumber = stepNumPrefix + index + ".";
+
+            String statusValue = step.getStatus();
+            TestStepStatus status = null;
+            String err = null;
+            try {
+                status = TestStepStatus.getEnumForValue(statusValue);
+            } catch (ServiceException e) {
+                err = e.getMessage();
+            }
+            if (err != null) {
+                log.printf("Step %s Error: %s\n", stepNumber, err);
+            } else {
+                switch (status) {
+                    case SUCCESS:
+                    case SUCCESS2:
+                        log.printf("Step %s %s %s: Status %s\n", stepNumber, step.getInstruction(), step.getData(), TestStepStatus.SUCCESS.name());
+                        break;
+                    case WARNING:
+                    case FAILURE:
+                    case IN_PROGRESS:
+                    case NOT_YET_CHECKED:
+                    case STOPPED:
+                        log.printf("Step %s %s %s: Status %s\n", stepNumber, step.getInstruction(), step.getData(), status.name());
+                        break;
+                }
+            }
+
+            if (step.getSubinstructions() != null && step.getSubinstructions().length > 0) {
+                showTestSteps(stepNumber, step.getSubinstructions());
+            }
+
+            index++;
+        }
     }
 
     private void logTestCaseNames() {

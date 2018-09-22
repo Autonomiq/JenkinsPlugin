@@ -14,6 +14,7 @@ public class ServiceAccess {
     private static final String authenticatePath = "%s:8005/authenticate/basic";
     private static final String listProjectsPath = "%s:8005/discovery/%d"; // accountId
     private static final String getTestCasesPath = "%s:8005/discovery/%d/%d/%d/testcases"; // userId, projectId, discoveryId
+    private static final String getTestCasePath = "%s:8005/discovery/%d/%d/%d/%d/testcase"; // userId, projectId, discoveryId, testcaseId
     private static final String genTestScriptsPath = "%s:8005/testScript/project/%d"; // projectId
     private static final String getTestScriptsPath = "%s:8005/testScript/userId/%d/project/%d/testCase/%d/executable"; // userId, projectId, testCaseId
     private static final String runTestCasesPath = "%s:8005/testScriptExecutions/%s/%s/run"; // userId, projectId
@@ -164,6 +165,21 @@ public class ServiceAccess {
         }
     }
 
+    public TestCasesResponse getTestCase(Long projectId, Long discoveryId, Long testcaseId) throws ServiceException {
+        String url = String.format(getTestCasePath, aiqUrl, userId, projectId, discoveryId, testcaseId);
+
+        try {
+
+            String resp = web.get(url);
+            TestCasesResponse testCaseResp = AiqUtil.gson.fromJson(resp,
+                    TestCasesResponse.class);
+
+            return testCaseResp;
+
+        } catch (Exception e) {
+            throw new ServiceException("Exception getting test cases for project " + projectId);
+        }
+    }
 
     public List<TestScriptResponse> getTestScript(Long projectId, Long testCaseId) throws ServiceException {
         String url = String.format(getTestScriptsPath, aiqUrl, userId, projectId, testCaseId);

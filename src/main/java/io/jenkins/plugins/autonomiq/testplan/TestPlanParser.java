@@ -71,11 +71,11 @@ public class TestPlanParser {
 
             doc.getDocumentElement().normalize();
 
-            log.println("Root element: " + doc.getDocumentElement().getNodeName());
+            //log.println("Root element: " + doc.getDocumentElement().getNodeName());
 
             NodeList initList = doc.getElementsByTagName("InitializeVariables");
 
-            log.println("len " + initList.getLength());
+            //log.println("len " + initList.getLength());
 
             List<Variable> initialVars = new LinkedList<>();
 
