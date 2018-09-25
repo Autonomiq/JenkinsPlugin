@@ -497,14 +497,12 @@ class RunTests {
     private void showTestStepsForCase(Long testCaseId) throws ServiceException {
         TestCasesResponse testCase = svc.getTestCase(pd.getProjectId(), pd.getDiscoveryId(),
                 testCaseId);
-        showTestSteps("", testCase.getTestSteps());
+        showTestSteps(testCase.getTestSteps());
     }
 
-    private void showTestSteps(String stepNumPrefix, BrokenDownInstruction[] testSteps) {
-        int index = 1;
+    private String stepFormat = "Step %s '%s' - '%s': Status %s\n";
+    private void showTestSteps(BrokenDownInstruction[] testSteps) {
         for (BrokenDownInstruction step : testSteps) {
-
-            String stepNumber = stepNumPrefix + index + ".";
 
             String statusValue = step.getStatus();
             TestStepStatus status = null;
@@ -515,28 +513,27 @@ class RunTests {
                 err = e.getMessage();
             }
             if (err != null) {
-                log.printf("Step %s Error: %s\n", stepNumber, err);
+                log.printf("Step %s Error: %v\n", step.getInstrNum(), err);
             } else {
                 switch (status) {
                     case SUCCESS:
                     case SUCCESS2:
-                        log.printf("Step %s %s-%s: Status %s\n", stepNumber, step.getInstruction(), step.getData(), TestStepStatus.SUCCESS.name());
+                        log.printf(stepFormat, step.getInstrNum(), step.getInstr(), step.getData(), TestStepStatus.SUCCESS.name());
                         break;
                     case WARNING:
                     case FAILURE:
                     case IN_PROGRESS:
                     case NOT_YET_CHECKED:
                     case STOPPED:
-                        log.printf("Step %s %s-%s: Status %s\n", stepNumber, step.getInstruction(), step.getData(), status.name());
+                        log.printf(stepFormat, step.getInstrNum(), step.getInstr(), step.getData(), status.name());
                         break;
                 }
             }
 
-            if (step.getSubinstructions() != null && step.getSubinstructions().length > 0) {
-                showTestSteps(stepNumber, step.getSubinstructions());
+            if (step.getSubInstructions() != null && step.getSubInstructions().length > 0) {
+                showTestSteps(step.getSubInstructions());
             }
 
-            index++;
         }
     }
 

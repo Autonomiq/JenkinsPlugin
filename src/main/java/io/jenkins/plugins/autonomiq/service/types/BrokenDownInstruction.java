@@ -1,64 +1,151 @@
 package io.jenkins.plugins.autonomiq.service.types;
 
 public class BrokenDownInstruction {
-    private String instruction;
+    private String instr;
     private String data;
-    private String instructionNumber;
-    private Boolean sendToTestcaseParser;
-    private BrokenDownInstruction subinstructions[];
+    private String instrNum;
+    private Boolean sendToTestCaseParser;
+    private BrokenDownInstruction subInstructions[];
     private String columnName;
     private String status;
     private String recorderData;
     private String message;
+    private String screenshotPaths[];
+    private String screenshotNo;
+    private String stepTime;
+    private String actualResult;
+    private String md5sum;
 
-    public BrokenDownInstruction(String instruction, String data, String instructionNumber,
-                                 Boolean sendToTestcaseParser, BrokenDownInstruction[] subinstructions,
-                                 String columnName, String status, String recorderData, String message) {
-        this.instruction = instruction;
+    public BrokenDownInstruction(String instr, String data, String instrNum, Boolean sendToTestCaseParser,
+                                 BrokenDownInstruction[] subInstructions, String columnName, String status,
+                                 String recorderData, String message, String screenshotPaths[],
+                                 String screenshotNo, String stepTime, String actualResult, String md5sum) {
+        this.instr = instr;
         this.data = data;
-        this.instructionNumber = instructionNumber;
-        this.sendToTestcaseParser = sendToTestcaseParser;
-        this.subinstructions = subinstructions;
+        this.instrNum = instrNum;
+        this.sendToTestCaseParser = sendToTestCaseParser;
+        this.subInstructions = subInstructions;
         this.columnName = columnName;
         this.status = status;
         this.recorderData = recorderData;
         this.message = message;
+        this.screenshotPaths = screenshotPaths;
+        this.screenshotNo = screenshotNo;
+        this.stepTime = stepTime;
+        this.actualResult = actualResult;
+        this.md5sum = md5sum;
     }
-    @SuppressWarnings("unused")
-    public String getInstruction() {
-        return instruction;
+
+    public String getInstr() {
+        return instr;
     }
-    @SuppressWarnings("unused")
+
+    public void setInstr(String instr) {
+        this.instr = instr;
+    }
+
     public String getData() {
         return data;
     }
-    @SuppressWarnings("unused")
-    public String getInstructionNumber() {
-        return instructionNumber;
+
+    public void setData(String data) {
+        this.data = data;
     }
-    @SuppressWarnings("unused")
-    public Boolean getSendToTestcaseParser() {
-        return sendToTestcaseParser;
+
+    public String getInstrNum() {
+        return instrNum;
     }
-    @SuppressWarnings("unused")
-    public BrokenDownInstruction[] getSubinstructions() {
-        return subinstructions;
+
+    public void setInstrNum(String instrNum) {
+        this.instrNum = instrNum;
     }
-    @SuppressWarnings("unused")
+
+    public Boolean getSendToTestCaseParser() {
+        return sendToTestCaseParser;
+    }
+
+    public void setSendToTestCaseParser(Boolean sendToTestCaseParser) {
+        this.sendToTestCaseParser = sendToTestCaseParser;
+    }
+
+    public BrokenDownInstruction[] getSubInstructions() {
+        return subInstructions;
+    }
+
+    public void setSubInstructions(BrokenDownInstruction[] subInstructions) {
+        this.subInstructions = subInstructions;
+    }
+
     public String getColumnName() {
         return columnName;
     }
-    @SuppressWarnings("unused")
+
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
+    }
+
     public String getStatus() {
         return status;
     }
-    @SuppressWarnings("unused")
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public String getRecorderData() {
         return recorderData;
     }
-    @SuppressWarnings("unused")
+
+    public void setRecorderData(String recorderData) {
+        this.recorderData = recorderData;
+    }
+
     public String getMessage() {
         return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String[] getScreenshotPaths() {
+        return screenshotPaths;
+    }
+
+    public void setScreenshotPaths(String screenshotPaths[]) {
+        this.screenshotPaths = screenshotPaths;
+    }
+
+    public String getScreenshotNo() {
+        return screenshotNo;
+    }
+
+    public void setScreenshotNo(String screenshotNo) {
+        this.screenshotNo = screenshotNo;
+    }
+
+    public String getStepTime() {
+        return stepTime;
+    }
+
+    public void setStepTime(String stepTime) {
+        this.stepTime = stepTime;
+    }
+
+    public String getActualResult() {
+        return actualResult;
+    }
+
+    public void setActualResult(String actualResult) {
+        this.actualResult = actualResult;
+    }
+
+    public String getMd5sum() {
+        return md5sum;
+    }
+
+    public void setMd5sum(String md5sum) {
+        this.md5sum = md5sum;
     }
 }
 

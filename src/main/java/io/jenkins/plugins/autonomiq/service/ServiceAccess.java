@@ -161,7 +161,7 @@ public class ServiceAccess {
             return testCaseList;
 
         } catch (Exception e) {
-            throw new ServiceException("Exception getting test cases for project " + projectId);
+            throw new ServiceException("Exception getting test cases for project " + projectId, e);
         }
     }
 
@@ -177,7 +177,7 @@ public class ServiceAccess {
             return testCaseResp;
 
         } catch (Exception e) {
-            throw new ServiceException("Exception getting test cases for project " + projectId);
+            throw new ServiceException("Exception getting test case " + testcaseId, e);
         }
     }
 
