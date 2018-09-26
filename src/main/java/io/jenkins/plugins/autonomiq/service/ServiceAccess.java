@@ -5,9 +5,7 @@ import io.jenkins.plugins.autonomiq.util.AiqUtil;
 import io.jenkins.plugins.autonomiq.service.types.*;
 import io.jenkins.plugins.autonomiq.util.WebClient;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class ServiceAccess {
 
@@ -52,7 +50,7 @@ public class ServiceAccess {
 
     }
 
-    public List<DiscoveryResponse> getProjectData() throws ServiceException {
+    public Collection<DiscoveryResponse> getProjectData() throws ServiceException {
 
         String url = String.format(listProjectsPath, aiqUrl, accountId);
 
@@ -63,7 +61,14 @@ public class ServiceAccess {
                     new TypeToken<List<DiscoveryResponse>>() {
                     }.getType());
 
-            return discoveryList;
+            // build sorted map by lower case project name
+            Map<String, DiscoveryResponse> map = new TreeMap<>();
+            for (DiscoveryResponse d : discoveryList) {
+                map.put(d.getProjectName().toLowerCase(), d);
+            }
+
+            // return the sorted values
+            return map.values();
 
         } catch (Exception e) {
             throw new ServiceException("Exception getting project list", e);

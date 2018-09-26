@@ -25,7 +25,9 @@ import org.kohsuke.stapler.QueryParameter;
 import javax.servlet.ServletException;
 import java.io.*;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 
 import jenkins.tasks.SimpleBuildStep;
@@ -365,7 +367,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             try {
                 ServiceAccess svc = new ServiceAccess(aiqUrl, login, password);
 
-                List<DiscoveryResponse> dataList = svc.getProjectData();
+                Collection<DiscoveryResponse> dataList = svc.getProjectData();
 
                 ret = new Option[dataList.size() + 1];
 
