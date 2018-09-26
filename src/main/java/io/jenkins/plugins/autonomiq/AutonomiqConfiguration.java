@@ -13,7 +13,7 @@ import org.kohsuke.stapler.StaplerRequest;
 /**
  * Example of Jenkins global configuration.
  */
-@Extension
+//@Extension
 public class AutonomiqConfiguration extends GlobalConfiguration {
 
     /** @return the singleton instance */

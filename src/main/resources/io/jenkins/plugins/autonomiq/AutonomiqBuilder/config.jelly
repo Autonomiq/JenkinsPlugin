@@ -2,15 +2,15 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:c="/lib/credentials" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
     <f:entry title="${%AiqUrl}" field="aiqUrl">
-        <f:textbox default="${descriptor.getDefaultAiqUrl()}" />
+        <f:textbox  />
     </f:entry>
 
     <f:entry title="${%Login}" field="login">
-        <f:textbox default="${descriptor.getDefaultLogin()}" />
+        <f:textbox  />
     </f:entry>
 
     <f:entry title="${%Password}" field="password">
-        <f:textbox default="${descriptor.getDefaultPassword()}" />
+        <f:password  />
     </f:entry>
 
     <f:entry title="${%Project}" field="project">
@@ -31,5 +31,9 @@
         </f:entry>
 
     </f:optionalBlock>
+
+    <f:entry title="${%TestPlan}" field="testPlan">
+        <f:textarea />
+    </f:entry>
 
 </j:jelly>

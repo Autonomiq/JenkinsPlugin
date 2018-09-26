@@ -42,6 +42,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     private Boolean runTestCases;
     private String platform;
     private String browser;
+    private String testPlan;
 
     private static Long pollingIntervalMs = 10000L;
 
@@ -49,7 +50,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public AutonomiqBuilder(String aiqUrl, String login, String password, String project,
                             Boolean genScripts,
                             Boolean runTestCases,
-                            String platform, String browser
+                            String platform, String browser, String testPlan
     ) {
 
         this.aiqUrl = aiqUrl;
@@ -60,6 +61,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         this.runTestCases = runTestCases;
         this.platform = platform;
         this.browser = browser;
+        this.testPlan = testPlan;
     }
 
     @SuppressWarnings("unused")
@@ -150,24 +152,37 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         return browser;
     }
 
+    @SuppressWarnings("unused")
+    public String getTestPlan() {
+        return testPlan;
+    }
+
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setTestPlan(String testPlan) {
+        this.testPlan = testPlan;
+    }
+
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher,
                         TaskListener listener) throws InterruptedException, IOException {
         
         TimeStampedLogger log = new TimeStampedLogger(listener.getLogger());
 
-        Boolean generateScripts = true;
-
         boolean ok = true;
 
-        FilePath fPath = workspace.child("testplan");
         TestPlan plan = null;
 
-        if (!fPath.exists()) {
+        String trimmedTestPlan = null;
+        if (testPlan != null) {
+            trimmedTestPlan = testPlan.trim();
+        }
+
+        if (trimmedTestPlan == null || trimmedTestPlan.length() == 0) {
             log.println();
             log.println("No test plan specified. All tests from project will run in parallel");
         } else {
-            InputStream is = fPath.read();
+            InputStream is = new ByteArrayInputStream(trimmedTestPlan.getBytes());
 
             TestPlanParser parser;
             try {
@@ -183,7 +198,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 run.setResult(Result.FAILURE);
                 return;
             } finally {
-                fPath.delete();
+                is.close();
             }
         }
 
