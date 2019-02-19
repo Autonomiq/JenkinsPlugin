@@ -4,39 +4,41 @@ import com.strangeberry.jmdns.tools.Browser;
 
 import java.util.List;
 
+
 public class ExecuteTaskRequest {
     private String testExecutionName;
     private List<Long> scripts;
-    private String platform;
-    private String browser;
     private String executionType;
+    private String platform;
+    private List<BrowserDetails> browserDetails;
 
-    public ExecuteTaskRequest(String testExecutionName, List<Long> scripts, String platform, String browser, String executionType) {
+    public ExecuteTaskRequest(String testExecutionName, List<Long> scripts, String executionType,
+                              String platform, List<BrowserDetails> browserDetails) {
         this.testExecutionName = testExecutionName;
         this.scripts = scripts;
-        this.platform = platform;
-        this.browser = browser;
         this.executionType = executionType;
+        this.platform = platform;
+        this.browserDetails = browserDetails;
     }
-    @SuppressWarnings("unused")
+
     public String getTestExecutionName() {
         return testExecutionName;
     }
-    @SuppressWarnings("unused")
+
     public List<Long> getScripts() {
         return scripts;
     }
-    @SuppressWarnings("unused")
+
+    public String getExecutionType() {
+        return executionType;
+    }
+
     public String getPlatform() {
         return platform;
     }
-    @SuppressWarnings("unused")
-    public String getBrowser() {
-        return browser;
-    }
-    @SuppressWarnings("unused")
-    public String getExecutionType() {
-        return executionType;
+
+    public List<BrowserDetails> getBrowserDetails() {
+        return browserDetails;
     }
 }
 

@@ -228,8 +228,13 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         if (ok) {
 
-            RunTests rt = new RunTests(svc, log, pd, pollingIntervalMs);
-            ok = rt.runTests(plan, genScripts, runTestCases, platform, browser);
+            try {
+                RunTests rt = new RunTests(svc, log, pd, pollingIntervalMs);
+                ok = rt.runTests(plan, genScripts, runTestCases, platform, browser);
+            } catch (PluginException e) {
+                log.println("Running test case failed with exception");
+                log.println(AiqUtil.getExceptionTrace(e));
+            }
 
         }
 

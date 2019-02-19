@@ -1,5 +1,6 @@
 package io.jenkins.plugins.autonomiq;
 
+import com.google.gson.reflect.TypeToken;
 import io.jenkins.plugins.autonomiq.service.ServiceAccess;
 import io.jenkins.plugins.autonomiq.service.ServiceException;
 import io.jenkins.plugins.autonomiq.service.types.*;
@@ -160,7 +161,7 @@ class RunTests {
      * @return returns true if all tests execute successfully
      */
     public Boolean runTests(TestPlan plan, Boolean generateScripts, Boolean runTestCases,
-                            String platform, String browser) {
+                            String platform, String browser) throws PluginException, InterruptedException {
 
         this.plan = plan;
 
@@ -170,7 +171,7 @@ class RunTests {
         }
 
         try {
-            getTestCases(plan, pd.getProjectId(), pd.getDiscoveryId());
+            getTestCases(plan, pd.getProjectId());
         } catch (ServiceException e) {
             log.println(AiqUtil.getExceptionTrace(e));
             return false;
@@ -191,7 +192,7 @@ class RunTests {
         return true;
     }
 
-    private Boolean handleScriptGeneration() {
+    private Boolean handleScriptGeneration() throws InterruptedException {
 
         log.println();
         log.printf("==== Starting script generations for project %s\n", pd.getProjectName());
@@ -301,6 +302,7 @@ class RunTests {
                         Thread.sleep(pollingIntervalMs);
                     } catch (InterruptedException e) {
                         log.println("Check scripts generation sleep interrupted");
+                        throw e;
                     }
 
                     List<TestScriptResponse> scripts = svc.getTestScript(pd.getProjectId(), testCaseId);
@@ -357,7 +359,7 @@ class RunTests {
         return ret;
     }
 
-    private Boolean handleTestExecutions(Boolean generateScripts, String platform, String browser) {
+    private Boolean handleTestExecutions(Boolean generateScripts, String platform, String browser) throws PluginException, InterruptedException {
 
         if (!generateScripts) {
             // use last test script in current list for test case
@@ -420,7 +422,7 @@ class RunTests {
         return true;
     }
 
-    private Boolean runSequentialTestExecutions(String platform, String browser) {
+    private Boolean runSequentialTestExecutions(String platform, String browser) throws PluginException, InterruptedException {
 
         Boolean ret = true;
 
@@ -441,14 +443,18 @@ class RunTests {
                 setVariables(testData.getTestItem().getSetVars());
 
                 String testExecutionName = String.format("Jenkins_%s", testCasesById.get(testData.getTestCaseId()).getTestCaseName());
-                ExecuteTaskResponse resp = svc.runTestCase(pd.getProjectId(), testData.getTestScriptId(),
+                ExecutedTaskResponse resp = svc.runTestCase(pd.getProjectId(), testData.getTestScriptId(),
                         testExecutionName,
                         platform, browser,
                         executionType);
                 log.println("Execution started");
 
                 // save execution id
-                Long testExecId = resp.getExecutionId().longValue();
+                if (resp.getTasks().length != 1) {
+                    throw new PluginException("Unexpected test execution response list length: " + resp.getTasks().length);
+                }
+                ExecuteTaskResponse first = resp.getTasks()[0];
+                Long testExecId = first.getExecutionId().longValue();
                 testData.setExecutionId(testExecId);
 
                 boolean done = false;
@@ -460,6 +466,7 @@ class RunTests {
                         Thread.sleep(pollingIntervalMs);
                     } catch (InterruptedException e) {
                         log.println("Check execution sleep interrupted");
+                        throw e;
                     }
 
                     ExecuteTaskResponse r = svc.getExecutedTask(testExecId);
@@ -495,9 +502,12 @@ class RunTests {
     }
 
     private void showTestStepsForCase(Long testCaseId) throws ServiceException {
-        TestCasesResponse testCase = svc.getTestCase(pd.getProjectId(), pd.getDiscoveryId(),
-                testCaseId);
-        showTestSteps(testCase.getTestSteps());
+
+        TestCaseInfo caseInfo = svc.getTestCaseInfo(testCaseId, TestCaseInfoType.REGULAR_STEPS);
+
+        BrokenDownInstruction[] testSteps = AiqUtil.gson.fromJson(caseInfo.getTest_steps(),
+                BrokenDownInstruction[].class);
+        showTestSteps(testSteps);
     }
 
     private String stepFormat = "Step %s '%s' - '%s': Status %s\n";
@@ -550,11 +560,11 @@ class RunTests {
         }
     }
 
-    private void getTestCases(TestPlan plan, Long projectId, Long discoveryId) throws ServiceException {
+    private void getTestCases(TestPlan plan, Long projectId) throws ServiceException {
         testCasesById = new HashMap<>();
         testCasesByName = new TreeMap<>();
 
-        List<TestCasesResponse> tc = svc.getTestCasesForProject(projectId, discoveryId);
+        List<TestCasesResponse> tc = svc.getTestCasesForProject(projectId);
         for (TestCasesResponse t : tc) {
             testCasesById.put(t.getTestCaseId(), t);
             testCasesByName.put(t.getTestCaseName(), t);
@@ -605,7 +615,7 @@ class RunTests {
         log.printf("%d...\n", count);
     }
 
-    private Boolean checkScriptGenerations() throws ServiceException {
+    private Boolean checkScriptGenerations() throws ServiceException, InterruptedException {
         // copy ids
         Set<Long> testCasesInProgress = new HashSet<>(testScriptByTestCaseId.keySet());
         gensSucceededCaseId = new HashSet<>();
@@ -623,6 +633,7 @@ class RunTests {
                 Thread.sleep(pollingIntervalMs);
             } catch (InterruptedException e) {
                 log.println("Check scripts generation sleep interrupted");
+                throw e;
             }
 
 //            log.println();
@@ -720,23 +731,27 @@ class RunTests {
     }
 
     private void runTestExecutions(List<TestData> runTestsData, String platform,
-                                   String browser) throws ServiceException {
+                                   String browser) throws PluginException, ServiceException {
 
         for (TestData t : runTestsData) {
 
             String testExecutionName = String.format("Jenkins_%s", testCasesById.get(t.getTestCaseId()).getTestCaseName());
 
-            ExecuteTaskResponse resp = svc.runTestCase(pd.getProjectId(), t.getTestScriptId(),
+            ExecutedTaskResponse resp = svc.runTestCase(pd.getProjectId(), t.getTestScriptId(),
                     testExecutionName,
                     platform, browser,
                     executionType);
 
             // save execution id
-            t.setExecutionId(resp.getExecutionId().longValue());
+            if (resp.getTasks().length != 1) {
+                throw new PluginException("Unexpected test execution response list length: " + resp.getTasks().length);
+            }
+            ExecuteTaskResponse first = resp.getTasks()[0];
+            t.setExecutionId(first.getExecutionId().longValue());
         }
     }
 
-    private Boolean checkRunTests(List<TestData> runTestsData) throws ServiceException {
+    private Boolean checkRunTests(List<TestData> runTestsData) throws ServiceException, InterruptedException {
 
         execSucceededId = new HashSet<>();
         execFailedId = new HashSet<>();
@@ -759,6 +774,7 @@ class RunTests {
                 Thread.sleep(pollingIntervalMs);
             } catch (InterruptedException e) {
                 log.println("Check test executions sleep interrupted");
+                throw e;
             }
 
 

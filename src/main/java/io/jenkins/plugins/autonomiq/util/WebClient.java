@@ -12,9 +12,10 @@ public class WebClient {
         client = new OkHttpClient();
     }
 
-    public String get(String url) throws ServiceException {
+    public String get(String url, String token) throws ServiceException {
         Request request = new Request.Builder()
                 .url(url)
+                .addHeader("Authorization", token == null ? "" : "Bearer " + token)
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
@@ -29,10 +30,11 @@ public class WebClient {
         }
     }
 
-    public String post(String url, String json) throws ServiceException {
+    public String post(String url, String json, String token) throws ServiceException {
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(url)
+                .addHeader("Authorization", token == null ? "" : "Bearer " + token)
                 .post(body)
                 .build();
         try (Response response = client.newCall(request).execute()) {
