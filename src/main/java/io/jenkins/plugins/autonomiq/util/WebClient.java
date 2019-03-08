@@ -49,4 +49,14 @@ public class WebClient {
         }
     }
 
+    public WebsocketData createWebsocket(String url) throws ServiceException {
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        WebsocketListener listener = new WebsocketListener();
+        WebSocket ws = client.newWebSocket(request, listener);
+
+        return new WebsocketData(ws, listener);
+    }
 }

@@ -4,6 +4,8 @@ import com.google.gson.reflect.TypeToken;
 import io.jenkins.plugins.autonomiq.util.AiqUtil;
 import io.jenkins.plugins.autonomiq.service.types.*;
 import io.jenkins.plugins.autonomiq.util.WebClient;
+import io.jenkins.plugins.autonomiq.util.WebsocketData;
+import okio.ByteString;
 
 import java.util.*;
 
@@ -20,6 +22,7 @@ public class ServiceAccess {
     private static final String getUserVariablePath = "%s/platform/uservariable/find/%d/%d/%s"; // accountId, projectId, key
     private static final String saveUserVariablePath = "%s/platform/uservariable/save";
     private static final String getTestCaseInfoPath = "%s/platform/testCases/getTestCaseInfo/%d/%d"; // testCaseId, type
+    private static final String websocketPath = "%s/ws?accountId=%d";
 
     private final String aiqUrl;
     private Long userId;
@@ -155,14 +158,51 @@ public class ServiceAccess {
 
     public List<TestScriptResponse> startTestScripGeneration(Long projectId, Collection<Long> testCaseIds) throws ServiceException {
 
-        String url = String.format(genTestScriptsPath, aiqUrl, projectId);
+        String wsUrl =  String.format(websocketPath, aiqUrl, accountId);
+        String sessionId = null;
 
-        GenerateScriptRequestBody body = new GenerateScriptRequestBody(testCaseIds, "");
+        try {
+
+            WebsocketData wsd = web.createWebsocket(wsUrl);
+
+            SessionCreateMsg createMsg = new SessionCreateMsg(token);
+            String createMsgJson = AiqUtil.gson.toJson(createMsg);
+
+            BasicTransportMessage transMsg = new BasicTransportMessage("",
+                    TransportMsgType.MSG_CREATE_SESSION.ordinal(),
+                    createMsgJson);
+            String transMsgJson = AiqUtil.gson.toJson(transMsg);
+
+            wsd.getSocket().send(transMsgJson);
+
+            for (Integer i = 0; i < 10; i++) {
+                Thread.sleep(200);
+                String msg = wsd.getListener().getMsg();
+                if (msg != null) {
+                    BasicTransportMessage recMsg = AiqUtil.gson.fromJson(msg, BasicTransportMessage.class);
+                    if (recMsg.getMsgType() == TransportMsgType.MSG_CREATE_SESSION.ordinal()) {
+                        sessionId = recMsg.getSessionId();
+                        break;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            throw new ServiceException("Exception getting session id for script generation", e);
+        }
+
+        if (sessionId == null) {
+            throw new ServiceException("Did not receive session id from websocket");
+        }
+
+        String genUrl = String.format(genTestScriptsPath, aiqUrl, projectId);
+
+        GenerateScriptRequestBody body = new GenerateScriptRequestBody(testCaseIds, sessionId);
         String json = AiqUtil.gson.toJson(body);
 
         try {
 
-            String resp = web.post(url, json, token);
+            String resp = web.post(genUrl, json, token);
             List<TestScriptResponse> tsResponses = AiqUtil.gson.fromJson(resp,
                     new TypeToken<List<TestScriptResponse>>() {
                     }.getType());
