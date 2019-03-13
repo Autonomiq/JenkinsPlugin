@@ -197,7 +197,8 @@ public class ServiceAccess {
 
         String genUrl = String.format(genTestScriptsPath, aiqUrl, projectId);
 
-        GenerateScriptRequestBody body = new GenerateScriptRequestBody(testCaseIds, sessionId);
+        GenerateScriptRequestBody body = new GenerateScriptRequestBody(testCaseIds, sessionId, "",
+                false, true);
         String json = AiqUtil.gson.toJson(body);
 
         try {
