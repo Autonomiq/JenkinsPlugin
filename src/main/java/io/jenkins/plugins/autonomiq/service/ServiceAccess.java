@@ -100,12 +100,14 @@ public class ServiceAccess {
                                             String platform, String browser,
                                             String executionType) throws ServiceException {
 
+        String sessionId = createSession();
+
         String url = String.format(runTestCasesPath, aiqUrl, userId, projectId);
 
         List<BrowserDetails> browserDetails = new LinkedList<>();
         browserDetails.add(new BrowserDetails(browser, null));
-        ExecuteTaskRequest body = new ExecuteTaskRequest(testExecutionName, scriptIds, executionType, platform,
-                browserDetails);
+        ExecuteTaskRequest body = new ExecuteTaskRequest(sessionId, testExecutionName, scriptIds, executionType, platform,
+                browserDetails, false, null, null);
         String json = AiqUtil.gson.toJson(body);
 
         try {
@@ -126,14 +128,16 @@ public class ServiceAccess {
                                             String platform, String browser,
                                             String executionType) throws ServiceException {
 
+        String sessionId = createSession();
+
         String url = String.format(runTestCasesPath, aiqUrl, projectId);
 
         List<Long> scriptList = listForItem(scriptId);
 
         List<BrowserDetails> browserDetails = new LinkedList<>();
         browserDetails.add(new BrowserDetails(browser, null));
-        ExecuteTaskRequest body = new ExecuteTaskRequest(testExecutionName, scriptList, executionType, platform,
-                browserDetails);
+        ExecuteTaskRequest body = new ExecuteTaskRequest(sessionId, testExecutionName, scriptList, executionType, platform,
+                browserDetails, false, null, null);
 
         String json = AiqUtil.gson.toJson(body);
 
@@ -156,7 +160,7 @@ public class ServiceAccess {
         return l;
     }
 
-    public List<TestScriptResponse> startTestScripGeneration(Long projectId, Collection<Long> testCaseIds) throws ServiceException {
+    public String createSession() throws ServiceException {
 
         String wsUrl =  String.format(websocketPath, aiqUrl, accountId);
         String sessionId = null;
@@ -194,6 +198,14 @@ public class ServiceAccess {
         if (sessionId == null) {
             throw new ServiceException("Did not receive session id from websocket");
         }
+
+        return sessionId;
+
+    }
+
+    public List<TestScriptResponse> startTestScripGeneration(Long projectId, Collection<Long> testCaseIds) throws ServiceException {
+
+        String sessionId = createSession();
 
         String genUrl = String.format(genTestScriptsPath, aiqUrl, projectId);
 
