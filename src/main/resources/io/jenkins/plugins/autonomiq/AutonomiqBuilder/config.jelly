@@ -18,22 +18,43 @@
     </f:entry>
 
     <f:optionalBlock inline="true" field="genScripts" title="${%GenScripts}" >
+
+        <f:entry title="${%GenCaseList}" field="genCaseList">
+            <f:textarea />
+        </f:entry>
+
     </f:optionalBlock>
 
     <f:optionalBlock inline="true" field="runTestCases" title="${%RunTestCases}" >
 
-        <f:entry title="${%Platform}" field="platform">
+        <f:entry title="${%Platform}" field="platformTestCases">
             <f:select />
         </f:entry>
 
-        <f:entry title="${%Browser}" field="browser">
+        <f:entry title="${%Browser}" field="browserTestCases">
             <f:select />
         </f:entry>
+
+         <f:entry title="${%RunCaseList}" field="runCaseList">
+            <f:textarea value="${descriptor.getDefaultGenScriptsList()}" />
+         </f:entry>
 
     </f:optionalBlock>
 
-    <f:entry title="${%TestPlan}" field="testPlan">
-        <f:textarea />
-    </f:entry>
+    <f:optionalBlock inline="true" field="runTestSuites" title="${%RunTestSuites}" >
+
+        <f:entry title="${%Platform}" field="platformTestSuites">
+            <f:select />
+        </f:entry>
+
+        <f:entry title="${%Browser}" field="browserTestSuites">
+            <f:select />
+        </f:entry>
+
+        <f:entry title="${%RunSuiteList}" field="runSuiteList">
+            <f:textarea />
+        </f:entry>
+
+    </f:optionalBlock>
 
 </j:jelly>

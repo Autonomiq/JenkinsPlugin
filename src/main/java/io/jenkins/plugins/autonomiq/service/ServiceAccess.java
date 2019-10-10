@@ -22,6 +22,7 @@ public class ServiceAccess {
     private static final String getUserVariablePath = "%s/platform/uservariable/find/%d/%d/%s"; // accountId, projectId, key
     private static final String saveUserVariablePath = "%s/platform/uservariable/save";
     private static final String getTestCaseInfoPath = "%s/platform/testCases/getTestCaseInfo/%d/%d"; // testCaseId, type
+    private static final String getTestSuitesPath = "%s/platform/testSuites/%d/%d/getTestSuites"; // accountId, projectId
     private static final String websocketPath = "%s/ws?accountId=%d";
 
     private final String aiqUrl;
@@ -242,6 +243,24 @@ public class ServiceAccess {
         } catch (Exception e) {
             throw new ServiceException("Exception getting test cases for project " + projectId, e);
         }
+    }
+
+    public List<GetTestSuitesResponse> getTestSuitesForProject(Long projectId) throws ServiceException {
+        String url = String.format(getTestSuitesPath, aiqUrl, accountId, projectId);
+
+        try {
+
+            String resp = web.get(url, token);
+            List<GetTestSuitesResponse> testSuiteList = AiqUtil.gson.fromJson(resp,
+                    new TypeToken<List<GetTestSuitesResponse>>() {
+                    }.getType());
+
+            return testSuiteList;
+
+        } catch (Exception e) {
+            throw new ServiceException("Exception getting test suites for project " + projectId, e);
+        }
+
     }
 
     public TestCasesResponse getTestCase(Long projectId, Long testcaseId) throws ServiceException {
