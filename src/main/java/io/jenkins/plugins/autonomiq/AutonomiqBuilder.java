@@ -254,36 +254,36 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         boolean ok = true;
 
-        TestPlan plan = null;
-
-        String trimmedTestPlan = null;
-        if (runCaseList != null) {
-            trimmedTestPlan = runCaseList.trim();
-        }
-
-        if (trimmedTestPlan == null || trimmedTestPlan.length() == 0) {
-            log.println();
-            log.println("No test plan specified. All tests from project will run in parallel");
-        } else {
-            InputStream is = new ByteArrayInputStream(trimmedTestPlan.getBytes());
-
-            TestPlanParser parser;
-            try {
-                log.println("Found a test plan and parsing the file");
-                parser = new TestPlanParser(is, log);
-                plan = parser.parseTestSequence();
-
-                log.println("Test plan parsing completed");
-                //parser.dumpTest(seq);
-            } catch (PluginException e) {
-                log.println("Parsing test plan file failed");
-                log.println(AiqUtil.getExceptionTrace(e));
-                run.setResult(Result.FAILURE);
-                return;
-            } finally {
-                is.close();
-            }
-        }
+//        TestPlan plan = null;
+//
+//        String trimmedTestPlan = null;
+//        if (runCaseList != null) {
+//            trimmedTestPlan = runCaseList.trim();
+//        }
+//
+//        if (trimmedTestPlan == null || trimmedTestPlan.length() == 0) {
+//            log.println();
+//            log.println("No test plan specified. All tests from project will run in parallel");
+//        } else {
+//            InputStream is = new ByteArrayInputStream(trimmedTestPlan.getBytes());
+//
+//            TestPlanParser parser;
+//            try {
+//                log.println("Found a test plan and parsing the file");
+//                parser = new TestPlanParser(is, log);
+//                plan = parser.parseTestSequence();
+//
+//                log.println("Test plan parsing completed");
+//                //parser.dumpTest(seq);
+//            } catch (PluginException e) {
+//                log.println("Parsing test plan file failed");
+//                log.println(AiqUtil.getExceptionTrace(e));
+//                run.setResult(Result.FAILURE);
+//                return;
+//            } finally {
+//                is.close();
+//            }
+//        }
 
         AiqUtil.gson.fromJson(project, ProjectData.class);
 
@@ -311,7 +311,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             try {
                 RunTests rt = new RunTests(svc, log, pd, pollingIntervalMs);
-                ok = rt.runTests(plan, genScripts, runTestCases, platformTestCases, browserTestCases);
+                ok = rt.runTests(genScripts, runTestCases, runTestSuites,
+                        platformTestCases, browserTestCases,
+                        platformTestSuites, browserTestSuites,
+                        genCaseList, runCaseList, runSuiteList);
             } catch (PluginException e) {
                 log.println("Running test case failed with exception");
                 log.println(AiqUtil.getExceptionTrace(e));
@@ -447,10 +450,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
 
         private FormValidation checkTestCasesFromText(String value,
-                                                             String aiqUrl,
-                                                             String login,
-                                                             String password,
-                                                             String project) {
+                                                      String aiqUrl,
+                                                      String login,
+                                                      String password,
+                                                      String project) {
             if (value.length() > 0
                     && aiqUrl.length() > 0
                     && login.length() > 0
@@ -584,7 +587,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         @SuppressWarnings("unused")
         public ListBoxModel doFillPlatformTestCasesItems() {
 
-            String[] values = {"Linux", "Windows"};
+            String[] values = {"Linux"};  //, "Windows"};
 
             Option[] options = buildSimpleOptions(values);
 
@@ -593,7 +596,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         @SuppressWarnings("unused")
         public ListBoxModel doFillPlatformTestSuitesItems() {
 
-            String[] values = {"Linux", "Windows"};
+            String[] values = {"Linux"};  //, "Windows"};
 
             Option[] options = buildSimpleOptions(values);
 

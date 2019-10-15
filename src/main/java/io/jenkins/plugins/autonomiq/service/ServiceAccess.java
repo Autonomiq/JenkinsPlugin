@@ -5,7 +5,6 @@ import io.jenkins.plugins.autonomiq.util.AiqUtil;
 import io.jenkins.plugins.autonomiq.service.types.*;
 import io.jenkins.plugins.autonomiq.util.WebClient;
 import io.jenkins.plugins.autonomiq.util.WebsocketData;
-import okio.ByteString;
 
 import java.util.*;
 
@@ -23,6 +22,9 @@ public class ServiceAccess {
     private static final String saveUserVariablePath = "%s/platform/uservariable/save";
     private static final String getTestCaseInfoPath = "%s/platform/testCases/getTestCaseInfo/%d/%d"; // testCaseId, type
     private static final String getTestSuitesPath = "%s/platform/testSuites/%d/%d/getTestSuites"; // accountId, projectId
+    private static final String executeTestSuitePath = "%s/platform/v1/testsuite/%s/execute"; // testSuiteId
+    private static final String getJobPath = "%s/platform/v1/jobs/%d/get_job"; // jobId
+
     private static final String websocketPath = "%s/ws?accountId=%d";
 
     private final String aiqUrl;
@@ -152,6 +154,34 @@ public class ServiceAccess {
 
         } catch (Exception e) {
             throw new ServiceException("Exception running test case", e);
+        }
+    }
+
+    public ExecuteSuiteResponse runTestSuite(Long testSuiteId,
+                                             String platform, String browser,
+                                             String browserVersion, String executionType,
+                                             String executionMode, boolean isRemoteDriver,
+                                             String remoteDriverUrl,
+                                             Map<Long, String> caseSessionMap) throws ServiceException {
+
+        String url = String.format(executeTestSuitePath, aiqUrl, testSuiteId);
+
+        ExecuteTestSuiteRequest body = new ExecuteTestSuiteRequest(platform,
+                browser, browserVersion, executionType, executionMode,
+                isRemoteDriver, remoteDriverUrl, caseSessionMap);
+
+        String json = AiqUtil.gson.toJson(body);
+
+        try {
+
+            String resp = web.post(url, json, token);
+
+            ExecuteSuiteResponse respExec = AiqUtil.gson.fromJson(resp, ExecuteSuiteResponse.class);
+
+            return respExec;
+
+        } catch (Exception e) {
+            throw new ServiceException(String.format("Exception running test suite id %d", testSuiteId), e);
         }
     }
 
@@ -301,7 +331,19 @@ public class ServiceAccess {
             ExecuteTaskResponse execResp = AiqUtil.gson.fromJson(resp, ExecuteTaskResponse.class);
             return execResp;
         } catch (Exception e) {
-            throw new ServiceException("Exception getting executed tasks by project", e);
+            throw new ServiceException("Exception getting executed task by id", e);
+        }
+    }
+
+    public Job getJob(Long jobId) throws ServiceException {
+        String url = String.format(getJobPath, aiqUrl, jobId);
+
+        try {
+            String resp = web.get(url, token);
+            Job job = AiqUtil.gson.fromJson(resp, Job.class);
+            return job;
+        } catch (Exception e) {
+            throw new ServiceException("Exception getting job", e);
         }
     }
 
