@@ -166,8 +166,10 @@ public class ServiceAccess {
 
         String url = String.format(executeTestSuitePath, aiqUrl, testSuiteId);
 
+        List<BrowserDetails> browserDetails = new LinkedList<>();
+        browserDetails.add(new BrowserDetails(browser, browserVersion));
         ExecuteTestSuiteRequest body = new ExecuteTestSuiteRequest(platform,
-                browser, browserVersion, executionType, executionMode,
+                browserDetails, executionType, executionMode,
                 isRemoteDriver, remoteDriverUrl, caseSessionMap);
 
         String json = AiqUtil.gson.toJson(body);

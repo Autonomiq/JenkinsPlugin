@@ -1,23 +1,22 @@
 package io.jenkins.plugins.autonomiq.service.types;
 
 import java.util.Map;
+import java.util.List;
 
 public class ExecuteTestSuiteRequest {
     private String platform;
-    private String browser;
-    private String browserVersion;
+    private List<BrowserDetails> browserDetails;
     private String executionType;
     private String executionMode;
     private boolean isRemoteDriver;
     private String remoteDriverUrl;
     private Map<Long, String> map;
 
-    public ExecuteTestSuiteRequest(String platform, String browser, String browserVersion, String executionType,
+    public ExecuteTestSuiteRequest(String platform, List<BrowserDetails> browserDetails, String executionType,
                                    String executionMode, boolean isRemoteDriver, String remoteDriverUrl,
                                    Map<Long, String> map) {
         this.platform = platform;
-        this.browser = browser;
-        this.browserVersion = browserVersion;
+        this.browserDetails = browserDetails;
         this.executionType = executionType;
         this.executionMode = executionMode;
         this.isRemoteDriver = isRemoteDriver;
@@ -27,14 +26,6 @@ public class ExecuteTestSuiteRequest {
 
     public String getPlatform() {
         return platform;
-    }
-
-    public String getBrowser() {
-        return browser;
-    }
-
-    public String getBrowserVersion() {
-        return browserVersion;
     }
 
     public String getExecutionType() {
@@ -55,5 +46,9 @@ public class ExecuteTestSuiteRequest {
 
     public Map<Long, String> getMap() {
         return map;
+    }
+
+    public List<BrowserDetails> getBrowserDetails() {
+        return browserDetails;
     }
 }
