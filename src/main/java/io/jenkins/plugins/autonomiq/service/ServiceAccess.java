@@ -105,7 +105,7 @@ public class ServiceAccess {
 
         String sessionId = createSession();
 
-        String url = String.format(runTestCasesPath, aiqUrl, userId, projectId);
+        String url = String.format(runTestCasesPath, aiqUrl, projectId);
 
         List<BrowserDetails> browserDetails = new LinkedList<>();
         browserDetails.add(new BrowserDetails(browser, null));
