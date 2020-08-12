@@ -56,11 +56,11 @@ public class AiqUtil {
             if (trim.length() > 0) {
 
                 // check if line has more than one item
-                String[] lineSplit = trim.split(lineSplitRE);
-                if (lineSplit.length > 1) {
-                    return new ItemListFromString(String.format("Line in text area has more than one item per line: '%s'",
-                            trim), null);
-                }
+//                String[] lineSplit = trim.split(lineSplitRE);
+//                if (lineSplit.length > 1) {
+//                    return new ItemListFromString(String.format("Line in text area has more than one item per line: '%s'",
+//                            trim), null);
+//                }
 
                 items.add(trim);
             }
