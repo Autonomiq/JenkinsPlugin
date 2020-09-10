@@ -107,9 +107,9 @@ public class ServiceAccess {
 
         String url = String.format(runTestCasesPath, aiqUrl, projectId);
 
-        List<BrowserDetails> browserDetails = new LinkedList<>();
-        browserDetails.add(new BrowserDetails(browser, null));
-        ExecuteTaskRequest body = new ExecuteTaskRequest(sessionId, testExecutionName, scriptIds, executionType, platform,
+        List<PlatformBrowserDetails> browserDetails = new LinkedList<>();
+        browserDetails.add(new PlatformBrowserDetails(browser, null, platform, null, null, null, null));
+        ExecuteTaskRequest body = new ExecuteTaskRequest(sessionId, testExecutionName, scriptIds, executionType,
                 browserDetails, false, null, null);
         String json = AiqUtil.gson.toJson(body);
 
@@ -137,9 +137,9 @@ public class ServiceAccess {
 
         List<Long> scriptList = listForItem(scriptId);
 
-        List<BrowserDetails> browserDetails = new LinkedList<>();
-        browserDetails.add(new BrowserDetails(browser, null));
-        ExecuteTaskRequest body = new ExecuteTaskRequest(sessionId, testExecutionName, scriptList, executionType, platform,
+        List<PlatformBrowserDetails> browserDetails = new LinkedList<>();
+        browserDetails.add(new PlatformBrowserDetails(browser, null, platform, null, null, null, null));
+        ExecuteTaskRequest body = new ExecuteTaskRequest(sessionId, testExecutionName, scriptList, executionType,
                 browserDetails, false, null, null);
 
         String json = AiqUtil.gson.toJson(body);
@@ -166,10 +166,10 @@ public class ServiceAccess {
 
         String url = String.format(executeTestSuitePath, aiqUrl, testSuiteId);
 
-        List<BrowserDetails> browserDetails = new LinkedList<>();
-        browserDetails.add(new BrowserDetails(browser, browserVersion));
-        ExecuteTestSuiteRequest body = new ExecuteTestSuiteRequest(platform,
-                browserDetails, executionType, executionMode,
+        List<PlatformBrowserDetails> details = new LinkedList<>();
+        details.add(new PlatformBrowserDetails(browser, null, platform, null, null, null, null));
+        ExecuteTestSuiteRequest body = new ExecuteTestSuiteRequest(
+                details, executionType, executionMode,
                 isRemoteDriver, remoteDriverUrl, caseSessionMap);
 
         String json = AiqUtil.gson.toJson(body);
@@ -213,7 +213,7 @@ public class ServiceAccess {
             wsd.getSocket().send(transMsgJson);
 
             for (Integer i = 0; i < 10; i++) {
-                Thread.sleep(200);
+                Thread.sleep(500);
                 String msg = wsd.getListener().getMsg();
                 if (msg != null) {
                     BasicTransportMessage recMsg = AiqUtil.gson.fromJson(msg, BasicTransportMessage.class);
