@@ -197,7 +197,7 @@ class RunSuiteExecutions {
                     new HashMap<>());
 
             //since we are running in only 1 browser platform combination we need to set only 1 job id here.
-            t.setJobId(resp.getJob_ids()[0]);
+            t.setJobId(resp.getJob_id()[0]);
         }
     }
 

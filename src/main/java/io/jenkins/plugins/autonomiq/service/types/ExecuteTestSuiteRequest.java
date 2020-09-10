@@ -4,28 +4,22 @@ import java.util.Map;
 import java.util.List;
 
 public class ExecuteTestSuiteRequest {
-    private String platform;
-    private List<BrowserDetails> browserDetails;
+    private List<PlatformBrowserDetails> platformBrowserDetails;
     private String executionType;
     private String executionMode;
     private boolean isRemoteDriver;
     private String remoteDriverUrl;
     private Map<Long, String> map;
 
-    public ExecuteTestSuiteRequest(String platform, List<BrowserDetails> browserDetails, String executionType,
+    public ExecuteTestSuiteRequest(List<PlatformBrowserDetails> browserDetails, String executionType,
                                    String executionMode, boolean isRemoteDriver, String remoteDriverUrl,
                                    Map<Long, String> map) {
-        this.platform = platform;
-        this.browserDetails = browserDetails;
+        this.platformBrowserDetails = browserDetails;
         this.executionType = executionType;
         this.executionMode = executionMode;
         this.isRemoteDriver = isRemoteDriver;
         this.remoteDriverUrl = remoteDriverUrl;
         this.map = map;
-    }
-
-    public String getPlatform() {
-        return platform;
     }
 
     public String getExecutionType() {
@@ -48,7 +42,7 @@ public class ExecuteTestSuiteRequest {
         return map;
     }
 
-    public List<BrowserDetails> getBrowserDetails() {
-        return browserDetails;
+    public List<PlatformBrowserDetails> getBrowserDetails() {
+        return platformBrowserDetails;
     }
 }

@@ -132,8 +132,14 @@ class RunTestExecutions {
         // use last test script in current list for test case
         for (TestCasesResponse r : testCasesById.values()) {
             TestScriptResponse[] scripts = r.getTestScripts();
+            if (scripts.length <= 0) {
+            	continue;
+            }
             TestScriptResponse s = scripts[scripts.length - 1];
             TestCaseData testData = testDataByTestCaseId.get(r.getTestCaseId());
+            if (testData == null) {
+            	continue;
+            }
             testData.setTestScriptId(s.getTestScriptid());
         }
 
