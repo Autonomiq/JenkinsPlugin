@@ -34,6 +34,8 @@ import java.util.Set;
 
 
 import jenkins.tasks.SimpleBuildStep;
+
+import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundSetter;
 
@@ -53,6 +55,11 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     private String genCaseList;
     private String runCaseList;
     private String runSuiteList;
+    private String proxyHost;
+    private String proxyPort;
+    private String proxyUser;
+    private String proxyPassword;
+    private Boolean httpProxy;
 
     private static Long pollingIntervalMs = 10000L;
 
@@ -65,7 +72,12 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                             String platformTestSuites, String browserTestSuites,
                             String genCaseList,
                             String runCaseList,
-                            String runSuiteList
+                            String runSuiteList,
+                            String proxyHost,
+                            String proxyPort,
+                            String proxyUser,
+                            String proxyPassword,
+                            Boolean httpProxy
     ) {
 
         this.aiqUrl = aiqUrl;
@@ -82,6 +94,11 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         this.genCaseList = genCaseList;
         this.runCaseList = runCaseList;
         this.runSuiteList = runSuiteList;
+        this.proxyHost = proxyHost;
+        this.proxyPort = proxyPort;
+        this.proxyUser = proxyUser;
+        this.proxyPassword = proxyPassword;
+        this.httpProxy = httpProxy;
     }
 
     @SuppressWarnings("unused")
@@ -243,8 +260,72 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getRunSuiteList() {
         return runSuiteList;
     }
+    
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
 
+    @SuppressWarnings("unused")
+    public String getProxyHost() {
+        return proxyHost;
+    }
+    
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setProxyPort(String proxyPort) {
+        this.proxyPort = proxyPort;
+    }
 
+    @SuppressWarnings("unused")
+    public String getProxyPort() {
+        return proxyPort;
+    }
+
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setProxyUser(String proxyUser) {
+        this.proxyUser = proxyUser;
+    }
+
+    @SuppressWarnings("unused")
+    public String getProxyUser() {
+        return proxyUser;
+    }
+    
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setProxyPassword(String proxyPassword) {
+        this.proxyPassword = proxyPassword;
+    }
+
+    @SuppressWarnings("unused")
+    public String getProxyPassword() {
+        return proxyPassword;
+    }
+    
+    @DataBoundSetter
+    @SuppressWarnings("unused")
+    public void setHttpProxy(Boolean httpProxy) {
+        this.httpProxy = httpProxy;
+    }
+
+    @SuppressWarnings("unused")
+    public Boolean getHttpProxy() {
+        return httpProxy;
+    }
+    
+    private static ServiceAccess getServiceAccess(String proxyHost, String proxyPort, String proxyUser, String proxyPassword,
+    		String aiqUrl, String login, String password, Boolean httpProxy) throws ServiceException {
+    	ServiceAccess svc = null;
+    	if (httpProxy && !StringUtils.isEmpty(proxyHost) && !StringUtils.isEmpty(proxyPort) ) {
+    		svc = new ServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password);
+    	} else {
+    		 svc = new ServiceAccess(aiqUrl, login, password);
+    	}
+    	return svc;
+    }
 
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher,
@@ -300,7 +381,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         ServiceAccess svc = null;
         try {
-            svc = new ServiceAccess(aiqUrl, login, password);
+        	svc = getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
         } catch (Exception e) {
             ok = false;
             log.println("Authentication with Autonomiq service failed");
@@ -382,27 +463,42 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                                                  @QueryParameter String aiqUrl,
                                                  @QueryParameter String login,
                                                  @QueryParameter String password,
-                                                 @QueryParameter String project)
+                                                 @QueryParameter String project,
+                                                 @QueryParameter String proxyHost,
+                                                 @QueryParameter String proxyPort,
+                                                 @QueryParameter String proxyUser,
+                                                 @QueryParameter String proxyPassword,
+                                                 @QueryParameter Boolean httpProxy)
                 throws IOException, ServletException {
 
-            return checkTestCasesFromText(value, aiqUrl, login, password, project);
+            return checkTestCasesFromText(value, aiqUrl, login, password, project, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
         }
 
         public FormValidation doCheckRunCaseList(@QueryParameter String value,
                                                  @QueryParameter String aiqUrl,
                                                  @QueryParameter String login,
                                                  @QueryParameter String password,
-                                                 @QueryParameter String project)
+                                                 @QueryParameter String project,
+                                                 @QueryParameter String proxyHost,
+                                                 @QueryParameter String proxyPort,
+                                                 @QueryParameter String proxyUser,
+                                                 @QueryParameter String proxyPassword,
+                                                 @QueryParameter Boolean httpProxy)
                 throws IOException, ServletException {
 
-            return checkTestCasesFromText(value, aiqUrl, login, password, project);
+            return checkTestCasesFromText(value, aiqUrl, login, password, project, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
         }
 
         public FormValidation doCheckRunSuiteList(@QueryParameter String value,
                                                   @QueryParameter String aiqUrl,
                                                   @QueryParameter String login,
                                                   @QueryParameter String password,
-                                                  @QueryParameter String project)
+                                                  @QueryParameter String project,
+                                                  @QueryParameter String proxyHost,
+                                                  @QueryParameter String proxyPort,
+                                                  @QueryParameter String proxyUser,
+                                                  @QueryParameter String proxyPassword,
+                                                  @QueryParameter Boolean httpProxy)
                 throws IOException, ServletException {
 
             if (value.length() > 0
@@ -428,7 +524,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                     // try checking the items
 
                     try {
-                        ServiceAccess svc = new ServiceAccess(aiqUrl, login, password);
+                        ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, proxyPassword, httpProxy);
                         Set<String> set = getTestSuiteSet(svc, pd.getProjectId());
                         if (set != null) {
                             for (String item : itemsObj.getItemList()) {
@@ -453,7 +549,12 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                                                       String aiqUrl,
                                                       String login,
                                                       String password,
-                                                      String project) {
+                                                      String project,
+                                                      String proxyHost,
+                                                      String proxyPort,
+                                                      String proxyUser,
+                                                      String proxyPassword,
+                                                      Boolean httpProxy) {
             if (value.length() > 0
                     && aiqUrl.length() > 0
                     && login.length() > 0
@@ -477,7 +578,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                     // try checking the items
 
                     try {
-                        ServiceAccess svc = new ServiceAccess(aiqUrl, login, password);
+                        ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
                         Set<String> set = getTestCaseSet(svc, pd.getProjectId());
                         if (set != null) {
                             for (String item : itemsObj.getItemList()) {
@@ -564,14 +665,19 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         @SuppressWarnings("unused")
         public ListBoxModel doFillProjectItems(@QueryParameter String aiqUrl,
                                                @QueryParameter String login,
-                                               @QueryParameter String password) {
+                                               @QueryParameter String password,
+                                               @QueryParameter String proxyHost,
+                                               @QueryParameter String proxyPort,
+                                               @QueryParameter String proxyUser,
+                                               @QueryParameter String proxyPassword,
+                                               @QueryParameter Boolean httpProxy) {
 
             // make sure other fields have been filled in
             if (aiqUrl.length() > 0 && login.length() > 0 && password.length() > 0) {
 
                 try {
 
-                    Option[] options = getProjectOptions(aiqUrl, login, password);
+                    Option[] options = getProjectOptions(aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
 
                     return new ListBoxModel(options);
 
@@ -624,12 +730,12 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
 
 
-        private Option[] getProjectOptions(String aiqUrl, String login, String password) throws ServiceException {
+        private Option[] getProjectOptions(String aiqUrl, String login, String password, String proxyHost, String proxyPort, String proxyUser, String proxyPassword, Boolean httpProxy) throws ServiceException {
 
             Option[] ret;
 
             try {
-                ServiceAccess svc = new ServiceAccess(aiqUrl, login, password);
+                ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, proxyPassword, httpProxy);
 
                 Collection<DiscoveryResponse> dataList = svc.getProjectData();
 

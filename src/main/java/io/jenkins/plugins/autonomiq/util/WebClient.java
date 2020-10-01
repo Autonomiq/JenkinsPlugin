@@ -1,5 +1,12 @@
 package io.jenkins.plugins.autonomiq.util;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.lang.StringUtils;
+
 import io.jenkins.plugins.autonomiq.service.ServiceException;
 import okhttp3.*;
 
@@ -7,6 +14,42 @@ public class WebClient {
 
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private final OkHttpClient client;
+    
+    private int responseCount(Response response) {
+    	  int result = 1;
+    	  while ((response = response.priorResponse()) != null) {
+    	    result++;
+    	  }
+    	  return result;
+    	}
+    
+    public WebClient(String proxyHost, String proxyPort, String proxyUser, String proxyPassword) {
+    	int proxyPortInt = Integer.parseInt(proxyPort);
+    	if (!StringUtils.isEmpty(proxyUser) || !StringUtils.isEmpty(proxyPassword) ) {
+    	Authenticator proxyAuthenticator = new Authenticator() {
+    		  @Override public Request authenticate(Route route, Response response) throws IOException {
+    		       String credential = Credentials.basic(proxyUser, proxyPassword);
+//    		       if (credential.equals(response.request().header("Proxy-Authorization"))) {
+//    		    	    return null; // If we already failed with these credentials, don't retry.
+//    		       }
+//    		       if (responseCount(response) >= 20) {
+//    		    	    return null; // If we've failed 3 times, give up.
+//    		    	  }
+    		       return response.request().newBuilder()
+    		           .header("Proxy-Authorization", credential)
+    		           .build();
+    		  }
+    		};
+    		Proxy proxyTest = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPortInt));
+    		client = new OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS).writeTimeout(30, TimeUnit.SECONDS)
+    			    .readTimeout(30, TimeUnit.SECONDS).retryOnConnectionFailure(false).
+    				proxy(proxyTest).proxyAuthenticator(proxyAuthenticator).build();
+    		
+    	} else {
+    		Proxy proxyTest = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPortInt));
+    		client = new OkHttpClient.Builder().proxy(proxyTest).build();
+    	}
+    }
 
     public WebClient() {
         client = new OkHttpClient();
@@ -19,6 +62,7 @@ public class WebClient {
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
+        	if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
             int code = response.code();
             if (code != 200) {
                 throw new ServiceException(String.format("On request to %s got response code %d with message '%s'",
@@ -38,6 +82,7 @@ public class WebClient {
                 .post(body)
                 .build();
         try (Response response = client.newCall(request).execute()) {
+        	if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
             int code = response.code();
             if (code != 200) {
                 throw new ServiceException(String.format("On request to %s got response code %d with message '%s'",

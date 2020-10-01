@@ -1,6 +1,22 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:c="/lib/credentials" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
+	 <f:optionalBlock inline="true" field="httpProxy" title="${%HttpProxy}" >
+	    <f:entry title="${%ProxyHost}" field="proxyHost">
+	        <f:textbox  />
+	    </f:entry>
+	     <f:entry title="${%ProxyPort}" field="proxyPort">
+	        <f:textbox  />
+	    </f:entry>
+	     <f:entry title="${%ProxyUser}" field="proxyUser">
+	        <f:textbox  />
+	    </f:entry>
+	     <f:entry title="${%ProxyPassword}" field="proxyPassword">
+	        <f:password  />
+	    </f:entry>
+    </f:optionalBlock>
+    
+    
     <f:entry title="${%AiqUrl}" field="aiqUrl">
         <f:textbox  />
     </f:entry>
