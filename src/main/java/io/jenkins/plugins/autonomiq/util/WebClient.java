@@ -26,29 +26,38 @@ public class WebClient {
     public WebClient(String proxyHost, String proxyPort, String proxyUser, String proxyPassword) {
     	int proxyPortInt = Integer.parseInt(proxyPort);
     	if (!StringUtils.isEmpty(proxyUser) || !StringUtils.isEmpty(proxyPassword) ) {
-    	Authenticator proxyAuthenticator = new Authenticator() {
-    		  @Override public Request authenticate(Route route, Response response) throws IOException {
-    		       String credential = Credentials.basic(proxyUser, proxyPassword);
-//    		       if (credential.equals(response.request().header("Proxy-Authorization"))) {
-//    		    	    return null; // If we already failed with these credentials, don't retry.
-//    		       }
-//    		       if (responseCount(response) >= 20) {
-//    		    	    return null; // If we've failed 3 times, give up.
-//    		    	  }
-    		       return response.request().newBuilder()
-    		           .header("Proxy-Authorization", credential)
-    		           .build();
-    		  }
-    		};
-    		Proxy proxyTest = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPortInt));
-    		client = new OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS).writeTimeout(30, TimeUnit.SECONDS)
-    			    .readTimeout(30, TimeUnit.SECONDS).retryOnConnectionFailure(false).
-    				proxy(proxyTest).proxyAuthenticator(proxyAuthenticator).build();
-    		
-    	} else {
-    		Proxy proxyTest = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPortInt));
-    		client = new OkHttpClient.Builder().proxy(proxyTest).build();
-    	}
+	    	Authenticator proxyAuthenticator = new Authenticator() {
+	    		int invalidCredentialAttempts = 0;
+	    		  @Override public Request authenticate(Route route, Response response) throws IOException {
+	    		       String credential = Credentials.basic(proxyUser, proxyPassword);
+	    		       if (credential.equals(response.request().header("Proxy-Authorization"))) {
+	    		    	   if (invalidCredentialAttempts > 100) {
+	    		    		   return null; // If we already failed with these credentials 100 times, don't retry.
+	    		    	   } else {
+	    		    		   invalidCredentialAttempts++;
+	    		    	   }
+	    		       } else {
+	    		    	   //reset counter after successful attempt as we want to count continuous
+	    		    	   //unsuccessful 1000 attempts only
+	    		    	   invalidCredentialAttempts = 0;
+	    		       }
+	    		       if (responseCount(response) >= 100) {
+	    		    	    return null; // If we've failed 100 times, give up.
+	    		    	  }
+	    		       return response.request().newBuilder()
+	    		           .header("Proxy-Authorization", credential)
+	    		           .build();
+	    		  }
+	    		};
+	    		Proxy proxyTest = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPortInt));
+	    		client = new OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS).writeTimeout(30, TimeUnit.SECONDS)
+	    			    .readTimeout(30, TimeUnit.SECONDS).retryOnConnectionFailure(false).
+	    				proxy(proxyTest).proxyAuthenticator(proxyAuthenticator).build();
+	    		
+	    	} else {
+	    		Proxy proxyTest = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPortInt));
+	    		client = new OkHttpClient.Builder().proxy(proxyTest).build();
+	    	}
     }
 
     public WebClient() {
