@@ -735,7 +735,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             Option[] ret;
 
             try {
-                ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, proxyPassword, httpProxy);
+                ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
 
                 Collection<DiscoveryResponse> dataList = svc.getProjectData();
 
