@@ -524,7 +524,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                     // try checking the items
 
                     try {
-                        ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, proxyPassword, httpProxy);
+                        ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
                         Set<String> set = getTestSuiteSet(svc, pd.getProjectId());
                         if (set != null) {
                             for (String item : itemsObj.getItemList()) {

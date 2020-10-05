@@ -25,7 +25,7 @@ public class WebClient {
     
     public WebClient(String proxyHost, String proxyPort, String proxyUser, String proxyPassword) {
     	int proxyPortInt = Integer.parseInt(proxyPort);
-    	if (!StringUtils.isEmpty(proxyUser) || !StringUtils.isEmpty(proxyPassword) ) {
+    	if (!StringUtils.isEmpty(proxyUser) && !StringUtils.isEmpty(proxyPassword) ) {
 	    	Authenticator proxyAuthenticator = new Authenticator() {
 	    		int invalidCredentialAttempts = 0;
 	    		  @Override public Request authenticate(Route route, Response response) throws IOException {
