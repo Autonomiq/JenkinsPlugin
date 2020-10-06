@@ -32,16 +32,30 @@ public class ServiceAccess {
     private Integer accountId;
     private WebClient web;
     private String token;
+    private String proxyHost;
+    
+    public ServiceAccess(String proxyHost, String proxyPort, String proxyUser, String proxyPassword, String aiqUrl, String login, String password) throws ServiceException {
+    	this.aiqUrl = aiqUrl;
+        web = new WebClient(proxyHost, proxyPort, proxyUser, proxyPassword);
+
+        authenticate(aiqUrl, login, password);
+
+    }
 
     public ServiceAccess(String aiqUrl,
                          String login,
                          String password) throws ServiceException {
-
         this.aiqUrl = aiqUrl;
-
         web = new WebClient();
 
-        AuthenticateUserBody authBody = new AuthenticateUserBody(login, password);
+        authenticate(aiqUrl, login, password);
+
+    }
+    
+    private void authenticate(String aiqUrl,
+            String login,
+            String password) throws ServiceException {
+    	AuthenticateUserBody authBody = new AuthenticateUserBody(login, password);
         String authJson = AiqUtil.gson.toJson(authBody);
 
         try {
@@ -56,7 +70,6 @@ public class ServiceAccess {
         } catch (Exception e) {
             throw new ServiceException("Exception in authentication", e);
         }
-
     }
 
     public TestCaseInfo getTestCaseInfo(Long testCaseId, TestCaseInfoType type) throws ServiceException {
