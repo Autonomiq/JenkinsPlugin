@@ -78,7 +78,6 @@ public class RunTests {
     private Long pollingIntervalMs;
 
     private Map<Long, TestCasesResponse> testCasesById;
-    //private Map<String, TestCasesResponse> testCasesByName;
     private Map<Long, TestScriptResponse> testScriptByTestCaseId;
     private Set<Long> gensSucceededCaseId;
     private Set<Long> gensFailedCaseId;
@@ -210,12 +209,10 @@ public class RunTests {
 
     private void getAllTestCases(Long projectId, Long discoveryId) throws ServiceException {
         testCasesById = new HashMap<>();
-        //testCasesByName = new TreeMap<>();
 
         List<TestCasesResponse> tc = svc.getTestCasesForProject(projectId, discoveryId);
         for (TestCasesResponse t : tc) {
             testCasesById.put(t.getTestCaseId(), t);
-            //testCasesByName.put(t.getTestCaseName(), t);
         }
     }
 
@@ -252,9 +249,6 @@ public class RunTests {
                 log.println("Check scripts generation sleep interrupted");
             }
 
-//            log.println();
-//            log.printf("==== Checking %d test cases still in progress\n", testCasesInProgress.size());
-
             Iterator<Long> i = testCasesInProgress.iterator();
             while (i.hasNext()) {
 
@@ -273,17 +267,13 @@ public class RunTests {
 
                         switch (p) {
                             case INPROGRESS:
-//                                log.printf("Script generation for test case %s still in progress\n",
-//                                        testCaseName);
                                 break;
                             case FAILED:
-                                //log.printf("Script generation for test case '%s' failed\n", testCaseName);
                                 scriptGenResponses.put(testCaseId, script);
                                 gensFailedCaseId.add(testCaseId);
                                 i.remove();
                                 break;
                             case SUCCESS:
-                                //log.printf("Script generation for test case '%s' succeeded\n", testCaseName);
                                 scriptGenResponses.put(testCaseId, script);
                                 gensSucceededCaseId.add(testCaseId);
                                 i.remove();
@@ -321,12 +311,6 @@ public class RunTests {
                     break;
                 default:
             }
-
-//            log.printf("Test case '%s' script gen status '%s'\n", testCasesById.get(r.getTestCaseId()).getTestCaseName(),
-//                                            r.getTestScriptGenerationStatus());
-//            if (r.getTestScriptDownloadLink() != null) {
-//                log.printf("  Script download link: %s\n", r.getTestScriptDownloadLink());
-//            }
         }
 
         if (pass.size() > 0) {
@@ -402,14 +386,11 @@ public class RunTests {
 
                 switch (stat) {
                     case INPROGRESS:
-                        //log.println("Test execution still in progress");
                         break;
                     case SUCCESS:
-                        //log.println("Test execution succeeded");
                         execSucceededId.add(testExecId);
                         i.remove();
                     case ERROR:
-                        //log.println("Test execution failed");
                         execFailedId.add(testExecId);
                         i.remove();
                 }
