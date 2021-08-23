@@ -7,10 +7,13 @@
         <version>3.4</version>
         <relativePath />
     </parent>
-    <groupId>io.jenkins.plugins</groupId>
-    <artifactId>AutonomiqPlugin</artifactId>
+    <groupId>org.jenkins-ci.plugins</groupId>
+    <artifactId>Autonomiq</artifactId>
     <version>1.9</version>
     <packaging>hpi</packaging>
+    <name>Autonomiq Plugin</name>
+    <url>https://github.com/jenkinsci/autonomiq-plugin</url>
+    <description>Plugin to support Autonomiq tests</description>
     <properties>
         <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
         <jenkins.version>2.7.3</jenkins.version>
@@ -21,8 +24,7 @@
           ~ stapler-plugin.version: The Stapler Maven plugin version required by the plugin.
      -->
     </properties>
-    <name>Autonomiq Plugin</name>
-    <description>Plugin to support Autonomiq tests</description>
+
     <!-- The default licence for Jenkins OSS Plugins is MIT. Substitute for the applicable one if needed. -->
     <licenses>
         <license>
@@ -104,14 +106,13 @@
       </developer>
     </developers> -->
 
-    <!-- Assuming you want to host on @jenkinsci:
-    <url>https://wiki.jenkins.io/display/JENKINS/TODO+Plugin</url>
     <scm>
-        <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-        <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
+        <connection>scm:git:git://github.com/jenkinsci/Autonomiq-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:jenkinsci/Autonomiq-plugin.git</developerConnection>
+        <url>https://github.com/jenkinsci/Autonomiq-plugin</url>
+        <tag>HEAD</tag>
     </scm>
-    -->
+
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
