@@ -1,34 +1,74 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:c="/lib/credentials" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
+	 <f:optionalBlock inline="true" field="httpProxy" title="${%HttpProxy}" >
+	    <f:entry title="${%ProxyHost}" field="proxyHost">
+	        <f:textbox  />
+	    </f:entry>
+	     <f:entry title="${%ProxyPort}" field="proxyPort">
+	        <f:textbox  />
+	    </f:entry>
+	     <f:entry title="${%ProxyUser}" field="proxyUser">
+	        <f:textbox  />
+	    </f:entry>
+	     <f:entry title="${%ProxyPassword}" field="proxyPassword">
+	        <f:password  />
+	    </f:entry>
+    </f:optionalBlock>
+    
+    
     <f:entry title="${%AiqUrl}" field="aiqUrl">
-        <f:textbox default="${descriptor.getDefaultAiqUrl()}" />
+        <f:textbox  />
     </f:entry>
 
     <f:entry title="${%Login}" field="login">
-        <f:textbox default="${descriptor.getDefaultLogin()}" />
+        <f:textbox  />
     </f:entry>
 
     <f:entry title="${%Password}" field="password">
-        <f:textbox default="${descriptor.getDefaultPassword()}" />
+        <f:password  />
     </f:entry>
 
     <f:entry title="${%Project}" field="project">
         <f:select />
     </f:entry>
 
-    <f:entry title="${%GenScripts}" field="genScripts" >
-        <f:checkbox />
-    </f:entry>
+    <f:optionalBlock inline="true" field="genScripts" title="${%GenScripts}" >
+
+        <f:entry title="${%GenCaseList}" field="genCaseList">
+            <f:textarea />
+        </f:entry>
+
+    </f:optionalBlock>
 
     <f:optionalBlock inline="true" field="runTestCases" title="${%RunTestCases}" >
 
-        <f:entry title="${%Platform}" field="platform">
+        <f:entry title="${%Platform}" field="platformTestCases">
             <f:select />
         </f:entry>
 
-        <f:entry title="${%Browser}" field="browser">
+        <f:entry title="${%Browser}" field="browserTestCases">
             <f:select />
+        </f:entry>
+
+         <f:entry title="${%RunCaseList}" field="runCaseList">
+            <f:textarea value="${descriptor.getDefaultGenScriptsList()}" />
+         </f:entry>
+
+    </f:optionalBlock>
+
+    <f:optionalBlock inline="true" field="runTestSuites" title="${%RunTestSuites}" >
+
+        <f:entry title="${%Platform}" field="platformTestSuites">
+            <f:select />
+        </f:entry>
+
+        <f:entry title="${%Browser}" field="browserTestSuites">
+            <f:select />
+        </f:entry>
+
+        <f:entry title="${%RunSuiteList}" field="runSuiteList">
+            <f:textarea />
         </f:entry>
 
     </f:optionalBlock>

@@ -14,8 +14,11 @@ import io.jenkins.plugins.autonomiq.service.ServiceAccess;
 import io.jenkins.plugins.autonomiq.service.ServiceException;
 import io.jenkins.plugins.autonomiq.service.types.AutInformation;
 import io.jenkins.plugins.autonomiq.service.types.DiscoveryResponse;
+
+import io.jenkins.plugins.autonomiq.service.types.GetTestSuitesResponse;
 import io.jenkins.plugins.autonomiq.service.types.TestCasesResponse;
-import io.jenkins.plugins.autonomiq.service.types.TestScriptResponse;
+import io.jenkins.plugins.autonomiq.testplan.TestPlan;
+import io.jenkins.plugins.autonomiq.testplan.TestPlanParser;
 import io.jenkins.plugins.autonomiq.util.AiqUtil;
 import io.jenkins.plugins.autonomiq.util.TimeStampedLogger;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -23,11 +26,16 @@ import org.kohsuke.stapler.QueryParameter;
 
 import javax.servlet.ServletException;
 import java.io.*;
-import java.util.ArrayList;
+
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 import jenkins.tasks.SimpleBuildStep;
+
+import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundSetter;
 
@@ -39,8 +47,19 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     private String project; // json of ProjectData class
     private Boolean genScripts;
     private Boolean runTestCases;
-    private String platform;
-    private String browser;
+    private Boolean runTestSuites;
+    private String platformTestCases;
+    private String browserTestCases;
+    private String platformTestSuites;
+    private String browserTestSuites;
+    private String genCaseList;
+    private String runCaseList;
+    private String runSuiteList;
+    private String proxyHost;
+    private String proxyPort;
+    private String proxyUser;
+    private String proxyPassword;
+    private Boolean httpProxy;
 
     private static Long pollingIntervalMs = 10000L;
 
@@ -48,7 +67,17 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public AutonomiqBuilder(String aiqUrl, String login, String password, String project,
                             Boolean genScripts,
                             Boolean runTestCases,
-                            String platform, String browser
+                            Boolean runTestSuites,
+                            String platformTestCases, String browserTestCases,
+                            String platformTestSuites, String browserTestSuites,
+                            String genCaseList,
+                            String runCaseList,
+                            String runSuiteList,
+                            String proxyHost,
+                            String proxyPort,
+                            String proxyUser,
+                            String proxyPassword,
+                            Boolean httpProxy
     ) {
 
         this.aiqUrl = aiqUrl;
@@ -57,8 +86,19 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         this.project = project;
         this.genScripts = genScripts;
         this.runTestCases = runTestCases;
-        this.platform = platform;
-        this.browser = browser;
+        this.runTestSuites = runTestSuites;
+        this.platformTestCases = platformTestCases;
+        this.browserTestCases = browserTestCases;
+        this.platformTestSuites = platformTestSuites;
+        this.browserTestSuites = browserTestSuites;
+        this.genCaseList = genCaseList;
+        this.runCaseList = runCaseList;
+        this.runSuiteList = runSuiteList;
+        this.proxyHost = proxyHost;
+        this.proxyPort = proxyPort;
+        this.proxyUser = proxyUser;
+        this.proxyPassword = proxyPassword;
+        this.httpProxy = httpProxy;
     }
 
     @SuppressWarnings("unused")
@@ -129,35 +169,202 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
     @SuppressWarnings("unused")
     @DataBoundSetter
-    public void setPlatform(String platform) {
-        this.platform = platform;
+    public void setRunTestSuites(Boolean runTestSuites) {
+        this.runTestSuites = runTestSuites;
     }
 
     @SuppressWarnings("unused")
-    public String getPlatform() {
-        return platform;
+    public Boolean getRunTestSuites() {
+        return runTestSuites;
+    }
+
+
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setPlatformTestCases(String platform) {
+        this.platformTestCases = platform;
+    }
+
+    @SuppressWarnings("unused")
+    public String getPlatformTestCases() {
+        return platformTestCases;
     }
 
     @SuppressWarnings("unused")
     @DataBoundSetter
-    public void setBrowser(String browser) {
-        this.browser = browser;
+    public void setBrowserTestCases(String browser) {
+        this.browserTestCases = browser;
     }
 
     @SuppressWarnings("unused")
-    public String getBrowser() {
-        return browser;
+    public String getBrowserTestCases() {
+        return browserTestCases;
+    }
+
+
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setPlatformTestSuites(String platform) {
+        this.platformTestSuites = platform;
+    }
+
+    @SuppressWarnings("unused")
+    public String getPlatformTestSuites() {
+        return platformTestSuites;
+    }
+
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setBrowserTestSuites(String browser) {
+        this.browserTestSuites = browser;
+    }
+
+    @SuppressWarnings("unused")
+    public String getBrowserTestSuites() {
+        return browserTestSuites;
+    }
+
+
+
+
+    @SuppressWarnings("unused")
+    public String getRunCaseList() {
+        return runCaseList;
+    }
+
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setRunCaseList(String runCaseList) {
+        this.runCaseList = runCaseList;
+    }
+
+    @SuppressWarnings("unused")
+    public void setGenCaseList(String genCaseList) {
+        this.genCaseList = genCaseList;
+    }
+
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setRunSuiteList(String runSuiteList) {
+        this.runSuiteList = runSuiteList;
+    }
+
+    @SuppressWarnings("unused")
+    public String getGenCaseList() {
+
+        return genCaseList;
+    }
+
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public String getRunSuiteList() {
+        return runSuiteList;
+    }
+    
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    @SuppressWarnings("unused")
+    public String getProxyHost() {
+        return proxyHost;
+    }
+    
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setProxyPort(String proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+    @SuppressWarnings("unused")
+    public String getProxyPort() {
+        return proxyPort;
+    }
+
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setProxyUser(String proxyUser) {
+        this.proxyUser = proxyUser;
+    }
+
+    @SuppressWarnings("unused")
+    public String getProxyUser() {
+        return proxyUser;
+    }
+    
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setProxyPassword(String proxyPassword) {
+        this.proxyPassword = proxyPassword;
+    }
+
+    @SuppressWarnings("unused")
+    public String getProxyPassword() {
+        return proxyPassword;
+    }
+    
+    @DataBoundSetter
+    @SuppressWarnings("unused")
+    public void setHttpProxy(Boolean httpProxy) {
+        this.httpProxy = httpProxy;
+    }
+
+    @SuppressWarnings("unused")
+    public Boolean getHttpProxy() {
+        return httpProxy;
+    }
+    
+    private static ServiceAccess getServiceAccess(String proxyHost, String proxyPort, String proxyUser, String proxyPassword,
+    		String aiqUrl, String login, String password, Boolean httpProxy) throws ServiceException {
+    	ServiceAccess svc = null;
+    	if (httpProxy && !StringUtils.isEmpty(proxyHost) && !StringUtils.isEmpty(proxyPort) ) {
+    		svc = new ServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password);
+    	} else {
+    		 svc = new ServiceAccess(aiqUrl, login, password);
+    	}
+    	return svc;
     }
 
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher,
                         TaskListener listener) throws InterruptedException, IOException {
-
+        
         TimeStampedLogger log = new TimeStampedLogger(listener.getLogger());
 
-        Boolean generateScripts = true;
-
         boolean ok = true;
+
+//        TestPlan plan = null;
+//
+//        String trimmedTestPlan = null;
+//        if (runCaseList != null) {
+//            trimmedTestPlan = runCaseList.trim();
+//        }
+//
+//        if (trimmedTestPlan == null || trimmedTestPlan.length() == 0) {
+//            log.println();
+//            log.println("No test plan specified. All tests from project will run in parallel");
+//        } else {
+//            InputStream is = new ByteArrayInputStream(trimmedTestPlan.getBytes());
+//
+//            TestPlanParser parser;
+//            try {
+//                log.println("Found a test plan and parsing the file");
+//                parser = new TestPlanParser(is, log);
+//                plan = parser.parseTestSequence();
+//
+//                log.println("Test plan parsing completed");
+//                //parser.dumpTest(seq);
+//            } catch (PluginException e) {
+//                log.println("Parsing test plan file failed");
+//                log.println(AiqUtil.getExceptionTrace(e));
+//                run.setResult(Result.FAILURE);
+//                return;
+//            } finally {
+//                is.close();
+//            }
+//        }
 
         AiqUtil.gson.fromJson(project, ProjectData.class);
 
@@ -174,7 +381,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         ServiceAccess svc = null;
         try {
-            svc = new ServiceAccess(aiqUrl, login, password);
+        	svc = getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
         } catch (Exception e) {
             ok = false;
             log.println("Authentication with Autonomiq service failed");
@@ -183,8 +390,16 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         if (ok) {
 
-            RunTests rt = new RunTests(svc, log, pd, pollingIntervalMs);
-            ok = rt.runAllTestsForProject(genScripts, runTestCases, platform, browser);
+            try {
+                RunTests rt = new RunTests(svc, log, pd, pollingIntervalMs);
+                ok = rt.runTests(genScripts, runTestCases, runTestSuites,
+                        platformTestCases, browserTestCases,
+                        platformTestSuites, browserTestSuites,
+                        genCaseList, runCaseList, runSuiteList);
+            } catch (PluginException e) {
+                log.println("Running test case failed with exception");
+                log.println(AiqUtil.getExceptionTrace(e));
+            }
 
         }
 
@@ -234,7 +449,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
 
         @SuppressWarnings("unused")
-        public FormValidation doCheckProject(@QueryParameter String value, @QueryParameter String project)
+        public FormValidation doCheckProject(@QueryParameter String value)
                 throws IOException, ServletException {
             if (value.length() == 0)
                 return FormValidation.error(Messages.AutonomiqBuilder_DescriptorImpl_errors_missingProject());
@@ -242,6 +457,176 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 //                return FormValidation.warning(Messages.AutonomiqBuilder_DescriptorImpl_warnings_tooShort());
 
             return FormValidation.ok();
+        }
+
+        public FormValidation doCheckGenCaseList(@QueryParameter String value,
+                                                 @QueryParameter String aiqUrl,
+                                                 @QueryParameter String login,
+                                                 @QueryParameter String password,
+                                                 @QueryParameter String project,
+                                                 @QueryParameter String proxyHost,
+                                                 @QueryParameter String proxyPort,
+                                                 @QueryParameter String proxyUser,
+                                                 @QueryParameter String proxyPassword,
+                                                 @QueryParameter Boolean httpProxy)
+                throws IOException, ServletException {
+
+            return checkTestCasesFromText(value, aiqUrl, login, password, project, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+        }
+
+        public FormValidation doCheckRunCaseList(@QueryParameter String value,
+                                                 @QueryParameter String aiqUrl,
+                                                 @QueryParameter String login,
+                                                 @QueryParameter String password,
+                                                 @QueryParameter String project,
+                                                 @QueryParameter String proxyHost,
+                                                 @QueryParameter String proxyPort,
+                                                 @QueryParameter String proxyUser,
+                                                 @QueryParameter String proxyPassword,
+                                                 @QueryParameter Boolean httpProxy)
+                throws IOException, ServletException {
+
+            return checkTestCasesFromText(value, aiqUrl, login, password, project, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+        }
+
+        public FormValidation doCheckRunSuiteList(@QueryParameter String value,
+                                                  @QueryParameter String aiqUrl,
+                                                  @QueryParameter String login,
+                                                  @QueryParameter String password,
+                                                  @QueryParameter String project,
+                                                  @QueryParameter String proxyHost,
+                                                  @QueryParameter String proxyPort,
+                                                  @QueryParameter String proxyUser,
+                                                  @QueryParameter String proxyPassword,
+                                                  @QueryParameter Boolean httpProxy)
+                throws IOException, ServletException {
+
+            if (value.length() > 0
+                    && aiqUrl.length() > 0
+                    && login.length() > 0
+                    && password.length() > 0
+                    && project.length() > 0) {
+
+                // get the project or skip
+                ProjectData pd;
+                try {
+                    pd = AiqUtil.gson.fromJson(project, ProjectData.class);
+                } catch (Exception e) {
+                    return FormValidation.ok();
+                }
+
+                AiqUtil.ItemListFromString itemsObj = AiqUtil.getItemListFromString(value);
+
+                if (itemsObj.getError() != null) {
+                    // show error from processing text
+                    return FormValidation.error(itemsObj.getError());
+                } else if (itemsObj.getItemList().size() > 0) {
+                    // try checking the items
+
+                    try {
+                        ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
+                        Set<String> set = getTestSuiteSet(svc, pd.getProjectId());
+                        if (set != null) {
+                            for (String item : itemsObj.getItemList()) {
+                                if (!set.contains(item)) {
+                                    return FormValidation.error(String.format("Test suite not found: '%s'", item));
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        return FormValidation.ok();
+                    }
+
+                }
+
+            }
+
+            return FormValidation.ok();
+
+        }
+
+        private FormValidation checkTestCasesFromText(String value,
+                                                      String aiqUrl,
+                                                      String login,
+                                                      String password,
+                                                      String project,
+                                                      String proxyHost,
+                                                      String proxyPort,
+                                                      String proxyUser,
+                                                      String proxyPassword,
+                                                      Boolean httpProxy) {
+            if (value.length() > 0
+                    && aiqUrl.length() > 0
+                    && login.length() > 0
+                    && password.length() > 0
+                    && project.length() > 0) {
+
+                // get the project or skip
+                ProjectData pd;
+                try {
+                    pd = AiqUtil.gson.fromJson(project, ProjectData.class);
+                } catch (Exception e) {
+                    return FormValidation.ok();
+                }
+
+                AiqUtil.ItemListFromString itemsObj = AiqUtil.getItemListFromString(value);
+
+                if (itemsObj.getError() != null) {
+                    // show error from processing text
+                    return FormValidation.error(itemsObj.getError());
+                } else if (itemsObj.getItemList().size() > 0) {
+                    // try checking the items
+
+                    try {
+                        ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
+                        Set<String> set = getTestCaseSet(svc, pd.getProjectId());
+                        if (set != null) {
+                            for (String item : itemsObj.getItemList()) {
+                                if (!set.contains(item)) {
+                                    return FormValidation.error(String.format("Test case not found: '%s'", item));
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        return FormValidation.ok();
+                    }
+
+                }
+
+            }
+
+            return FormValidation.ok();
+
+        }
+
+        private Set<String> getTestCaseSet(ServiceAccess svc, Long projectId) {
+            try {
+                Set<String> set = new HashSet<>();
+
+                List<TestCasesResponse> cases = svc.getTestCasesForProject(projectId);
+
+                for (TestCasesResponse t : cases) {
+                    set.add(t.getTestCaseName());
+                }
+                return set;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        private Set<String> getTestSuiteSet(ServiceAccess svc, Long projectId) {
+            try {
+                Set<String> set = new HashSet<>();
+
+                List<GetTestSuitesResponse> suites = svc.getTestSuitesForProject(projectId);
+
+                for (GetTestSuitesResponse t : suites) {
+                    set.add(t.getTestSuiteName());
+                }
+                return set;
+            } catch (Exception e) {
+                return null;
+            }
         }
 
         @SuppressWarnings("unused")
@@ -262,6 +647,11 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return ret;
         }
 
+//        @SuppressWarnings("unused")
+//        public String getDefaultGenScriptsList() {
+//            return "testone\ntesttwo";
+//        }
+
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
             return true;
@@ -275,14 +665,19 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         @SuppressWarnings("unused")
         public ListBoxModel doFillProjectItems(@QueryParameter String aiqUrl,
                                                @QueryParameter String login,
-                                               @QueryParameter String password) {
+                                               @QueryParameter String password,
+                                               @QueryParameter String proxyHost,
+                                               @QueryParameter String proxyPort,
+                                               @QueryParameter String proxyUser,
+                                               @QueryParameter String proxyPassword,
+                                               @QueryParameter Boolean httpProxy) {
 
             // make sure other fields have been filled in
             if (aiqUrl.length() > 0 && login.length() > 0 && password.length() > 0) {
 
                 try {
 
-                    Option[] options = getProjectOptions(aiqUrl, login, password);
+                    Option[] options = getProjectOptions(aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
 
                     return new ListBoxModel(options);
 
@@ -296,17 +691,36 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
 
         @SuppressWarnings("unused")
-        public ListBoxModel doFillPlatformItems() {
+        public ListBoxModel doFillPlatformTestCasesItems() {
 
-            String[] values = {"Linux", "Windows"};
+            String[] values = {"Linux"};  //, "Windows"};
+
+            Option[] options = buildSimpleOptions(values);
+
+            return new ListBoxModel(options);
+        }
+        @SuppressWarnings("unused")
+        public ListBoxModel doFillPlatformTestSuitesItems() {
+
+            String[] values = {"Linux"};  //, "Windows"};
 
             Option[] options = buildSimpleOptions(values);
 
             return new ListBoxModel(options);
         }
 
+
         @SuppressWarnings("unused")
-        public ListBoxModel doFillBrowserItems() {
+        public ListBoxModel doFillBrowserTestCasesItems() {
+
+            String[] values = {"Chrome", "Firefox"};
+
+            Option[] options = buildSimpleOptions(values);
+
+            return new ListBoxModel(options);
+        }
+        @SuppressWarnings("unused")
+        public ListBoxModel doFillBrowserTestSuitesItems() {
 
             String[] values = {"Chrome", "Firefox"};
 
@@ -315,14 +729,15 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return new ListBoxModel(options);
         }
 
-        private Option[] getProjectOptions(String aiqUrl, String login, String password) throws ServiceException {
+
+        private Option[] getProjectOptions(String aiqUrl, String login, String password, String proxyHost, String proxyPort, String proxyUser, String proxyPassword, Boolean httpProxy) throws ServiceException {
 
             Option[] ret;
 
             try {
-                ServiceAccess svc = new ServiceAccess(aiqUrl, login, password);
+                ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
 
-                List<DiscoveryResponse> dataList = svc.getProjectData();
+                Collection<DiscoveryResponse> dataList = svc.getProjectData();
 
                 ret = new Option[dataList.size() + 1];
 
