@@ -215,8 +215,7 @@ public class RunGenScripts {
 
                             switch (p) {
                                 case INPROGRESS:
-//                                log.printf("Script generation for test case %s still in progress\n",
-//                                        testCaseName);
+
                                     break;
                                 case SUCCESS:
                                     log.printf("Script generation for test case '%s' succeeded\n",
@@ -404,8 +403,6 @@ public class RunGenScripts {
                 throw e;
             }
 
-//            log.println();
-//            log.printf("==== Checking %d test cases still in progress\n", testCasesInProgress.size());
 
             Iterator<Long> i = testCasesInProgress.iterator();
             while (i.hasNext()) {
@@ -423,8 +420,6 @@ public class RunGenScripts {
 
                         switch (p) {
                             case INPROGRESS:
-//                                log.printf("Script generation for test case %s still in progress\n",
-//                                        testCaseName);
                                 break;
                             case FAILED:
                                 //log.printf("Script generation for test case '%s' failed\n", testCaseName);
@@ -472,11 +467,6 @@ public class RunGenScripts {
                 default:
             }
 
-//            log.printf("Test case '%s' script gen status '%s'\n", testCasesById.get(r.getTestSuiteId()).getTestCaseName(),
-//                                            r.getTestScriptGenerationStatus());
-//            if (r.getTestScriptDownloadLink() != null) {
-//                log.printf("  Script download link: %s\n", r.getTestScriptDownloadLink());
-//            }
         }
 
         if (pass.size() > 0) {
