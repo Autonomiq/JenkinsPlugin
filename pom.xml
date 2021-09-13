@@ -2,20 +2,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.jenkins-ci.plugins</groupId>
+        <groupId>io.jenkins.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>3.4</version>
+        <version>4.0.0</version>
         <relativePath />
     </parent>
-    <groupId>org.jenkins-ci.plugins</groupId>
-    <artifactId>Autonomiq</artifactId>
+    <groupId>io.jenkins.plugins</groupId>
+    <artifactId>autonomiq</artifactId>
     <version>1.9</version>
     <packaging>hpi</packaging>
-    <name>Autonomiq Plugin</name>
+    <name>autonomiq plugin</name>
     <url>https://github.com/jenkinsci/autonomiq-plugin</url>
     <description>Plugin to support Autonomiq tests</description>
     <properties>
-        <jenkins.version>2.7.3</jenkins.version>
+        <jenkins.version>2.309</jenkins.version>
         <java.level>8</java.level>
     </properties>
     <licenses>
