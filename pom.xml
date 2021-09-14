@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.25</version>
+        <version>4.16</version>
         <relativePath />
     </parent>
     <groupId>io.jenkins.plugins</groupId>
@@ -15,7 +15,7 @@
     <url>https://github.com/jenkinsci/autonomiq-plugin</url>
     <description>Plugin to support Autonomiq tests</description>
     <properties>
-        <jenkins.version>2.309</jenkins.version>
+        <jenkins.version>2.263.1</jenkins.version>
         <java.level>8</java.level>
     </properties>
     <licenses>
