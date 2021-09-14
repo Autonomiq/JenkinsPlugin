@@ -4,18 +4,18 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>3.4</version>
+        <version>4.25</version>
         <relativePath />
     </parent>
-    <groupId>org.jenkins-ci.plugins</groupId>
-    <artifactId>Autonomiq</artifactId>
+    <groupId>io.jenkins.plugins</groupId>
+    <artifactId>autonomiq</artifactId>
     <version>1.9</version>
     <packaging>hpi</packaging>
-    <name>Autonomiq Plugin</name>
+    <name>autonomiq plugin</name>
     <url>https://github.com/jenkinsci/autonomiq-plugin</url>
     <description>Plugin to support Autonomiq tests</description>
     <properties>
-        <jenkins.version>2.7.3</jenkins.version>
+        <jenkins.version>2.263.1</jenkins.version>
         <java.level>8</java.level>
     </properties>
     <licenses>
