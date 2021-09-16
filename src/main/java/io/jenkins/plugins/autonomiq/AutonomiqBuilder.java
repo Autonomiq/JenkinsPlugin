@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+import hudson.util.Secret;
 
 import jenkins.tasks.SimpleBuildStep;
 
@@ -608,8 +608,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
 
         @SuppressWarnings("unused")
-        public String getDefaultPassword() {
-            String ret = AutonomiqConfiguration.get().getDefaultPassword();
+        public Secret getDefaultPassword() {
+            Secret ret = AutonomiqConfiguration.get().getDefaultPassword();
             return ret;
         }
 
