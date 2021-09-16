@@ -12,7 +12,7 @@
         </f:entry>
 
         <f:entry field="defaultPassword" title="${%DefaultPassword}">
-            <f:textbox/>
+            <f:secretTextarea/>
         </f:entry>
 
         <f:validateButton title="${%TestConnection}" progress="${%Testing connection to Autonomiq...}"
