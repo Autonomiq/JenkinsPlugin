@@ -9,6 +9,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
+import hudson.util.Secret;
 
 /**
  * Example of Jenkins global configuration.
@@ -27,7 +28,7 @@ public class AutonomiqConfiguration extends GlobalConfiguration {
 
     private String defaultAiqUrl;
     private String defaultLogin;
-    private String defaultPassword;
+    private Secret defaultPassword;
 
 
     public AutonomiqConfiguration() {
@@ -45,7 +46,7 @@ public class AutonomiqConfiguration extends GlobalConfiguration {
     public String getDefaultLogin() {
         return defaultLogin;
     }
-    public String getDefaultPassword() {
+    public Secret getDefaultPassword() {
         return defaultPassword;
     }
 
@@ -54,7 +55,7 @@ public class AutonomiqConfiguration extends GlobalConfiguration {
     public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
         defaultAiqUrl = formData.getString(DEFAULT_AIQ_URL);
         defaultLogin = formData.getString(DEFAULT_LOGIN);
-        defaultPassword = formData.getString(DEFAULT_PASSWORD);
+        defaultPassword = Secret.fromString(DEFAULT_PASSWORD);
 
         save();
 
