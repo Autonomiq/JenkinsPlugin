@@ -32,7 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import hudson.util.Secret;
-
+import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 
 import org.apache.commons.lang.StringUtils;
@@ -386,6 +386,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         @SuppressWarnings("unused")
         public FormValidation doCheckAiqUrl(@QueryParameter String value, @QueryParameter String aiqUrl)
                 throws IOException, ServletException {
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             if (value.length() == 0)
                 return FormValidation.error(Messages.AutonomiqBuilder_DescriptorImpl_errors_missingAiqUrl());
             if (!(value.startsWith("http://") || value.startsWith("https://")))
@@ -397,6 +398,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         @SuppressWarnings("unused")
         public FormValidation doCheckLogin(@QueryParameter String value, @QueryParameter String login)
                 throws IOException, ServletException {
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             if (value.length() == 0)
                 return FormValidation.error(Messages.AutonomiqBuilder_DescriptorImpl_errors_missingLogin());
             if (value.length() < 4)
@@ -408,6 +410,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         @SuppressWarnings("unused")
         public FormValidation doCheckPassword(@QueryParameter String value, @QueryParameter String password)
                 throws IOException, ServletException {
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             if (value.length() == 0)
                 return FormValidation.error(Messages.AutonomiqBuilder_DescriptorImpl_errors_missingPassword());
             if (value.length() < 6)
@@ -419,6 +422,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         @SuppressWarnings("unused")
         public FormValidation doCheckProject(@QueryParameter String value)
                 throws IOException, ServletException {
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             if (value.length() == 0)
                 return FormValidation.error(Messages.AutonomiqBuilder_DescriptorImpl_errors_missingProject());
 
@@ -436,7 +440,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                                                  @QueryParameter String proxyPassword,
                                                  @QueryParameter Boolean httpProxy)
                 throws IOException, ServletException {
-
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             return checkTestCasesFromText(value, aiqUrl, login, password, project, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
         }
 
@@ -451,7 +455,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                                                  @QueryParameter String proxyPassword,
                                                  @QueryParameter Boolean httpProxy)
                 throws IOException, ServletException {
-
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             return checkTestCasesFromText(value, aiqUrl, login, password, project, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
         }
 
@@ -466,7 +470,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                                                   @QueryParameter String proxyPassword,
                                                   @QueryParameter Boolean httpProxy)
                 throws IOException, ServletException {
-
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             if (value.length() > 0
                     && aiqUrl.length() > 0
                     && login.length() > 0
@@ -521,6 +525,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                                                       String proxyUser,
                                                       String proxyPassword,
                                                       Boolean httpProxy) {
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             if (value.length() > 0
                     && aiqUrl.length() > 0
                     && login.length() > 0
