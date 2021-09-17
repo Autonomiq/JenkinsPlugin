@@ -5,6 +5,7 @@ import hudson.util.FormValidation;
 import io.jenkins.plugins.autonomiq.service.ServiceAccess;
 import io.jenkins.plugins.autonomiq.util.AiqUtil;
 import jenkins.model.GlobalConfiguration;
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.QueryParameter;
@@ -89,6 +90,7 @@ public class AutonomiqConfiguration extends GlobalConfiguration {
     public FormValidation doTestConnection(@QueryParameter(DEFAULT_AIQ_URL) final String defaultAiqUrl,
                                            @QueryParameter(DEFAULT_LOGIN) final String defaultLogin,
                                            @QueryParameter(DEFAULT_PASSWORD) final String defaultPassword) {
+    	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 
         if (AiqUtil.isNullOrEmpty(defaultAiqUrl)) {
             return FormValidation.error("Default Autonomiq URL is empty!");
