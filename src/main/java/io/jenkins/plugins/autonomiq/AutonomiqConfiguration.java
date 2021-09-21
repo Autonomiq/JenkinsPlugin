@@ -64,6 +64,7 @@ public class AutonomiqConfiguration extends GlobalConfiguration {
     }
 
     public FormValidation doCheckDefaultAiqUrl(@QueryParameter String value) {
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         if (StringUtils.isEmpty(value)) {
             return FormValidation.warning("Please specify default URL for Autonomiq service.");
         }
@@ -73,12 +74,14 @@ public class AutonomiqConfiguration extends GlobalConfiguration {
         return FormValidation.ok();
     }
     public FormValidation doCheckDefaultLogin(@QueryParameter String value) {
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         if (StringUtils.isEmpty(value)) {
             return FormValidation.warning("Please specify a default username.");
         }
         return FormValidation.ok();
     }
     public FormValidation doCheckDefaultPassword(@QueryParameter String value) {
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         if (StringUtils.isEmpty(value)) {
             return FormValidation.warning("Please specify a default password.");
         }
