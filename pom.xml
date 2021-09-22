@@ -15,7 +15,7 @@
     <url>https://github.com/jenkinsci/autonomiq-plugin</url>
     <description>Plugin to support Autonomiq tests</description>
     <properties>
-        <jenkins.version>2.263.1</jenkins.version>
+        <jenkins.version>2.303.1</jenkins.version>
         <java.level>8</java.level>
     </properties>
     <licenses>
