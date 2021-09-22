@@ -23,6 +23,7 @@ import io.jenkins.plugins.autonomiq.util.AiqUtil;
 import io.jenkins.plugins.autonomiq.util.TimeStampedLogger;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 import javax.servlet.ServletException;
 import java.io.*;
@@ -416,6 +417,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
         @SuppressWarnings("unused")
+        @POST
         public FormValidation doCheckAiqUrl(@QueryParameter String value, @QueryParameter String aiqUrl)
                 throws IOException, ServletException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
@@ -428,6 +430,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
 
         @SuppressWarnings("unused")
+        @POST
         public FormValidation doCheckLogin(@QueryParameter String value, @QueryParameter String login)
                 throws IOException, ServletException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
@@ -440,6 +443,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
 
         @SuppressWarnings("unused")
+        @POST
         public FormValidation doCheckPassword(@QueryParameter String value, @QueryParameter String password)
                 throws IOException, ServletException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
@@ -452,6 +456,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
 
         @SuppressWarnings("unused")
+        @POST
         public FormValidation doCheckProject(@QueryParameter String value)
                 throws IOException, ServletException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
@@ -462,7 +467,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             return FormValidation.ok();
         }
-
+        
+        @POST
         public FormValidation doCheckGenCaseList(@QueryParameter String value,
                                                  @QueryParameter String aiqUrl,
                                                  @QueryParameter String login,
@@ -478,6 +484,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return checkTestCasesFromText(value, aiqUrl, login, password, project, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
         }
 
+        @POST
         public FormValidation doCheckRunCaseList(@QueryParameter String value,
                                                  @QueryParameter String aiqUrl,
                                                  @QueryParameter String login,
@@ -493,6 +500,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return checkTestCasesFromText(value, aiqUrl, login, password, project, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
         }
 
+        @POST
         public FormValidation doCheckRunSuiteList(@QueryParameter String value,
                                                   @QueryParameter String aiqUrl,
                                                   @QueryParameter String login,
