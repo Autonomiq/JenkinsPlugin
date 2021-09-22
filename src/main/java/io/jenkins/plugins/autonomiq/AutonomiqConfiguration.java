@@ -10,6 +10,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.verb.POST;
 import hudson.util.Secret;
 
 /**
@@ -63,6 +64,7 @@ public class AutonomiqConfiguration extends GlobalConfiguration {
         return super.configure(req, formData);
     }
 
+    @POST
     public FormValidation doCheckDefaultAiqUrl(@QueryParameter String value) {
         Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         if (StringUtils.isEmpty(value)) {
@@ -73,6 +75,8 @@ public class AutonomiqConfiguration extends GlobalConfiguration {
         }
         return FormValidation.ok();
     }
+    
+    @POST
     public FormValidation doCheckDefaultLogin(@QueryParameter String value) {
         Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         if (StringUtils.isEmpty(value)) {
@@ -80,6 +84,8 @@ public class AutonomiqConfiguration extends GlobalConfiguration {
         }
         return FormValidation.ok();
     }
+    
+    @POST
     public FormValidation doCheckDefaultPassword(@QueryParameter String value) {
         Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         if (StringUtils.isEmpty(value)) {
@@ -90,6 +96,7 @@ public class AutonomiqConfiguration extends GlobalConfiguration {
 
     // Form validation
     @SuppressWarnings({"ThrowableResultOfMethodCallIgnored", "unused"})
+    @POST
     public FormValidation doTestConnection(@QueryParameter(DEFAULT_AIQ_URL) final String defaultAiqUrl,
                                            @QueryParameter(DEFAULT_LOGIN) final String defaultLogin,
                                            @QueryParameter(DEFAULT_PASSWORD) final String defaultPassword) {
