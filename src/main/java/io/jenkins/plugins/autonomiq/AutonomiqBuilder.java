@@ -44,7 +44,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
     private String aiqUrl;
     private String login;
-    private String password;
+    private Secret password;
     private String project; // json of ProjectData class
     private Boolean genScripts;
     private Boolean runTestCases;
@@ -59,13 +59,13 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     private String proxyHost;
     private String proxyPort;
     private String proxyUser;
-    private String proxyPassword;
+    private Secret proxyPassword;
     private Boolean httpProxy;
 
     private static Long pollingIntervalMs = 10000L;
 
     @DataBoundConstructor
-    public AutonomiqBuilder(String aiqUrl, String login, String password, String project,
+    public AutonomiqBuilder(String aiqUrl, String login, Secret password, String project,
                             Boolean genScripts,
                             Boolean runTestCases,
                             Boolean runTestSuites,
@@ -77,7 +77,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                             String proxyHost,
                             String proxyPort,
                             String proxyUser,
-                            String proxyPassword,
+                            Secret proxyPassword,
                             Boolean httpProxy
     ) {
 
@@ -126,12 +126,12 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
     @SuppressWarnings("unused")
     @DataBoundSetter
-    public void setPassword(String password) {
+    public void setPassword(Secret password) {
         this.password = password;
     }
 
     @SuppressWarnings("unused")
-    public String getPassword() {
+    public Secret getPassword() {
         return password;
     }
 
@@ -297,12 +297,12 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     
     @SuppressWarnings("unused")
     @DataBoundSetter
-    public void setProxyPassword(String proxyPassword) {
+    public void setProxyPassword(Secret proxyPassword) {
         this.proxyPassword = proxyPassword;
     }
 
     @SuppressWarnings("unused")
-    public String getProxyPassword() {
+    public Secret getProxyPassword() {
         return proxyPassword;
     }
     
@@ -317,8 +317,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         return httpProxy;
     }
     
-    private static ServiceAccess getServiceAccess(String proxyHost, String proxyPort, String proxyUser, String proxyPassword,
-    		String aiqUrl, String login, String password, Boolean httpProxy) throws ServiceException {
+    private static ServiceAccess getServiceAccess(String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword,
+    		String aiqUrl, String login, Secret password, Boolean httpProxy) throws ServiceException {
     	ServiceAccess svc = null;
     	if (httpProxy && !StringUtils.isEmpty(proxyHost) && !StringUtils.isEmpty(proxyPort) ) {
     		svc = new ServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password);
@@ -412,7 +412,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         @SuppressWarnings("unused")
         @POST
-        public FormValidation doCheckPassword(@QueryParameter String value, @QueryParameter String password)
+        public FormValidation doCheckPassword(@QueryParameter String value, @QueryParameter Secret password)
                 throws IOException, ServletException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             if (value.length() == 0)
@@ -438,12 +438,12 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         public FormValidation doCheckGenCaseList(@QueryParameter String value,
                                                  @QueryParameter String aiqUrl,
                                                  @QueryParameter String login,
-                                                 @QueryParameter String password,
+                                                 @QueryParameter Secret password,
                                                  @QueryParameter String project,
                                                  @QueryParameter String proxyHost,
                                                  @QueryParameter String proxyPort,
                                                  @QueryParameter String proxyUser,
-                                                 @QueryParameter String proxyPassword,
+                                                 @QueryParameter Secret proxyPassword,
                                                  @QueryParameter Boolean httpProxy)
                 throws IOException, ServletException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
@@ -454,12 +454,12 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         public FormValidation doCheckRunCaseList(@QueryParameter String value,
                                                  @QueryParameter String aiqUrl,
                                                  @QueryParameter String login,
-                                                 @QueryParameter String password,
+                                                 @QueryParameter Secret password,
                                                  @QueryParameter String project,
                                                  @QueryParameter String proxyHost,
                                                  @QueryParameter String proxyPort,
                                                  @QueryParameter String proxyUser,
-                                                 @QueryParameter String proxyPassword,
+                                                 @QueryParameter Secret proxyPassword,
                                                  @QueryParameter Boolean httpProxy)
                 throws IOException, ServletException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
@@ -470,19 +470,19 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         public FormValidation doCheckRunSuiteList(@QueryParameter String value,
                                                   @QueryParameter String aiqUrl,
                                                   @QueryParameter String login,
-                                                  @QueryParameter String password,
+                                                  @QueryParameter Secret password,
                                                   @QueryParameter String project,
                                                   @QueryParameter String proxyHost,
                                                   @QueryParameter String proxyPort,
                                                   @QueryParameter String proxyUser,
-                                                  @QueryParameter String proxyPassword,
+                                                  @QueryParameter Secret proxyPassword,
                                                   @QueryParameter Boolean httpProxy)
                 throws IOException, ServletException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             if (value.length() > 0
                     && aiqUrl.length() > 0
                     && login.length() > 0
-                    && password.length() > 0
+                    && Secret.toString(password).length() > 0
                     && project.length() > 0) {
 
                 // get the project or skip
@@ -526,18 +526,18 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         private FormValidation checkTestCasesFromText(String value,
                                                       String aiqUrl,
                                                       String login,
-                                                      String password,
+                                                      Secret password,
                                                       String project,
                                                       String proxyHost,
                                                       String proxyPort,
                                                       String proxyUser,
-                                                      String proxyPassword,
+                                                      Secret proxyPassword,
                                                       Boolean httpProxy) {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             if (value.length() > 0
                     && aiqUrl.length() > 0
                     && login.length() > 0
-                    && password.length() > 0
+                    && Secret.toString(password).length() > 0
                     && project.length() > 0) {
 
                 // get the project or skip
@@ -641,15 +641,15 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         @SuppressWarnings("unused")
         public ListBoxModel doFillProjectItems(@QueryParameter String aiqUrl,
                                                @QueryParameter String login,
-                                               @QueryParameter String password,
+                                               @QueryParameter Secret password,
                                                @QueryParameter String proxyHost,
                                                @QueryParameter String proxyPort,
                                                @QueryParameter String proxyUser,
-                                               @QueryParameter String proxyPassword,
+                                               @QueryParameter Secret proxyPassword,
                                                @QueryParameter Boolean httpProxy) {
 
             // make sure other fields have been filled in
-            if (aiqUrl.length() > 0 && login.length() > 0 && password.length() > 0) {
+            if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
 
                 try {
 
@@ -706,7 +706,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
 
 
-        private Option[] getProjectOptions(String aiqUrl, String login, String password, String proxyHost, String proxyPort, String proxyUser, String proxyPassword, Boolean httpProxy) throws ServiceException {
+        private Option[] getProjectOptions(String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
 
             Option[] ret;
 
