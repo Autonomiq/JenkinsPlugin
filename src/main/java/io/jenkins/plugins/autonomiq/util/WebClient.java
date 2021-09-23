@@ -6,7 +6,7 @@ import java.net.Proxy;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
-
+import hudson.util.Secret;
 import io.jenkins.plugins.autonomiq.service.ServiceException;
 import okhttp3.*;
 
@@ -23,13 +23,13 @@ public class WebClient {
     	  return result;
     	}
     
-    public WebClient(String proxyHost, String proxyPort, String proxyUser, String proxyPassword) {
+    public WebClient(String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword) {
     	int proxyPortInt = Integer.parseInt(proxyPort);
-    	if (!StringUtils.isEmpty(proxyUser) && !StringUtils.isEmpty(proxyPassword) ) {
+    	if (!StringUtils.isEmpty(proxyUser) && !StringUtils.isEmpty(Secret.toString(proxyPassword))) {
 	    	Authenticator proxyAuthenticator = new Authenticator() {
 	    		int invalidCredentialAttempts = 0;
 	    		  @Override public Request authenticate(Route route, Response response) throws IOException {
-	    		       String credential = Credentials.basic(proxyUser, proxyPassword);
+	    		       String credential = Credentials.basic(proxyUser, Secret.toString(proxyPassword));
 	    		       if (credential.equals(response.request().header("Proxy-Authorization"))) {
 	    		    	   if (invalidCredentialAttempts > 100) {
 	    		    		   return null; // If we already failed with these credentials 100 times, don't retry.

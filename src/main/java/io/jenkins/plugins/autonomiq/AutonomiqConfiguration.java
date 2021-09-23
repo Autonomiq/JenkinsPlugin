@@ -99,7 +99,7 @@ public class AutonomiqConfiguration extends GlobalConfiguration {
     @POST
     public FormValidation doTestConnection(@QueryParameter(DEFAULT_AIQ_URL) final String defaultAiqUrl,
                                            @QueryParameter(DEFAULT_LOGIN) final String defaultLogin,
-                                           @QueryParameter(DEFAULT_PASSWORD) final String defaultPassword) {
+                                           @QueryParameter(DEFAULT_PASSWORD) final Secret defaultPassword) {
     	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 
         if (AiqUtil.isNullOrEmpty(defaultAiqUrl)) {
@@ -108,7 +108,7 @@ public class AutonomiqConfiguration extends GlobalConfiguration {
         if (AiqUtil.isNullOrEmpty(defaultLogin)) {
             return FormValidation.error("Default username is empty!");
         }
-        if (AiqUtil.isNullOrEmpty(defaultPassword)) {
+        if (AiqUtil.isNullOrEmpty(Secret.toString(defaultPassword))) {
             return FormValidation.error("Default password is empty!");
         }
 

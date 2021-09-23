@@ -1,19 +1,20 @@
 package io.jenkins.plugins.autonomiq.service.types;
+import hudson.util.Secret;
 
 public class AuthenticateUserBody {
     private String username;
-    private String password;
+    private Secret password;
 
-    public AuthenticateUserBody(String username, String password) {
+    public AuthenticateUserBody(String username, Secret password) {
         this.username = username;
         this.password = password;
     }
-
+    
     public String getUsername() {
         return username;
     }
 
-    public String getPassword() {
+    public Secret getPassword() {
         return password;
     }
 }
