@@ -9,7 +9,7 @@
     </parent>
     <groupId>io.jenkins.plugins</groupId>
     <artifactId>autonomiq</artifactId>
-    <version>1.9</version>
+    <version>1.12-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <name>autonomiq plugin</name>
     <url>https://github.com/jenkinsci/autonomiq-plugin</url>
@@ -92,9 +92,9 @@
     
     <developers>
       <developer>
-        <id>AIQ</id>
-        <name>AIQ</name>
-        <email>puneet.chelani@saucelabs.com</email>
+        <id>jameeluddin</id>
+        <name>Mohammed Jameel Uddin</name>
+        <email>jameeluddin30@gmail.com</email>
       </developer>
     </developers>
 
@@ -117,4 +117,14 @@
             <url>https://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <url>https://repo.jenkins-ci.org/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>https://repo.jenkins-ci.org/snapshots</url>
+        </snapshotRepository>
+  </distributionManagement>
 </project>
