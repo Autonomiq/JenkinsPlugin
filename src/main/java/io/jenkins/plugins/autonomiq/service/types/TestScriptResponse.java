@@ -35,9 +35,9 @@ public class TestScriptResponse {
         this.errorMessage = errorMessage;
         this.stepsErrorMessages = stepsErrorMessages;
         this.initiatedBy = initiatedBy;
-        this.initiatedTime = initiatedTime;
-        this.generationTime = generationTime;
-        this.lastExecutedTime = lastExecutedTime;
+        this.initiatedTime = new Date(initiatedTime.getTime());
+        this.generationTime = new Date(generationTime.getTime());
+        this.lastExecutedTime = new Date(lastExecutedTime.getTime());
         this.executionId = executionId;
     }
     @SuppressWarnings("unused")
@@ -86,19 +86,18 @@ public class TestScriptResponse {
     }
     @SuppressWarnings("unused")
     public Date getInitiatedTime() {
-        return initiatedTime;
+        return new Date(initiatedTime.getTime());
     }
     @SuppressWarnings("unused")
     public Date getGenerationTime() {
-        return generationTime;
+        return new Date(generationTime.getTime());
     }
     @SuppressWarnings("unused")
     public Date getLastExecutedTime() {
-        return lastExecutedTime;
+        return new Date(lastExecutedTime.getTime());
     }
     @SuppressWarnings("unused")
     public Long getExecutionId() {
         return executionId;
     }
 }
-

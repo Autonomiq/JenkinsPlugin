@@ -245,6 +245,8 @@ public class RunGenScripts {
                 }
 
                 // TODO run variable shows/validates
+            } catch (RuntimeException e) {
+                throw e;
 
             } catch (Exception e) {
                 log.printf("Exception running test case: %s\n", testCaseName);

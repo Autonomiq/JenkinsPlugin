@@ -30,10 +30,10 @@ public class Job {
         this.accountId = accountId;
         this.name = name;
         this.description = description;
-        this.creationTime = creationTime;
+        this.creationTime = new Date(creationTime.getTime());
         this.jobType = jobType;
         this.isScheduled = isScheduled;
-        this.startTime = startTime;
+        this.startTime = new Date(startTime.getTime());
         this.timeZone = timeZone;
         this.lastInitiatedTime = lastInitiatedTime;
         this.scheduledInterval = scheduledInterval;
@@ -62,7 +62,7 @@ public class Job {
     }
 
     public Date getCreationTime() {
-        return creationTime;
+        return new Date(creationTime.getTime());
     }
 
     public String getJobType() {
@@ -74,7 +74,7 @@ public class Job {
     }
 
     public Date getStartTime() {
-        return startTime;
+        return new Date(startTime.getTime());
     }
 
     public String getTimeZone() {

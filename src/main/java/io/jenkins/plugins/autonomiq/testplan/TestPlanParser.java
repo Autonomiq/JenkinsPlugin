@@ -18,7 +18,7 @@ import java.util.List;
 public class TestPlanParser {
 
 
-    public class Variable {
+    public static class Variable {
         private String name;
         private String value;
 
@@ -59,7 +59,7 @@ public class TestPlanParser {
             	factory.setFeature("http://xml.org/sax/features/external-general-entities",false);
             	factory.setFeature("http://xml.org/sax/features/external-parameter-entities",false);
             } catch(ParserConfigurationException exp){
-                exp.printStackTrace();	
+                exp.printStackTrace();
             }
             DocumentBuilder dBuilder = factory.newDocumentBuilder();
 
@@ -169,6 +169,8 @@ public class TestPlanParser {
                                 break;
                             case "ValidateVariable":
                                 validateVars.add(getVar(elem));
+                                break;
+                            default:
                                 break;
                         }
 

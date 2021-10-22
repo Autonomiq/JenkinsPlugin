@@ -7,12 +7,12 @@ public class NullTime {
     boolean Valid;
 
     public NullTime(Date time, boolean valid) {
-        Time = time;
+        Time = new Date(time.getTime());
         Valid = valid;
     }
 
     public Date getTime() {
-        return Time;
+        return new Date(Time.getTime());
     }
 
     public boolean isValid() {

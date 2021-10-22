@@ -23,7 +23,6 @@ class RunTestExecutions {
 
     private Map<Long, TestCasesResponse> testCasesById;
     private Map<String, TestCasesResponse> testCasesByName;
-    private Map<Long, TestScriptResponse> testScriptByTestCaseId;
     private Set<Long> execSucceededId;
     private Set<Long> execFailedId;
     private List<TestCaseData> testDataList;
@@ -40,9 +39,6 @@ class RunTestExecutions {
         this.log = log;
         this.pd = pd;
         this.pollingIntervalMs = pollingIntervalMs;
-
-        testScriptByTestCaseId = new HashMap<>();
-
     }
 
     public Boolean runTests(String platform,

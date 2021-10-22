@@ -14,8 +14,8 @@ public class TestMethodForDb {
     public TestMethodForDb(String name, Integer durationMs, Date startedAt, Date finishedAt, String status, ExceptionForDb exception) {
         this.name = name;
         this.durationMs = durationMs;
-        this.startedAt = startedAt;
-        this.finishedAt = finishedAt;
+        this.startedAt = new Date(startedAt.getTime());
+        this.finishedAt = new Date(finishedAt.getTime());
         this.status = status;
         this.exception = exception;
     }
@@ -29,11 +29,11 @@ public class TestMethodForDb {
     }
     @SuppressWarnings("unused")
     public Date getStartedAt() {
-        return startedAt;
+        return new Date(startedAt.getTime());
     }
     @SuppressWarnings("unused")
     public Date getFinishedAt() {
-        return finishedAt;
+        return new Date(finishedAt.getTime());
     }
     @SuppressWarnings("unused")
     public String getStatus() {
