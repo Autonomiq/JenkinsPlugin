@@ -15,7 +15,7 @@ public class WebsocketListener extends WebSocketListener {
     private Boolean failed = false;
     private LinkedList<String> messages = new LinkedList<String>();
     private final Object msgLock = new Object();
-    private Integer binMsgCount = 0;
+//    private Integer binMsgCount = 0;
 
     @Override
     public void onMessage(WebSocket webSocket, String text) {
@@ -24,11 +24,11 @@ public class WebsocketListener extends WebSocketListener {
         }
     }
 
-    @Override
-    public void onMessage(WebSocket webSocket, ByteString bytes) {
+//    @Override
+//    public void onMessage(WebSocket webSocket, ByteString bytes) {
         // binary messages not expected
-        binMsgCount++;
-    }
+//        binMsgCount++;
+//    }
 
     @Override
     public void onClosing(WebSocket webSocket, int code, String reason) {
@@ -41,9 +41,9 @@ public class WebsocketListener extends WebSocketListener {
         failed = true;
     }
 
-    public Integer getBinMsgCount() {
-        return binMsgCount;
-    }
+//    public Integer getBinMsgCount() {
+//        return binMsgCount;
+//    }
 
     public Boolean isClosed() {
         return closed;

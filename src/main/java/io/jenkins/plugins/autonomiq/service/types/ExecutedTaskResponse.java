@@ -1,5 +1,7 @@
 package io.jenkins.plugins.autonomiq.service.types;
 
+import java.util.Arrays;
+
 public class ExecutedTaskResponse {
     ExecuteTaskResponse[] tasks;
     Integer totalExecs;
@@ -7,12 +9,12 @@ public class ExecutedTaskResponse {
     @SuppressWarnings("unused")
     public ExecutedTaskResponse(ExecuteTaskResponse[] tasks,
                                 Integer totalExecs) {
-        this.tasks = tasks;
+        this.tasks = Arrays.copyOf(tasks,tasks.length);
         this.totalExecs = totalExecs;
     }
     @SuppressWarnings("unused")
     public ExecuteTaskResponse[] getTasks() {
-        return tasks;
+        return Arrays.copyOf(tasks, tasks.length);
     }
     @SuppressWarnings("unused")
     public Integer getTotalExecs() {

@@ -1,5 +1,6 @@
 package io.jenkins.plugins.autonomiq.service.types;
 
+import java.util.Arrays;
 import java.util.Date;
 
 public class GetTestSuitesResponse {
@@ -25,14 +26,14 @@ public class GetTestSuitesResponse {
         this.projectName = projectName;
         this.testSuiteId = testSuiteId;
         this.testSuiteName = testSuiteName;
-        this.creationTime = creationTime;
-        this.lastRunTime = lastRunTime;
-        this.testCases = testCases;
+        this.creationTime = new Date(creationTime.getTime());
+        this.lastRunTime = new Date(lastRunTime.getTime());
+        this.testCases = Arrays.copyOf(testCases,testCases.length);
         this.disabledStatus = disabledStatus;
         this.interval = interval;
         this.latestJobId = latestJobId;
         this.executionStatus = executionStatus;
-        this.scheduleStartTime = scheduleStartTime;
+        this.scheduleStartTime = new Date(scheduleStartTime.getTime());
         this.isAiqExecution = isAiqExecution;
     }
 
@@ -53,15 +54,15 @@ public class GetTestSuitesResponse {
     }
 
     public Date getCreationTime() {
-        return creationTime;
+        return new Date(creationTime.getTime());
     }
 
     public Date getLastRunTime() {
-        return lastRunTime;
+        return new Date(lastRunTime.getTime());
     }
 
     public TestCasesResponse[] getTestCases() {
-        return testCases;
+        return Arrays.copyOf(testCases, testCases.length);
     }
 
     public Boolean getDisabledStatus() {
@@ -81,7 +82,7 @@ public class GetTestSuitesResponse {
     }
 
     public Date getScheduleStartTime() {
-        return scheduleStartTime;
+        return new Date(scheduleStartTime.getTime());
     }
 
     public Boolean getAiqExecution() {

@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class TimeStampedLogger {
 
-    private static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final String separator = "| ";
 
     private final PrintStream log;

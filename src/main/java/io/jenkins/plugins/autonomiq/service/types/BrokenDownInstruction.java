@@ -1,16 +1,18 @@
 package io.jenkins.plugins.autonomiq.service.types;
 
+import java.util.Arrays;
+
 public class BrokenDownInstruction {
     private String instr;
     private String data;
     private String instrNum;
     private Boolean sendToTestCaseParser;
-    private BrokenDownInstruction subInstructions[];
+    private BrokenDownInstruction[] subInstructions;
     private String columnName;
     private String status;
     private String recorderData;
     private String message;
-    private String screenshotPaths[];
+    private String[] screenshotPaths;
     private String screenshotNo;
     private String stepTime;
     private String actualResult;
@@ -18,18 +20,18 @@ public class BrokenDownInstruction {
 
     public BrokenDownInstruction(String instr, String data, String instrNum, Boolean sendToTestCaseParser,
                                  BrokenDownInstruction[] subInstructions, String columnName, String status,
-                                 String recorderData, String message, String screenshotPaths[],
+                                 String recorderData, String message, String[] screenshotPaths,
                                  String screenshotNo, String stepTime, String actualResult, String md5sum) {
         this.instr = instr;
         this.data = data;
         this.instrNum = instrNum;
         this.sendToTestCaseParser = sendToTestCaseParser;
-        this.subInstructions = subInstructions;
+        this.subInstructions = Arrays.copyOf(subInstructions, subInstructions.length);
         this.columnName = columnName;
         this.status = status;
         this.recorderData = recorderData;
         this.message = message;
-        this.screenshotPaths = screenshotPaths;
+        this.screenshotPaths = Arrays.copyOf(screenshotPaths, screenshotPaths.length);
         this.screenshotNo = screenshotNo;
         this.stepTime = stepTime;
         this.actualResult = actualResult;
@@ -69,11 +71,11 @@ public class BrokenDownInstruction {
     }
 
     public BrokenDownInstruction[] getSubInstructions() {
-        return subInstructions;
+        return Arrays.copyOf(subInstructions, subInstructions.length);
     }
 
     public void setSubInstructions(BrokenDownInstruction[] subInstructions) {
-        this.subInstructions = subInstructions;
+        this.subInstructions = Arrays.copyOf(subInstructions, subInstructions.length);
     }
 
     public String getColumnName() {
@@ -109,11 +111,11 @@ public class BrokenDownInstruction {
     }
 
     public String[] getScreenshotPaths() {
-        return screenshotPaths;
+        return Arrays.copyOf(screenshotPaths, screenshotPaths.length);
     }
 
-    public void setScreenshotPaths(String screenshotPaths[]) {
-        this.screenshotPaths = screenshotPaths;
+    public void setScreenshotPaths(String[] screenshotPaths) {
+        this.screenshotPaths = Arrays.copyOf(screenshotPaths, screenshotPaths.length);
     }
 
     public String getScreenshotNo() {

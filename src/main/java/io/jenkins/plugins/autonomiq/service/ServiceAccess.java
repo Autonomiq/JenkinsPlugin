@@ -29,12 +29,10 @@ public class ServiceAccess {
     private static final String websocketPath = "%s/ws?accountId=%d";
 
     private final String aiqUrl;
-    private Long userId;
     private Integer accountId;
     private WebClient web;
     private String token;
-    private String proxyHost;
-    
+
     public ServiceAccess(String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, String aiqUrl, String login, Secret password) throws ServiceException {
     	this.aiqUrl = aiqUrl;
         web = new WebClient(proxyHost, proxyPort, proxyUser, proxyPassword);
@@ -61,7 +59,6 @@ public class ServiceAccess {
             String resp = web.post(String.format(authenticatePath, aiqUrl), constructAuthJson(login, password), null);
 
             AuthenticateUserResponse r = AiqUtil.gson.fromJson(resp, AuthenticateUserResponse.class);
-            userId = r.getUserId();
             accountId = r.getUserAccount();
             token = r.getToken();
 
