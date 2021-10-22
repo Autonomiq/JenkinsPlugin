@@ -19,7 +19,7 @@ public class ExecuteTaskResponse {
         this.executionId = executionId;
         this.executionName = executionName;
         this.executionStatus = executionStatus;
-        this.initiatedOn = initiatedOn;
+        this.initiatedOn = new Date(initiatedOn.getTime());
         this.projectName = projectName;
         this.projectId = projectId;
         this.executionVideoUrl = executionVideoUrl;
@@ -40,7 +40,7 @@ public class ExecuteTaskResponse {
     }
 
     public Date getInitiatedOn() {
-        return initiatedOn;
+        return new Date(initiatedOn.getTime());
     }
 
     public String getProjectName() {
