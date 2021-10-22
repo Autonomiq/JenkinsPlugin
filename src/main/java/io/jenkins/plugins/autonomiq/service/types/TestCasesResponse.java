@@ -1,5 +1,6 @@
 package io.jenkins.plugins.autonomiq.service.types;
 
+import java.util.Arrays;
 import java.util.Date;
 
 public class TestCasesResponse {
@@ -24,14 +25,14 @@ public class TestCasesResponse {
         this.testSuiteName = testSuiteName;
         this.testCaseId = testCaseId;
         this.testCaseName = testCaseName;
-        this.createdTime = createdTime;
+        this.createdTime = new Date(createdTime.getTime());
         this.s3URL = s3URL;
         this.discoveryId = discoveryId;
-        this.testSteps = testSteps;
-        this.recoverTestSteps = recoverTestSteps;
-        this.testScripts = testScripts;
+        this.testSteps = Arrays.copyOf(testSteps, testSteps.length);
+        this.recoverTestSteps = Arrays.copyOf(recoverTestSteps, recoverTestSteps.length);
+        this.testScripts = Arrays.copyOf(testScripts, testScripts.length);
         this.unmetDependency = unmetDependency;
-        this.dependentFiles = dependentFiles;
+        this.dependentFiles = Arrays.copyOf(dependentFiles, dependentFiles.length);
         this.src = src;
     }
     @SuppressWarnings("unused")
@@ -48,7 +49,7 @@ public class TestCasesResponse {
     }
     @SuppressWarnings("unused")
     public Date getCreatedTime() {
-        return createdTime;
+        return new Date(createdTime.getTime());
     }
     @SuppressWarnings("unused")
     public String getS3URL() {
@@ -60,15 +61,15 @@ public class TestCasesResponse {
     }
     @SuppressWarnings("unused")
     public BrokenDownInstruction[] getTestSteps() {
-        return testSteps;
+        return Arrays.copyOf(testSteps, testSteps.length);
     }
     @SuppressWarnings("unused")
     public Instruction[] getRecoverTestSteps() {
-        return recoverTestSteps;
+        return Arrays.copyOf(recoverTestSteps, recoverTestSteps.length);
     }
     @SuppressWarnings("unused")
     public TestScriptResponse[] getTestScripts() {
-        return testScripts;
+        return Arrays.copyOf(testScripts, testScripts.length);
     }
     @SuppressWarnings("unused")
     public Boolean getUnmetDependency() {
@@ -76,7 +77,7 @@ public class TestCasesResponse {
     }
     @SuppressWarnings("unused")
     public String[] getDependentFiles() {
-        return dependentFiles;
+        return Arrays.copyOf(dependentFiles, dependentFiles.length);
     }
     @SuppressWarnings("unused")
     public String getSrc() {

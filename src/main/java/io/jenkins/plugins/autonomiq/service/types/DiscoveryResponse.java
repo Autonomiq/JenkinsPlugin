@@ -28,8 +28,8 @@ public class DiscoveryResponse {
         this.projectId = projectId;
         this.projectName = projectName;
         this.autInformations = autInformations;
-        this.lastActivityDate = lastActivityDate;
-        this.creationTime = creationTime;
+        this.lastActivityDate = new Date(lastActivityDate.getTime());
+        this.creationTime = new Date(creationTime.getTime());
         this.lastUsedBy = lastUsedBy;
         this.noOfEnvironments = noOfEnvironments;
         this.totalTestsCount = totalTestsCount;
@@ -52,11 +52,11 @@ public class DiscoveryResponse {
     }
     @SuppressWarnings("unused")
     public Date getLastActivityDate() {
-        return lastActivityDate;
+        return new Date(lastActivityDate.getTime());
     }
     @SuppressWarnings("unused")
     public Date getCreationTime() {
-        return creationTime;
+        return new Date(creationTime.getTime());
     }
     @SuppressWarnings("unused")
     public String getLastUsedBy() {
