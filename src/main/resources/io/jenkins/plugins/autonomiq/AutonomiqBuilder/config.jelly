@@ -3,40 +3,40 @@
 
 	 <f:optionalBlock inline="true" field="httpProxy" title="${%HttpProxy}" >
 	    <f:entry title="${%ProxyHost}" field="proxyHost">
-	        <f:textbox checkMethod="post" />
+	        <f:textbox  />
 	    </f:entry>
 	     <f:entry title="${%ProxyPort}" field="proxyPort">
-	        <f:textbox checkMethod="post" />
+	        <f:textbox  />
 	    </f:entry>
 	     <f:entry title="${%ProxyUser}" field="proxyUser">
-	        <f:textbox checkMethod="post"/>
+	        <f:textbox  />
 	    </f:entry>
 	     <f:entry title="${%ProxyPassword}" field="proxyPassword">
-	        <f:password checkMethod="post" />
+	        <f:password  />
 	    </f:entry>
     </f:optionalBlock>
     
     
     <f:entry title="${%AiqUrl}" field="aiqUrl">
-        <f:textbox checkMethod="post" />
+        <f:textbox  />
     </f:entry>
 
     <f:entry title="${%Login}" field="login">
-        <f:textbox checkMethod="post"/>
+        <f:textbox  />
     </f:entry>
 
     <f:entry title="${%Password}" field="password">
-        <f:password checkMethod="post"/>
+        <f:password  />
     </f:entry>
 
     <f:entry title="${%Project}" field="project">
-        <f:select checkMethod="post"/>
+        <f:select />
     </f:entry>
 
     <f:optionalBlock inline="true" field="genScripts" title="${%GenScripts}" >
 
         <f:entry title="${%GenCaseList}" field="genCaseList">
-            <f:textarea checkMethod="post"/>
+            <f:textarea />
         </f:entry>
 
     </f:optionalBlock>
@@ -44,15 +44,15 @@
     <f:optionalBlock inline="true" field="runTestCases" title="${%RunTestCases}" >
 
         <f:entry title="${%Platform}" field="platformTestCases">
-            <f:select checkMethod="post"/>
+            <f:select />
         </f:entry>
 
         <f:entry title="${%Browser}" field="browserTestCases">
-            <f:select checkMethod="post"/>
+            <f:select />
         </f:entry>
 
          <f:entry title="${%RunCaseList}" field="runCaseList">
-            <f:textarea value="${descriptor.getDefaultGenScriptsList()}" checkMethod="post" />
+            <f:textarea value="${descriptor.getDefaultGenScriptsList()}" />
          </f:entry>
 
     </f:optionalBlock>
@@ -60,15 +60,15 @@
     <f:optionalBlock inline="true" field="runTestSuites" title="${%RunTestSuites}" >
 
         <f:entry title="${%Platform}" field="platformTestSuites">
-            <f:select checkMethod="post"/>
+            <f:select />
         </f:entry>
 
         <f:entry title="${%Browser}" field="browserTestSuites">
-            <f:select checkMethod="post"/>
+            <f:select />
         </f:entry>
 
         <f:entry title="${%RunSuiteList}" field="runSuiteList">
-            <f:textarea checkMethod="post"/>
+            <f:textarea />
         </f:entry>
 
     </f:optionalBlock>

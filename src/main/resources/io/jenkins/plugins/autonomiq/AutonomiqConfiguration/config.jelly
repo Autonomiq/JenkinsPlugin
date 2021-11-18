@@ -4,19 +4,19 @@
     <f:section title="${%Autonomiq Plugin}">
 
         <f:entry field="defaultAiqUrl" title="${%DefaultAiqUrl}">
-            <f:textbox checkMethod="post"/>
+            <f:textbox/>
         </f:entry>
 
 <!--        <f:entry field="defaultLogin" title="${%DefaultLogin}">
-            <f:textbox checkMethod="post"/>
+            <f:textbox/>
         </f:entry>
 
         <f:entry field="defaultPassword" title="${%DefaultPassword}">
-            <f:secretTextarea checkMethod="post"/>
+            <f:secretTextarea/>
         </f:entry>
 
         <f:validateButton title="${%TestConnection}" progress="${%Testing connection to Autonomiq...}"
-                    method="testConnection" with="defaultAiqUrl,defaultLogin,defaultPassword" checkMethod="post"/>
+                    method="testConnection" with="defaultAiqUrl,defaultLogin,defaultPassword"/>
 -->
     </f:section>
 </j:jelly>

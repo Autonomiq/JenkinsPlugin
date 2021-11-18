@@ -192,6 +192,8 @@ public class TestPlanParser {
         for (int i = 0; i < initialSetters.getLength(); i++) {
 
             Node setterNode = initialSetters.item(i);
+            //log.println("node name " + setterNode.getNodeName());
+
             if (setterNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element elem = (Element) setterNode;
                 vars.add(getVar(elem));
