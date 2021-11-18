@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.16</version>
+        <version>4.25</version>
         <relativePath />
     </parent>
     <groupId>io.jenkins.plugins</groupId>
@@ -17,7 +17,14 @@
     <properties>
         <jenkins.version>2.303.1</jenkins.version>
         <java.level>8</java.level>
+        <!-- Other properties you may want to use:
+          ~ jenkins-test-harness.version: Jenkins Test Harness version you use to test the plugin. For Jenkins version >= 1.580.1 use JTH 2.0 or higher.
+          ~ hpi-plugin.version: The HPI Maven Plugin version used by the plugin..
+          ~ stapler-plugin.version: The Stapler Maven plugin version required by the plugin.
+     -->
     </properties>
+
+    <!-- The default licence for Jenkins OSS Plugins is MIT. Substitute for the applicable one if needed. -->
     <licenses>
         <license>
             <name>MIT License</name>
@@ -89,7 +96,7 @@
         </dependency>
     </dependencies>
 
-
+    
     <developers>
       <developer>
         <id>jameeluddin</id>
