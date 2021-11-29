@@ -41,7 +41,7 @@ class RunSuiteExecutions {
 
     public Boolean runSuites(String platform,
                              String browser,
-                             String runSuiteList) throws PluginException, InterruptedException {
+                             String runSuiteList,String executionMode) throws PluginException, InterruptedException {
 
 
         AiqUtil.ItemListFromString itemsObj = AiqUtil.getItemListFromString(runSuiteList);
@@ -64,7 +64,7 @@ class RunSuiteExecutions {
 
         logTestSuiteNames();
 
-        return handleSuiteExecutions(platform, browser);
+        return handleSuiteExecutions(platform, browser,executionMode);
 
     }
 
@@ -102,7 +102,7 @@ class RunSuiteExecutions {
         }
     }
 
-    private Boolean handleSuiteExecutions(String platform, String browser) throws PluginException, InterruptedException {
+    private Boolean handleSuiteExecutions(String platform, String browser,String executionMode) throws PluginException, InterruptedException {
 
         log.println();
         log.printf("==== Starting suite executions for project %s\n", pd.getProjectName());
@@ -110,7 +110,7 @@ class RunSuiteExecutions {
 
         try {
             // runTestsData gets updated with execution ids
-            runSuiteExecutions(testDataList, platform, browser);
+            runSuiteExecutions(testDataList, platform, browser,executionMode);
         } catch (ServiceException e) {
             log.println("Exception running test executions.");
             log.println(AiqUtil.getExceptionTrace(e));
@@ -185,14 +185,14 @@ class RunSuiteExecutions {
     }
 
     private void runSuiteExecutions(List<TestSuiteData> runTestsData, String platform,
-                                   String browser) throws PluginException, ServiceException {
+                                   String browser,String executionMode) throws PluginException, ServiceException {
 
         for (TestSuiteData t : runTestsData) {
 
             ExecuteSuiteResponse resp = svc.runTestSuite(t.getTestSuiteId(),
                     platform,  browser,
                     null, executionType,
-                    "", false,
+                    executionMode, false,
                     null,
                     new HashMap<>());
 

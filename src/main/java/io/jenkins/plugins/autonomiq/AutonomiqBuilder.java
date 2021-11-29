@@ -61,6 +61,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     private String proxyUser;
     private Secret proxyPassword;
     private Boolean httpProxy;
+    private String executionMode;
 
     private static Long pollingIntervalMs = 10000L;
 
@@ -78,7 +79,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                             String proxyPort,
                             String proxyUser,
                             Secret proxyPassword,
-                            Boolean httpProxy
+                            Boolean httpProxy,
+                            String executionMode
     ) {
 
         this.aiqUrl = aiqUrl;
@@ -100,6 +102,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         this.proxyUser = proxyUser;
         this.proxyPassword = proxyPassword;
         this.httpProxy = httpProxy;
+        this.executionMode = executionMode;
     }
 
     @SuppressWarnings("unused")
@@ -317,6 +320,18 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         return httpProxy;
     }
     
+    
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setExecutionMode(String executionMode) {
+        this.executionMode = executionMode;
+    }
+
+    @SuppressWarnings("unused")
+    public String getExecutionMode() {
+        return executionMode;
+    }
+    
     private static ServiceAccess getServiceAccess(String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword,
     		String aiqUrl, String login, Secret password, Boolean httpProxy) throws ServiceException {
     	ServiceAccess svc = null;
@@ -396,7 +411,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 ok = rt.runTests(genScripts, runTestCases, runTestSuites,
                         platformTestCases, browserTestCases,
                         platformTestSuites, browserTestSuites,
-                        genCaseList, runCaseList, runSuiteList);
+                        genCaseList, runCaseList, runSuiteList,executionMode);
             } catch (PluginException e) {
                 log.println("Running test case failed with exception");
                 log.println(AiqUtil.getExceptionTrace(e));
@@ -741,7 +756,16 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             return new ListBoxModel(options);
         }
+ 
+        @SuppressWarnings("unused")
+        public ListBoxModel doFillExecutionModeItems() {
 
+            String[] values = {"serial", "parallel"};
+
+            Option[] options = buildSimpleOptions(values);
+
+            return new ListBoxModel(options);
+        }
 
         private Option[] getProjectOptions(String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
 
