@@ -66,6 +66,10 @@
         <f:entry title="${%Browser}" field="browserTestSuites">
             <f:select />
         </f:entry>
+        
+        <f:entry title="${%ExecutionMode}" field="executionMode">
+            <f:select checkMethod="post"/>
+        </f:entry>
 
         <f:entry title="${%RunSuiteList}" field="runSuiteList">
             <f:textarea />
