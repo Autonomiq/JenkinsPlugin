@@ -789,7 +789,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         @SuppressWarnings("unused")
         public ListBoxModel doFillPlatformVersionItems() {
 
-            String[] values = {"10"};
+            String[] values = {"10",""};
 
             Option[] options = buildSimpleOptions(values);
 
@@ -799,7 +799,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         @SuppressWarnings("unused")
         public ListBoxModel doFillBrowserVersionItems() {
 
-            String[] values = {"1.0","91","92"};
+            String[] values = {"1.0","89.0","90.0","91.0","92.0"};
 
             Option[] options = buildSimpleOptions(values);
 
