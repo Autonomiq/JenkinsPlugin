@@ -62,6 +62,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     private Secret proxyPassword;
     private Boolean httpProxy;
     private String executionMode;
+    private String environmentType;
+    private String platformVersion;
+    private String browserVersion;
     private static Long pollingIntervalMs = 10000L;
 
     @DataBoundConstructor
@@ -79,7 +82,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                             String proxyUser,
                             Secret proxyPassword,
                             Boolean httpProxy,
-                            String executionMode
+                            String executionMode,
+                            String environmentType,
+                            String platformVersion,
+                            String browserVersion
     ) {
 
         this.aiqUrl = aiqUrl;
@@ -102,6 +108,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         this.proxyPassword = proxyPassword;
         this.httpProxy = httpProxy;
         this.executionMode=executionMode;
+        this.environmentType=environmentType;
     }
 
     @SuppressWarnings("unused")
@@ -330,6 +337,43 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getExecutionMode() {
         return executionMode;
     }
+    
+    //String platformVersion,
+    //String browserVersion
+    
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setEnvironmentType(String environmentType) {
+        this.environmentType = environmentType;
+    }
+
+    @SuppressWarnings("unused")
+    public String getEnvironmentType() {
+        return environmentType;
+    }
+
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setPlatformVersionType(String platformVersion) {
+        this.platformVersion = platformVersion;
+    }
+
+    @SuppressWarnings("unused")
+    public String getPlatformVersionType() {
+        return platformVersion;
+    }
+    
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setBrowserVersionType(String browserVersion) {
+        this.browserVersion = browserVersion;
+    }
+
+    @SuppressWarnings("unused")
+    public String getBrowserVersionType() {
+        return browserVersion;
+    }
+    
 
     
     private static ServiceAccess getServiceAccess(String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword,
@@ -379,7 +423,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 ok = rt.runTests(genScripts, runTestCases, runTestSuites,
                         platformTestCases, browserTestCases,
                         platformTestSuites, browserTestSuites,
-                        genCaseList, runCaseList, runSuiteList,executionMode);
+                        genCaseList, runCaseList, runSuiteList,executionMode,environmentType);
             } catch (PluginException e) {
                 log.println("Running test case failed with exception");
                 log.println(AiqUtil.getExceptionTrace(e));
@@ -693,7 +737,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         @SuppressWarnings("unused")
         public ListBoxModel doFillPlatformTestSuitesItems() {
 
-            String[] values = {"Linux"};  //, "Windows"};
+            String[] values = {"Linux","Windows"};  //, "Windows"};
 
             Option[] options = buildSimpleOptions(values);
 
@@ -714,7 +758,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         @SuppressWarnings("unused")
         public ListBoxModel doFillBrowserTestSuitesItems() {
 
-            String[] values = {"Chrome", "Firefox"};
+            String[] values = {"Chrome", "Firefox","safari","MicrosoftEdge"};
 
             Option[] options = buildSimpleOptions(values);
 
@@ -730,7 +774,37 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             return new ListBoxModel(options);
         }
+        
+        @SuppressWarnings("unused")
+        public ListBoxModel doFillEnvironmentTypeItems() {
 
+            String[] values = {"local", "remote","saucelabs"};
+
+            Option[] options = buildSimpleOptions(values);
+
+            return new ListBoxModel(options);
+        }
+      //String platformVersion,
+        //String browserVersion
+        @SuppressWarnings("unused")
+        public ListBoxModel doFillPlatformVersionItems() {
+
+            String[] values = {"10"};
+
+            Option[] options = buildSimpleOptions(values);
+
+            return new ListBoxModel(options);
+        }
+        
+        @SuppressWarnings("unused")
+        public ListBoxModel doFillBrowserVersionItems() {
+
+            String[] values = {"1.0","91","92"};
+
+            Option[] options = buildSimpleOptions(values);
+
+            return new ListBoxModel(options);
+        }
 
         private Option[] getProjectOptions(String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
 

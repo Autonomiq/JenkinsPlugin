@@ -41,7 +41,7 @@ class RunSuiteExecutions {
 
     public Boolean runSuites(String platform,
                              String browser,
-                             String runSuiteList,String executionMode) throws PluginException, InterruptedException {
+                             String runSuiteList,String executionMode,String environmentType) throws PluginException, InterruptedException {
 
 
         AiqUtil.ItemListFromString itemsObj = AiqUtil.getItemListFromString(runSuiteList);
@@ -64,7 +64,7 @@ class RunSuiteExecutions {
 
         logTestSuiteNames();
 
-        return handleSuiteExecutions(platform, browser,executionMode);
+        return handleSuiteExecutions(platform, browser,executionMode,environmentType);
 
     }
 
@@ -102,7 +102,7 @@ class RunSuiteExecutions {
         }
     }
 
-    private Boolean handleSuiteExecutions(String platform, String browser,String executionMode) throws PluginException, InterruptedException {
+    private Boolean handleSuiteExecutions(String platform, String browser,String executionMode,String environmentType) throws PluginException, InterruptedException {
 
         log.println();
         log.printf("==== Starting suite executions for project %s\n", pd.getProjectName());
@@ -110,7 +110,7 @@ class RunSuiteExecutions {
 
         try {
             // runTestsData gets updated with execution ids
-            runSuiteExecutions(testDataList, platform, browser,executionMode);
+            runSuiteExecutions(testDataList, platform, browser,executionMode,environmentType);
         } catch (ServiceException e) {
             log.println("Exception running test executions.");
             log.println(AiqUtil.getExceptionTrace(e));
@@ -185,7 +185,7 @@ class RunSuiteExecutions {
     }
 
     private void runSuiteExecutions(List<TestSuiteData> runTestsData, String platform,
-                                   String browser,String executionMode) throws PluginException, ServiceException {
+                                   String browser,String executionMode,String environmentType) throws PluginException, ServiceException {
 
         for (TestSuiteData t : runTestsData) {
 
@@ -194,7 +194,7 @@ class RunSuiteExecutions {
                     null, executionType,
                     executionMode, false,
                     null,
-                    new HashMap<>());
+                    new HashMap<>(),environmentType);
 
             //since we are running in only 1 browser platform combination we need to set only 1 job id here.
             t.setJobId(resp.getJob_id()[0]);

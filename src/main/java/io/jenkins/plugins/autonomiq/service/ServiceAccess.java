@@ -116,7 +116,7 @@ public class ServiceAccess {
         String url = String.format(runTestCasesPath, aiqUrl, projectId);
 
         List<PlatformBrowserDetails> browserDetails = new LinkedList<>();
-        browserDetails.add(new PlatformBrowserDetails(browser, null, platform, null, null, null, null));
+        browserDetails.add(new PlatformBrowserDetails(browser, null, platform, null, null, null, null,null));
         ExecuteTaskRequest body = new ExecuteTaskRequest(sessionId, testExecutionName, scriptIds, executionType,
                 browserDetails, false, null, null);
         String json = AiqUtil.gson.toJson(body);
@@ -146,7 +146,7 @@ public class ServiceAccess {
         List<Long> scriptList = listForItem(scriptId);
 
         List<PlatformBrowserDetails> browserDetails = new LinkedList<>();
-        browserDetails.add(new PlatformBrowserDetails(browser, null, platform, null, null, null, null));
+        browserDetails.add(new PlatformBrowserDetails(browser, null, platform, null, null, null, null,null));
         ExecuteTaskRequest body = new ExecuteTaskRequest(sessionId, testExecutionName, scriptList, executionType,
                 browserDetails, false, null, null);
 
@@ -170,12 +170,12 @@ public class ServiceAccess {
                                              String browserVersion, String executionType,
                                              String executionMode, boolean isRemoteDriver,
                                              String remoteDriverUrl,
-                                             Map<Long, String> caseSessionMap) throws ServiceException {
+                                             Map<Long, String> caseSessionMap,String environmentType) throws ServiceException {
 
         String url = String.format(executeTestSuitePath, aiqUrl, testSuiteId);
 
         List<PlatformBrowserDetails> details = new LinkedList<>();
-        details.add(new PlatformBrowserDetails(browser, null, platform, null, null, null, null));
+        details.add(new PlatformBrowserDetails(browser, null, platform, null, null, null, null,environmentType));
         ExecuteTestSuiteRequest body = new ExecuteTestSuiteRequest(
                 details, executionType, executionMode,
                 isRemoteDriver, remoteDriverUrl, caseSessionMap);

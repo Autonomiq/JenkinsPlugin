@@ -38,7 +38,7 @@ class RunTests {
                             String browserTestSuites,
                             String genCaseList,
                             String runCaseList,
-                            String runSuiteList,String executionMode) throws PluginException, InterruptedException {
+                            String runSuiteList,String executionMode,String environmentType) throws PluginException, InterruptedException {
 
 
         if (!(generateScripts || runTestCases || runTestSuites)) {
@@ -68,7 +68,7 @@ class RunTests {
         if (runTestSuites) {
 
             RunSuiteExecutions run = new RunSuiteExecutions(svc, log, pd, pollingIntervalMs);
-            boolean result = run.runSuites(platformTestSuites, browserTestSuites, runSuiteList,executionMode);
+            boolean result = run.runSuites(platformTestSuites, browserTestSuites, runSuiteList,executionMode,environmentType);
             if (!result) {
                 return result;
             }
