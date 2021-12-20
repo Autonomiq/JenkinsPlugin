@@ -65,6 +65,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     private String environmentType;
     private String platformVersion;
     private String browserVersion;
+    private String sauceConnectProxy;
     private static Long pollingIntervalMs = 10000L;
 
     @DataBoundConstructor
@@ -85,7 +86,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                             String executionMode,
                             String environmentType,
                             String platformVersion,
-                            String browserVersion
+                            String browserVersion,
+                            String sauceConnectProxy
     ) {
 
         this.aiqUrl = aiqUrl;
@@ -108,7 +110,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         this.proxyPassword = proxyPassword;
         this.httpProxy = httpProxy;
         this.executionMode=executionMode;
+        this.platformVersion=platformVersion;
+        this.browserVersion=browserVersion;
         this.environmentType=environmentType;
+        this.sauceConnectProxy=sauceConnectProxy;
     }
 
     @SuppressWarnings("unused")
@@ -354,24 +359,35 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
     @SuppressWarnings("unused")
     @DataBoundSetter
-    public void setPlatformVersionType(String platformVersion) {
+    public void setPlatformVersion(String platformVersion) {
         this.platformVersion = platformVersion;
     }
 
     @SuppressWarnings("unused")
-    public String getPlatformVersionType() {
+    public String getPlatformVersion() {
         return platformVersion;
     }
-    
+   // sauceConnectProxy
     @SuppressWarnings("unused")
     @DataBoundSetter
-    public void setBrowserVersionType(String browserVersion) {
+    public void setBrowserVersion(String browserVersion) {
         this.browserVersion = browserVersion;
     }
 
     @SuppressWarnings("unused")
-    public String getBrowserVersionType() {
+    public String getBrowserVersion() {
         return browserVersion;
+    }
+    
+    @SuppressWarnings("unused")
+    @DataBoundSetter
+    public void setSauceConnectProxyType(String sauceConnectProxy) {
+        this.sauceConnectProxy = sauceConnectProxy;
+    }
+
+    @SuppressWarnings("unused")
+    public String getSauceConnectProxyType() {
+        return sauceConnectProxy;
     }
     
 
@@ -398,11 +414,14 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         log.println();
         log.printf("Logging in as user '%s' to Autonomiq service at: %s\n", login, aiqUrl);
+        log.printf("browserversion '%s' to platformversion at: %s\n", browserVersion,platformVersion);
         log.println();
-
+        log.printf("browserversion '%s' to platformversion at: %s\n", browserVersion,platformVersion);
         ProjectData pd;
+       
         try {
             pd = AiqUtil.gson.fromJson(project, ProjectData.class);
+          
         } catch (Exception e) {
             throw new IOException("Exception unpacking project data", e);
         }
@@ -417,13 +436,15 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
 
         if (ok) {
-
             try {
+            	log.printf("list of svc '%s'\n",svc);
+            	log.printf("list of pd '%s'\n",pd);
+            	log.printf("list of logs '%s'\n",log);
                 RunTests rt = new RunTests(svc, log, pd, pollingIntervalMs);
                 ok = rt.runTests(genScripts, runTestCases, runTestSuites,
                         platformTestCases, browserTestCases,
                         platformTestSuites, browserTestSuites,
-                        genCaseList, runCaseList, runSuiteList,executionMode,environmentType);
+                        genCaseList, runCaseList, runSuiteList,executionMode,environmentType,browserVersion,platformVersion,sauceConnectProxy);
             } catch (PluginException e) {
                 log.println("Running test case failed with exception");
                 log.println(AiqUtil.getExceptionTrace(e));
@@ -778,7 +799,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         @SuppressWarnings("unused")
         public ListBoxModel doFillEnvironmentTypeItems() {
 
-            String[] values = {"local", "remote","saucelabs"};
+            String[] values = {"local", "zalenium","saucelabs"};
 
             Option[] options = buildSimpleOptions(values);
 
@@ -799,7 +820,17 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         @SuppressWarnings("unused")
         public ListBoxModel doFillBrowserVersionItems() {
 
-            String[] values = {"1.0","89.0","90.0","91.0","92.0"};
+            String[] values = {"0.0","1.0","89","90","91","92"};
+
+            Option[] options = buildSimpleOptions(values);
+
+            return new ListBoxModel(options);
+        }
+        
+        @SuppressWarnings("unused")
+        public ListBoxModel doFillSauceConnectProxyItems() {
+
+            String[] values = {"Shared_Tunnel","b1f5d964b5524f169ecef8bd7ebafac6","amitshared"};
 
             Option[] options = buildSimpleOptions(values);
 

@@ -79,6 +79,10 @@
             <f:select />
         </f:entry>
         
+        <f:entry title="${%SauceConnectProxy}" field="sauceConnectProxy">
+            <f:select />
+        </f:entry>
+        
         <f:entry title="${%ExecutionMode}" field="executionMode">
             <f:select checkMethod="post"/>
         </f:entry>
