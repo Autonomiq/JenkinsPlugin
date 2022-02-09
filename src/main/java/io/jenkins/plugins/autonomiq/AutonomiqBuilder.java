@@ -654,6 +654,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
 
         @SuppressWarnings("unused")
+        @POST
         public ListBoxModel doFillProjectItems(@QueryParameter String aiqUrl,
                                                @QueryParameter String login,
                                                @QueryParameter Secret password,
@@ -662,6 +663,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                                                @QueryParameter String proxyUser,
                                                @QueryParameter Secret proxyPassword,
                                                @QueryParameter Boolean httpProxy) {
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+
 
             // make sure other fields have been filled in
             if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
@@ -682,8 +685,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
 
         @SuppressWarnings("unused")
+        @POST
         public ListBoxModel doFillPlatformTestCasesItems() {
-
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             String[] values = {"Linux"};  //, "Windows"};
 
             Option[] options = buildSimpleOptions(values);
@@ -691,8 +695,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return new ListBoxModel(options);
         }
         @SuppressWarnings("unused")
+        @POST
         public ListBoxModel doFillPlatformTestSuitesItems() {
-
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             String[] values = {"Linux"};  //, "Windows"};
 
             Option[] options = buildSimpleOptions(values);
@@ -702,8 +707,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
 
         @SuppressWarnings("unused")
+        @POST
         public ListBoxModel doFillBrowserTestCasesItems() {
-
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             String[] values = {"Chrome", "Firefox"};
 
             Option[] options = buildSimpleOptions(values);
@@ -712,8 +718,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
 
         @SuppressWarnings("unused")
+        @POST
         public ListBoxModel doFillBrowserTestSuitesItems() {
-
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             String[] values = {"Chrome", "Firefox"};
 
             Option[] options = buildSimpleOptions(values);
@@ -722,8 +729,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
 
         @SuppressWarnings("unused")
+        @POST
         public ListBoxModel doFillExecutionModeItems() {
-
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             String[] values = {"serial", "parallel"};
 
             Option[] options = buildSimpleOptions(values);
