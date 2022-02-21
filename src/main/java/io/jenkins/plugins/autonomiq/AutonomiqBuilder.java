@@ -319,7 +319,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         return httpProxy;
     }
     
-    
+
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setExecutionMode(String executionMode) {
@@ -331,7 +331,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         return executionMode;
     }
 
-    
+
     private static ServiceAccess getServiceAccess(String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword,
     		String aiqUrl, String login, Secret password, Boolean httpProxy) throws ServiceException {
     	ServiceAccess svc = null;
@@ -448,7 +448,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             return FormValidation.ok();
         }
-        
+
         @POST
         public FormValidation doCheckGenCaseList(@QueryParameter String value,
                                                  @QueryParameter String aiqUrl,
@@ -654,6 +654,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
 
         @SuppressWarnings("unused")
+        @POST
         public ListBoxModel doFillProjectItems(@QueryParameter String aiqUrl,
                                                @QueryParameter String login,
                                                @QueryParameter Secret password,
@@ -662,6 +663,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                                                @QueryParameter String proxyUser,
                                                @QueryParameter Secret proxyPassword,
                                                @QueryParameter Boolean httpProxy) {
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+
 
             // make sure other fields have been filled in
             if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
@@ -682,8 +685,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
 
         @SuppressWarnings("unused")
+        @POST
         public ListBoxModel doFillPlatformTestCasesItems() {
-
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             String[] values = {"Linux"};  //, "Windows"};
 
             Option[] options = buildSimpleOptions(values);
@@ -691,8 +695,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return new ListBoxModel(options);
         }
         @SuppressWarnings("unused")
+        @POST
         public ListBoxModel doFillPlatformTestSuitesItems() {
-
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             String[] values = {"Linux"};  //, "Windows"};
 
             Option[] options = buildSimpleOptions(values);
@@ -702,28 +707,31 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
 
         @SuppressWarnings("unused")
+        @POST
         public ListBoxModel doFillBrowserTestCasesItems() {
-
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             String[] values = {"Chrome", "Firefox"};
 
             Option[] options = buildSimpleOptions(values);
 
             return new ListBoxModel(options);
         }
-        
+
         @SuppressWarnings("unused")
+        @POST
         public ListBoxModel doFillBrowserTestSuitesItems() {
-
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             String[] values = {"Chrome", "Firefox"};
 
             Option[] options = buildSimpleOptions(values);
 
             return new ListBoxModel(options);
         }
-        
-        @SuppressWarnings("unused")
-        public ListBoxModel doFillExecutionModeItems() {
 
+        @SuppressWarnings("unused")
+        @POST
+        public ListBoxModel doFillExecutionModeItems() {
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             String[] values = {"serial", "parallel"};
 
             Option[] options = buildSimpleOptions(values);
