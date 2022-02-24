@@ -14,8 +14,10 @@ import io.jenkins.plugins.autonomiq.service.ServiceAccess;
 import io.jenkins.plugins.autonomiq.service.ServiceException;
 import io.jenkins.plugins.autonomiq.service.types.AutInformation;
 import io.jenkins.plugins.autonomiq.service.types.DiscoveryResponse;
-
+import io.jenkins.plugins.autonomiq.service.types.Environment2;
+import io.jenkins.plugins.autonomiq.service.types.ExecutionEnvironment;
 import io.jenkins.plugins.autonomiq.service.types.GetTestSuitesResponse;
+import io.jenkins.plugins.autonomiq.service.types.PlatformDetail;
 import io.jenkins.plugins.autonomiq.service.types.TestCasesResponse;
 import io.jenkins.plugins.autonomiq.testplan.TestPlan;
 import io.jenkins.plugins.autonomiq.testplan.TestPlanParser;
@@ -24,12 +26,15 @@ import io.jenkins.plugins.autonomiq.util.TimeStampedLogger;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
+import io.jenkins.plugins.autonomiq.service.types.Environment;
 
 import javax.servlet.ServletException;
 import java.io.*;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import hudson.util.Secret;
@@ -514,6 +519,45 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return FormValidation.ok();
         }
         
+        @SuppressWarnings("unused")
+        @POST
+        public FormValidation doCheckEnvironmentType(@QueryParameter String value,@QueryParameter String environmentType)
+                throws IOException, ServletException {
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+            if (value.length() == 0)
+                return FormValidation.error(Messages.AutonomiqBuilder_DescriptorImpl_errors_missingEnvironmentType());
+            else
+            	environmentType=value;
+            	System.out.println(" form validation before the do fill values Environment"+environmentType);
+            return FormValidation.ok();
+        }
+        
+        @SuppressWarnings("unused")
+        @POST
+        public FormValidation doCheckBrowserTestSuites(@QueryParameter String value,@QueryParameter String platformTestSuites)
+                throws IOException, ServletException {
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+            if (value.length() == 0)
+                return FormValidation.error(Messages.AutonomiqBuilder_DescriptorImpl_errors_missingEnvironmentType());
+            else
+            	platformTestSuites=value;
+            	System.out.println(" form validation before the do fill values platform values"+platformTestSuites);
+            return FormValidation.ok();
+        }
+        
+        @SuppressWarnings("unused")
+        @POST
+        public FormValidation doCheckPlatformTestSuites(@QueryParameter String value,@QueryParameter String browserTestSuites)
+                throws IOException, ServletException {
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+            if (value.length() == 0)
+                return FormValidation.error(Messages.AutonomiqBuilder_DescriptorImpl_errors_missingEnvironmentType());
+            else
+            	browserTestSuites=value;
+            	System.out.println(" form validation before the do fill values browser values"+browserTestSuites);
+            return FormValidation.ok();
+        }
+        
         @POST
         public FormValidation doCheckGenCaseList(@QueryParameter String value,
                                                  @QueryParameter String aiqUrl,
@@ -755,14 +799,40 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             return new ListBoxModel(options);
         }
+        
         @SuppressWarnings("unused")
-        public ListBoxModel doFillPlatformTestSuitesItems() {
+        public ListBoxModel doFillPlatformTestSuitesItems(@QueryParameter String environmentType,@QueryParameter String aiqUrl,
+                @QueryParameter String login,
+                @QueryParameter Secret password,
+                @QueryParameter String proxyHost,
+                @QueryParameter String proxyPort,
+                @QueryParameter String proxyUser,
+                @QueryParameter Secret proxyPassword,
+                @QueryParameter Boolean httpProxy) throws ServiceException {
 
-            String[] values = {"Linux","Windows"};  //, "Windows"};
+            //String[] values = {"Linux","Windows"};  //, "Windows"};
+        	
+        	if (environmentType.equalsIgnoreCase("Saucelabs")) {
+        	
+            String[] values= getplatformType(environmentType,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy); 
+
+            //String[] values = {"Linux","Windows"};  //, "Windows"};        
 
             Option[] options = buildSimpleOptions(values);
 
             return new ListBoxModel(options);
+        	}
+        	if (environmentType.equalsIgnoreCase("Local"))
+        	{
+        		 String[] values = {"Linux"};  //, "Windows"};
+
+                 Option[] options = buildSimpleOptions(values);
+
+                 return new ListBoxModel(options);
+        	}
+        	
+        	return new ListBoxModel();
+        			
         }
 
 
@@ -777,13 +847,33 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
         
         @SuppressWarnings("unused")
-        public ListBoxModel doFillBrowserTestSuitesItems() {
+        public ListBoxModel doFillBrowserTestSuitesItems(@QueryParameter String platformTestSuites,@QueryParameter String aiqUrl,
+                @QueryParameter String login,
+                @QueryParameter Secret password,
+                @QueryParameter String proxyHost,
+                @QueryParameter String proxyPort,
+                @QueryParameter String proxyUser,
+                @QueryParameter Secret proxyPassword,
+                @QueryParameter Boolean httpProxy) throws ServiceException {
 
-            String[] values = {"Chrome", "Firefox","safari","MicrosoftEdge"};
+        	if (platformTestSuites.equalsIgnoreCase("Windows 10") || platformTestSuites.equalsIgnoreCase("macOS 10.15") || platformTestSuites.equalsIgnoreCase("macOS 11.00")) {
+            String[] values= getBrowser(platformTestSuites,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+
+            //String[] values = {"Chrome", "Firefox","safari","MicrosoftEdge"};
 
             Option[] options = buildSimpleOptions(values);
 
             return new ListBoxModel(options);
+        	}
+        	if (platformTestSuites.equalsIgnoreCase("Linux"))
+        	{
+        		  //, "Windows"};
+                 String[] values = {"Chrome (headless)","Firefox (headless)","Chrome (headful)","Firefox (headful)"};  //, "Windows"};
+                 Option[] options = buildSimpleOptions(values);
+
+                 return new ListBoxModel(options);
+        	}
+        	return new ListBoxModel();
         }
         
         @SuppressWarnings("unused")
@@ -795,15 +885,31 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             return new ListBoxModel(options);
         }
-        
+       
         @SuppressWarnings("unused")
-        public ListBoxModel doFillEnvironmentTypeItems() {
+        public ListBoxModel doFillEnvironmentTypeItems(@QueryParameter String aiqUrl,
+                @QueryParameter String login,
+                @QueryParameter Secret password,
+                @QueryParameter String proxyHost,
+                @QueryParameter String proxyPort,
+                @QueryParameter String proxyUser,
+                @QueryParameter Secret proxyPassword,
+                @QueryParameter Boolean httpProxy) throws ServiceException {
+        	
+        	System.out.println("env type inside do fill AIQURL"+aiqUrl);
+        	if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
+            //String[] values = {"Linux","Windows"};  //, "Windows"};
+            String[] values= getEnvironmentType(aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
 
-            String[] values = {"local", "zalenium","saucelabs"};
-
+            //String[] values = {"-- select environment --","saucelabs"};
+            
+            
             Option[] options = buildSimpleOptions(values);
 
-            return new ListBoxModel(options);
+            return  new ListBoxModel(options);
+        	}
+        	return new ListBoxModel();
+            
         }
       //String platformVersion,
         //String browserVersion
@@ -818,23 +924,49 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
         
         @SuppressWarnings("unused")
-        public ListBoxModel doFillBrowserVersionItems() {
+        public ListBoxModel doFillBrowserVersionItems(@QueryParameter String browserTestSuites,@QueryParameter String aiqUrl,
+                @QueryParameter String login,
+                @QueryParameter Secret password,
+                @QueryParameter String proxyHost,
+                @QueryParameter String proxyPort,
+                @QueryParameter String proxyUser,
+                @QueryParameter Secret proxyPassword,
+                @QueryParameter Boolean httpProxy) throws ServiceException {
 
-            String[] values = {"0.0","1.0","89","90","91","92"};
+            //String[] values = {"Linux","Windows"};  //, "Windows"};
+        	if (browserTestSuites.equalsIgnoreCase("chrome") || browserTestSuites.equalsIgnoreCase("firefox") || browserTestSuites.equalsIgnoreCase("safari") || browserTestSuites.equalsIgnoreCase("MicrosoftEdge")) 
+        	{
+
+            String[] values= getBrowserVersion(browserTestSuites,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+
+           // String[] values = {"0.0","1.0","89","90","91","92"};
 
             Option[] options = buildSimpleOptions(values);
 
             return new ListBoxModel(options);
+        	}
+        	return new ListBoxModel();
         }
         
+        
         @SuppressWarnings("unused")
-        public ListBoxModel doFillSauceConnectProxyItems() {
+        public ListBoxModel doFillSauceConnectProxyItems(@QueryParameter String environmentType,@QueryParameter String aiqUrl,
+                @QueryParameter String login,
+                @QueryParameter Secret password,
+                @QueryParameter String proxyHost,
+                @QueryParameter String proxyPort,
+                @QueryParameter String proxyUser,
+                @QueryParameter Secret proxyPassword,
+                @QueryParameter Boolean httpProxy) {
+        	if (environmentType.equalsIgnoreCase("Saucelabs")) {
 
             String[] values = {"Shared_Tunnel","b1f5d964b5524f169ecef8bd7ebafac6","amitshared"};
 
             Option[] options = buildSimpleOptions(values);
 
             return new ListBoxModel(options);
+        	}
+        	return new ListBoxModel();
         }
 
         private Option[] getProjectOptions(String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
@@ -874,7 +1006,217 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             return ret;
         }
+////////////////////////////////////   platform           //////////////////////////////
+        
+     // get the list of platforms for saucelabs
+        private String[] getplatformType(String environmentType,String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
+            int i =0;
+        	String[] platform1= new String[12];  
 
+            try {
+                ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
+               
+            	List<ExecutionEnvironment> envInfo=svc.executionEnvironment();
+            	//svc.SauceConnectid();
+            	
+				for (ExecutionEnvironment t:envInfo) {
+					
+	            	 Integer a=t.getaccountId();
+	            	 ArrayList<Environment> d=t.getenvironments();
+	            	 
+	            	 
+	            	 for (Environment t1:d)
+	            	 {
+	            		 
+	            		 String z = t1.getenvironmentType();
+	            		 
+	            		 	if(z.equalsIgnoreCase("Saucelabs"))
+	            		 	{
+	            		 		System.out.println("List of response saucelabs"+z);
+	            		 		Environment2 env2=t1.getenvironment();
+	   	            		 
+	   	            		 ArrayList<PlatformDetail> td = env2.getplatformDetails();
+	   	            		  	 String  sdc = env2.getsauceDataCentreName();
+	   	            		     String sp=env2.getsaucePassword();
+	   	            		     String su=env2.getsauceUsername();
+	   	            		     
+	   	            		     for(PlatformDetail pD:td) {
+	   	            		    	String platform=pD.getplatform();
+	   	            		    	System.out.println("List of response sauce labs"+platform);
+	   	            		    	platform1[i]=platform;
+	   	   	            		 	i++;	   
+	   	            		    	
+	            		 	}
+	            		 
+	            		     }     
+
+	            	 }
+	            	 
+				}  
+
+            } catch (Exception e) {
+                throw new ServiceException("Exception getting project list");
+            }
+            LinkedHashSet<String> lhSetColors =  
+                    new LinkedHashSet<String>(Arrays.asList(platform1));
+            lhSetColors.remove(null);
+       	 String[] newArray = lhSetColors.toArray(new String[ lhSetColors.size()]);
+       	
+       	 System.out.println("List of response12"+newArray);   
+            return newArray;
+        }
+ /////////////////////////////////////////////  browser ///////////////////////////      
+        private String[] getBrowser(String platformTestSuites,String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
+            int i =0;
+        	String[] platform1= new String[12];
+
+            try {
+                ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
+                
+            	List<ExecutionEnvironment> envInfo=svc.executionEnvironment();
+				for (ExecutionEnvironment t:envInfo) {
+	            	 
+	            	 Integer a=t.getaccountId();
+	            	 ArrayList<Environment> d=t.getenvironments();
+	            	 
+	            	 for (Environment t1:d)
+	            	 {
+	            		 String z = t1.getenvironmentType(); 	
+	            		 if(z.equalsIgnoreCase("Saucelabs"))
+	            		 {
+	            		 Environment2 env2=t1.getenvironment();
+	            		 
+	            		 ArrayList<PlatformDetail> td = env2.getplatformDetails();
+	            		  	 String  sdc = env2.getsauceDataCentreName();
+	            		     String sp=env2.getsaucePassword();
+	            		     String su=env2.getsauceUsername();
+
+	            		     for(PlatformDetail pD:td) {
+	            		    	 String platform=pD.getplatform(); 
+	            		    	 if (platform.equalsIgnoreCase(platformTestSuites))
+	            		    	 {
+		            		    	String browser=pD.getbrowser();
+		            		    	platform1[i]=browser;
+		   	            		 	i++;
+	            		    	 }
+	            		     }
+        		    	
+	            		     }
+
+	            	 }
+
+				}  
+
+            } catch (Exception e) {
+                throw new ServiceException("Exception getting project list");
+            }
+            LinkedHashSet<String> lhSetColors =  
+                    new LinkedHashSet<String>(Arrays.asList(platform1));
+            lhSetColors.remove(null);
+       	 String[] newArray = lhSetColors.toArray(new String[ lhSetColors.size() ]);
+            return newArray;
+        }
+////////////////////// environment type ////////////////////////////////
+        private String[] getEnvironmentType(String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
+            int i =0;
+        	String[] envType= new String[3];        	
+
+            try {
+                ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
+                
+            	List<ExecutionEnvironment> envInfo=svc.executionEnvironment();
+            	
+				for (ExecutionEnvironment t:envInfo) {
+	            	 System.out.println("inside first for loop"+t);
+	            	 Integer a=t.getaccountId();
+	            	 ArrayList<Environment> d=t.getenvironments();
+	            	 for (Environment t1:d)
+	            	 {
+	            		 System.out.println("inside second for loop"+t1);
+	            		 String z = t1.getenvironmentType(); 	
+	            		 if(z.equalsIgnoreCase("Zalenium"))
+	            		 {
+	            			 System.out.println("inside if condition"+z);
+	            			 z="Remote";
+		            		 //i++;
+		            		 //break;
+	            		 }   
+		            		 envType[i]=z;
+		            		 i++;
+	            	 }
+	            	
+				}  
+				
+
+            } catch (Exception e) {
+                throw new ServiceException("Exception getting project list");
+            }
+              
+            List<String> list = new ArrayList<String>();
+
+            for(String s : envType) {
+               if(s != null && s.length() > 0) {
+                  list.add(s);
+               }
+            }
+            envType = list.toArray(new String[list.size()]);
+            return envType;
+        }
+        
+ /////////////////////// browser version /////////////////////////////
+        private String[] getBrowserVersion(String browserTestSuites,String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
+            int i =0;
+        	String[] platform1= new String[12];
+        	String[] Browserversion= new String[12];
+
+            try {
+                ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
+                
+            	List<ExecutionEnvironment> envInfo=svc.executionEnvironment();
+				for (ExecutionEnvironment t:envInfo) {
+	            	 
+	            	 Integer a=t.getaccountId();
+	            	 ArrayList<Environment> d=t.getenvironments();
+	            	 
+	            	 for (Environment t1:d)
+	            	 {
+	            		 String z = t1.getenvironmentType(); 
+	            		 if(z.equalsIgnoreCase("Saucelabs"))
+	            		 {
+	            		 Environment2 env2=t1.getenvironment();
+	            		 
+	            		 ArrayList<PlatformDetail> td = env2.getplatformDetails();
+	            		  	 String  sdc = env2.getsauceDataCentreName();
+	            		     String sp=env2.getsaucePassword();
+	            		     String su=env2.getsauceUsername();
+	            		     
+	            		     for(PlatformDetail pD:td) {
+	            		    	 String browser=pD.getbrowser();
+	            		    	 if (browser.equalsIgnoreCase(browserTestSuites))
+	            		    	 {
+		    	 
+		            		    	 String bv=pD.getbrowserVersion();
+		            		    	platform1[i]=bv;
+		            		    		i++;
+	            		     }
+	            		     }
+	            		     }
+	            	 }
+	            	
+				}  
+
+            } catch (Exception e) {
+                throw new ServiceException("Exception getting project list");
+            }
+            LinkedHashSet<String> lhSetColors =  
+                    new LinkedHashSet<String>(Arrays.asList(platform1));
+            lhSetColors.remove(null);
+       	 String[] newArray = lhSetColors.toArray(new String[ lhSetColors.size() ]);
+            return newArray;
+        }
+        
+        
+ ///////////////////////////////////////////       
         private Option[] buildSimpleOptions(String[] values) {
 
             Option[] options = new Option[values.length];
