@@ -25,7 +25,7 @@ public class ServiceAccess {
     private static final String getTestSuitesPath = "%s/platform/testSuites/%d/%d/getTestSuites"; // accountId, projectId
     private static final String executeTestSuitePath = "%s/platform/v1/testsuite/%s/execute"; // testSuiteId
     private static final String getJobPath = "%s/platform/v1/jobs/%d/get_job"; // jobId
-
+    private  static final String getExecutionenverinoment="%s/platform/v1/accounts/executionenvironment";
     private static final String websocketPath = "%s/ws?accountId=%d";
 
     private final String aiqUrl;
@@ -65,6 +65,23 @@ public class ServiceAccess {
         } catch (Exception e) {
             throw new ServiceException("Exception in authentication", e);
         }
+    }
+    public List<ExecutionEnvironment> executionEnvironment() throws ServiceException{
+    	
+    	String url = String.format(getExecutionenverinoment, aiqUrl);
+    	
+    	 try {
+             String resp = web.get(url, token);
+             
+             
+             List<ExecutionEnvironment> envInfo = AiqUtil.gson.fromJson(resp,
+                     new TypeToken<List<ExecutionEnvironment>>() {
+                     }.getType());
+            
+             return envInfo;
+         } catch (Exception e) {
+             throw new ServiceException("Exception getting test case info ", e);
+         }	
     }
 
     public TestCaseInfo getTestCaseInfo(Long testCaseId, TestCaseInfoType type) throws ServiceException {

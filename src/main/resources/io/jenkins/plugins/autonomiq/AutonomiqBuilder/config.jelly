@@ -67,10 +67,6 @@
             <f:select />
         </f:entry>
         
-        <f:entry title="${%PlatformVersion}" field="platformVersion">
-            <f:select />
-        </f:entry>
-
         <f:entry title="${%Browser}" field="browserTestSuites">
             <f:select />
         </f:entry>
