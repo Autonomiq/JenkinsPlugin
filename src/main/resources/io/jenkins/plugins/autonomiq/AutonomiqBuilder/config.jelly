@@ -2,6 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:c="/lib/credentials" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
 	 <f:optionalBlock inline="true" field="httpProxy" title="${%HttpProxy}" >
+	 
 	    <f:entry title="${%ProxyHost}" field="proxyHost">
 	        <f:textbox  />
 	    </f:entry>

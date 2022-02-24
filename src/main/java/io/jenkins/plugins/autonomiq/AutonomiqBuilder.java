@@ -810,13 +810,11 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException {
 
-            //String[] values = {"Linux","Windows"};  //, "Windows"};
         	
         	if (environmentType.equalsIgnoreCase("Saucelabs")) {
         	
             String[] values= getplatformType(environmentType,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy); 
-
-            //String[] values = {"Linux","Windows"};  //, "Windows"};        
+      
 
             Option[] options = buildSimpleOptions(values);
 
@@ -1008,7 +1006,6 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
 ////////////////////////////////////   platform           //////////////////////////////
         
-     // get the list of platforms for saucelabs
         private String[] getplatformType(String environmentType,String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
             int i =0;
         	String[] platform1= new String[12];  
