@@ -26,6 +26,7 @@ public class ServiceAccess {
     private static final String executeTestSuitePath = "%s/platform/v1/testsuite/%s/execute"; // testSuiteId
     private static final String getJobPath = "%s/platform/v1/jobs/%d/get_job"; // jobId
     private  static final String getExecutionenverinoment="%s/platform/v1/accounts/executionenvironment";
+    private  static final String getsauceconnectids="%s/platform/v1/getsauceconnectids";
     private static final String websocketPath = "%s/ws?accountId=%d";
 
     private final String aiqUrl;
@@ -200,16 +201,28 @@ public class ServiceAccess {
         String json = AiqUtil.gson.toJson(body);
 
         try {
-
             String resp = web.post(url, json, token);
 
             ExecuteSuiteResponse respExec = AiqUtil.gson.fromJson(resp, ExecuteSuiteResponse.class);
-
+           
             return respExec;
 
         } catch (Exception e) {
             throw new ServiceException(String.format("Exception running test suite id %d", testSuiteId), e);
         }
+    }
+    public GetSauceConnect getsauceconnect() throws ServiceException  
+    {
+    	String url = String.format(getsauceconnectids, aiqUrl);
+    	try {
+            String resp = web.get(url, token);
+            GetSauceConnect getsauceid = AiqUtil.gson.fromJson(resp, GetSauceConnect.class);
+            
+            return getsauceid;
+        } catch (Exception e) {
+            throw new ServiceException("Exception getting getsauceconnect ", e);
+        }
+    	
     }
 
     private <T> List<T> listForItem(T item) {

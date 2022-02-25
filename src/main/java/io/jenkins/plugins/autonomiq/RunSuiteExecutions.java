@@ -186,6 +186,23 @@ class RunSuiteExecutions {
 
     private void runSuiteExecutions(List<TestSuiteData> runTestsData, String platform,
                                    String browser,String executionMode,String environmentType,String browserVersion,String platformVersion,String sauceConnectProxy) throws PluginException, ServiceException {
+    	
+    	if(browser.equalsIgnoreCase("Chrome (headless)")|| browser.equalsIgnoreCase("Firefox (headless)"))
+        {
+        	String[] splited = browser.split(" ");
+        	log.printf("list of platform version inside loop '%s'\n",splited[0]);
+        	browser=splited[0].toLowerCase();	
+        	//environmentType="Local";
+        
+        }
+    	if(browser.equalsIgnoreCase("Chrome (headful)") || browser.equalsIgnoreCase("Firefox (headful)"))
+        {
+        	String[] splited = browser.split(" ");
+        	log.printf("list of platform version inside loop '%s'\n",splited[0]);
+        	
+        	browser=splited[0].toLowerCase();	
+        	environmentType="zalenium";
+        }
     	log.printf("browser version of chrome :'%s'\n",browser);
     	log.printf("browser version of platform :'%s'\n",platform);
     	log.printf("browser version of environmentType :'%s'\n",environmentType);
@@ -200,6 +217,7 @@ class RunSuiteExecutions {
                     executionMode, false,
                     null,
                     new HashMap<>(),environmentType,platformVersion,sauceConnectProxy);
+           
             
             //since we are running in only 1 browser platform combination we need to set only 1 job id here.
             t.setJobId(resp.getJob_id()[0]);

@@ -16,6 +16,7 @@ import io.jenkins.plugins.autonomiq.service.types.AutInformation;
 import io.jenkins.plugins.autonomiq.service.types.DiscoveryResponse;
 import io.jenkins.plugins.autonomiq.service.types.Environment2;
 import io.jenkins.plugins.autonomiq.service.types.ExecutionEnvironment;
+import io.jenkins.plugins.autonomiq.service.types.GetSauceConnect;
 import io.jenkins.plugins.autonomiq.service.types.GetTestSuitesResponse;
 import io.jenkins.plugins.autonomiq.service.types.PlatformDetail;
 import io.jenkins.plugins.autonomiq.service.types.TestCasesResponse;
@@ -967,10 +968,14 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter String proxyPort,
                 @QueryParameter String proxyUser,
                 @QueryParameter Secret proxyPassword,
-                @QueryParameter Boolean httpProxy) {
+                @QueryParameter Boolean httpProxy) throws ServiceException
+        {
         	if (environmentType.equalsIgnoreCase("Saucelabs")) {
+        		
+            String[] values= getSauceconnect(aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
 
-            String[] values = {"Shared_Tunnel","b1f5d964b5524f169ecef8bd7ebafac6","amitshared"};
+
+            //String[] values = {"Shared_Tunnel","b1f5d964b5524f169ecef8bd7ebafac6","amitshared"};
 
             Option[] options = buildSimpleOptions(values);
 
@@ -985,7 +990,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             try {
                 ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
-
+                
+                
                 Collection<DiscoveryResponse> dataList = svc.getProjectData();
 
                 ret = new Option[dataList.size() + 1];
@@ -1251,8 +1257,38 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
        	 String[] newArray = lhSetColors.toArray(new String[ lhSetColors.size() ]);
             return newArray;
         }
-        
-        
+///////////// sauce connect ////////////////
+        private String[] getSauceconnect(String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
+            int i =1;
+        	String[] platform1= new String[12];
+        	platform1[0]="--select sauceconnect--";
+
+            try {
+                ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
+                GetSauceConnect sauceid =svc.getsauceconnect();
+                System.out.println("sauceid"+sauceid.sauce_connect_ids().length);
+                
+                System.out.println("sauceid values actual addition"+sauceid.sauce_connect_ids().length+1);
+                
+                for(int i1=1;i1<sauceid.sauce_connect_ids().length+1;i1++)
+                {
+                	System.out.println("sauceid values after subtract"+sauceid.sauce_connect_ids()[i1-1]);
+                	
+                	platform1[i1]=sauceid.sauce_connect_ids()[i1-1];
+                	
+                }
+                
+
+            } catch (Exception e) {
+                throw new ServiceException("Exception getting project list");
+            }
+            LinkedHashSet<String> lhSetColors =  
+                    new LinkedHashSet<String>(Arrays.asList(platform1));
+            lhSetColors.remove(null);
+       	 String[] newArray = lhSetColors.toArray(new String[ lhSetColors.size() ]);
+            return newArray;
+        }
+                
  ///////////////////////////////////////////       
         private Option[] buildSimpleOptions(String[] values) {
 
