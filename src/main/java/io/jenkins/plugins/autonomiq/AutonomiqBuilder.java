@@ -16,17 +16,15 @@ import io.jenkins.plugins.autonomiq.service.types.AutInformation;
 import io.jenkins.plugins.autonomiq.service.types.DiscoveryResponse;
 import io.jenkins.plugins.autonomiq.service.types.Environment2;
 import io.jenkins.plugins.autonomiq.service.types.ExecutionEnvironment;
-import io.jenkins.plugins.autonomiq.service.types.GetSauceConnect;
 import io.jenkins.plugins.autonomiq.service.types.GetTestSuitesResponse;
 import io.jenkins.plugins.autonomiq.service.types.PlatformDetail;
 import io.jenkins.plugins.autonomiq.service.types.TestCasesResponse;
-import io.jenkins.plugins.autonomiq.testplan.TestPlan;
-import io.jenkins.plugins.autonomiq.testplan.TestPlanParser;
 import io.jenkins.plugins.autonomiq.util.AiqUtil;
 import io.jenkins.plugins.autonomiq.util.TimeStampedLogger;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
+
 import io.jenkins.plugins.autonomiq.service.types.Environment;
 
 import javax.servlet.ServletException;
