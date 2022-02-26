@@ -29,6 +29,10 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import io.jenkins.plugins.autonomiq.service.types.Environment;
 
+
+
+////////////
+
 import javax.servlet.ServletException;
 import java.io.*;
 import java.util.ArrayList;
@@ -1266,6 +1270,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             try {
                 ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
                 GetSauceConnect sauceid =svc.getsauceconnect();
+                
                 System.out.println("sauceid"+sauceid.sauce_connect_ids().length);
                 
                 System.out.println("sauceid values actual addition"+sauceid.sauce_connect_ids().length+1);
