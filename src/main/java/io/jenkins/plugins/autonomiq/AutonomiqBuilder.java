@@ -16,6 +16,7 @@ import io.jenkins.plugins.autonomiq.service.types.AutInformation;
 import io.jenkins.plugins.autonomiq.service.types.DiscoveryResponse;
 import io.jenkins.plugins.autonomiq.service.types.Environment2;
 import io.jenkins.plugins.autonomiq.service.types.ExecutionEnvironment;
+import io.jenkins.plugins.autonomiq.service.types.GetSauceConnect;
 import io.jenkins.plugins.autonomiq.service.types.GetTestSuitesResponse;
 import io.jenkins.plugins.autonomiq.service.types.PlatformDetail;
 import io.jenkins.plugins.autonomiq.service.types.TestCasesResponse;
