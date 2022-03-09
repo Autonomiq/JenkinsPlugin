@@ -44,12 +44,24 @@
 
     <f:optionalBlock inline="true" field="runTestCases" title="${%RunTestCases}" >
 
-        <f:entry title="${%Platform}" field="platformTestCases">
-            <f:select />
+         <f:entry title="${%EnvironmentType}" field="environmentType">
+            <f:select checkMethod="post" style="width:15em;"/>
         </f:entry>
-
-        <f:entry title="${%Browser}" field="browserTestCases">
-            <f:select />
+        
+        <f:entry title="${%Platform}" field="platformTestSuites">
+            <f:select style="width:15em;"/>
+        </f:entry>
+        
+        <f:entry title="${%Browser}" field="browserTestSuites">
+            <f:select style="width:15em;"/>
+        </f:entry>
+        
+        <f:entry title="${%BrowserVersion}" field="browserVersion">
+            <f:select style="width:15em;" />
+        </f:entry>
+        
+        <f:entry title="${%SauceConnectProxy}" field="sauceConnectProxy">
+            <f:select style="width:15em;" />
         </f:entry>
 
          <f:entry title="${%RunCaseList}" field="runCaseList">

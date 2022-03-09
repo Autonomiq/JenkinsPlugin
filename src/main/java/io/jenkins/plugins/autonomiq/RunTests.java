@@ -59,7 +59,7 @@ class RunTests {
         if (runTestCases) {
 
             RunTestExecutions run = new RunTestExecutions(svc, log, pd, pollingIntervalMs);
-            boolean result = run.runTests(platformTestCases, browserTestCases, runCaseList);
+            boolean result = run.runTests(platformTestSuites, browserTestSuites, runCaseList,environmentType,browserVersion,platformVersion,sauceConnectProxy);
             if (!result) {
                 return result;
             }

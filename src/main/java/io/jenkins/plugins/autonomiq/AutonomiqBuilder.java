@@ -987,7 +987,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	if( environmentType.equalsIgnoreCase("Local"))
         	{
                  String[] values = {"NotApplicable"};
-                 Option[] options = buildSimpleOptions(values);
+                 Option[] options = buildSimpleOptions(values);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
 
                  return new ListBoxModel(options);
         	}
@@ -1079,7 +1079,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 				}  
 
             } catch (Exception e) {
-                throw new ServiceException("Exception getting project list");
+                throw new ServiceException("Exception in getting platform values");
             }
             LinkedHashSet<String> lhSetColors =  
                     new LinkedHashSet<String>(Arrays.asList(platform1));
@@ -1133,7 +1133,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 				}  
 
             } catch (Exception e) {
-                throw new ServiceException("Exception getting project list");
+                throw new ServiceException("Exception in getting browser values");
             }
             LinkedHashSet<String> lhSetColors =  
                     new LinkedHashSet<String>(Arrays.asList(Browser));
@@ -1171,7 +1171,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 				
 
             } catch (Exception e) {
-                throw new ServiceException("Exception getting project list");
+                throw new ServiceException("Exception in getting environmenttype values");
             }
               
             List<String> list = new ArrayList<String>();
@@ -1229,7 +1229,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 				}  
 
             } catch (Exception e) {
-                throw new ServiceException("Exception getting project list");
+                throw new ServiceException("Exception in getting browserversion values");
             }
             LinkedHashSet<String> lhSetColors =  
                     new LinkedHashSet<String>(Arrays.asList(BrowserVersion));
@@ -1255,7 +1255,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 }
                 
             } catch (Exception e) {
-                throw new ServiceException("Exception getting project list");
+                throw new ServiceException("Exception in getting sauceconnect values");
             }
             LinkedHashSet<String> lhSetColors =  
                     new LinkedHashSet<String>(Arrays.asList(sauceconnect));
