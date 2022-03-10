@@ -43,7 +43,7 @@ class RunTestExecutions {
 
     public Boolean runTests(String platform,
                             String browser,
-                            String runCaseList) throws PluginException, InterruptedException {
+                            String runCaseList,String environmentTypeTestcases,String browserVersionTestcases,String sauceConnectProxyTestcases) throws PluginException, InterruptedException {
 
 
         AiqUtil.ItemListFromString itemsObj = AiqUtil.getItemListFromString(runCaseList);
@@ -66,7 +66,7 @@ class RunTestExecutions {
 
         logTestCaseNames();
 
-        return handleTestExecutions(platform, browser);
+        return handleTestExecutions(platform, browser,environmentTypeTestcases,browserVersionTestcases,sauceConnectProxyTestcases);
 
     }
 
@@ -123,7 +123,7 @@ class RunTestExecutions {
     }
 
 
-    private Boolean handleTestExecutions(String platform, String browser) throws PluginException, InterruptedException {
+    private Boolean handleTestExecutions(String platform, String browser,String environmentTypeTestcases,String browserVersionTestcases,String sauceConnectProxyTestcases) throws PluginException, InterruptedException {
 
         // use last test script in current list for test case
         for (TestCasesResponse r : testCasesById.values()) {
@@ -144,11 +144,11 @@ class RunTestExecutions {
         log.println();
 
         if (runSequential) {
-            return runSequentialTestExecutions(platform, browser);
+            return runSequentialTestExecutions(platform, browser,environmentTypeTestcases,browserVersionTestcases,sauceConnectProxyTestcases);
         } else {
             try {
                 // runTestsData gets updated with execution ids
-                runTestExecutions(testDataList, platform, browser);
+                runTestExecutions(testDataList, platform, browser,environmentTypeTestcases,browserVersionTestcases,sauceConnectProxyTestcases);
             } catch (ServiceException e) {
                 log.println("Exception running test executions.");
                 log.println(AiqUtil.getExceptionTrace(e));
@@ -190,9 +190,26 @@ class RunTestExecutions {
         return true;
     }
 
-    private Boolean runSequentialTestExecutions(String platform, String browser) throws PluginException, InterruptedException {
+    private Boolean runSequentialTestExecutions(String platform, String browser,String environmentTypeTestcases,String browserVersionTestcases,String sauceConnectProxyTestcases) throws PluginException, InterruptedException {
 
-        Boolean ret = true;
+    	if(browser.equalsIgnoreCase("Chrome (headless)")|| browser.equalsIgnoreCase("Firefox (headless)"))
+        {
+        	String[] splited = browser.split(" ");
+        	log.printf("list of platform version inside loop '%s'\n",splited[0]);
+        	browser=splited[0].toLowerCase();	
+        	//environmentType="Local";
+        
+        }
+    	if(browser.equalsIgnoreCase("Chrome (headful)") || browser.equalsIgnoreCase("Firefox (headful)"))
+        {
+        	String[] splited = browser.split(" ");
+        	log.printf("list of platform version inside loop '%s'\n",splited[0]);
+        	
+        	browser=splited[0].toLowerCase();	
+        	environmentTypeTestcases="zalenium";
+        }
+    	
+    	Boolean ret = true;
 
         ret = setInitialVariables(plan.getInitialVars());
         if (ret == false) {
@@ -214,7 +231,7 @@ class RunTestExecutions {
                 ExecutedTaskResponse resp = svc.runTestCase(pd.getProjectId(), testData.getTestScriptId(),
                         testExecutionName,
                         platform, browser,
-                        executionType);
+                        executionType,environmentTypeTestcases,browserVersionTestcases,sauceConnectProxyTestcases);
                 log.println("Execution started");
 
                 // save execution id
@@ -328,7 +345,7 @@ class RunTestExecutions {
     }
 
     private void runTestExecutions(List<TestCaseData> runTestsData, String platform,
-                                   String browser) throws PluginException, ServiceException {
+                                   String browser,String environmentTypeTestcases,String browserVersionTestcases,String sauceConnectProxyTestcases) throws PluginException, ServiceException {
 
         for (TestCaseData t : runTestsData) {
 
@@ -337,7 +354,7 @@ class RunTestExecutions {
             ExecutedTaskResponse resp = svc.runTestCase(pd.getProjectId(), t.getTestScriptId(),
                     testExecutionName,
                     platform, browser,
-                    executionType);
+                    executionType,environmentTypeTestcases,browserVersionTestcases,sauceConnectProxyTestcases);
 
             // save execution id
             if (resp.getTasks().length != 1) {
