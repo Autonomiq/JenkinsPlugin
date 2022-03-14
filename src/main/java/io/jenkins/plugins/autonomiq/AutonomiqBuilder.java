@@ -421,12 +421,12 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     
     @SuppressWarnings("unused")
     @DataBoundSetter
-    public void setSauceConnectProxyType(String sauceConnectProxy) {
+    public void setSauceConnectProxy(String sauceConnectProxy) {
         this.sauceConnectProxy = sauceConnectProxy;
     }
 
     @SuppressWarnings("unused")
-    public String getSauceConnectProxyType() {
+    public String getSauceConnectProxy() {
         return sauceConnectProxy;
     }
     @SuppressWarnings("unused")
@@ -1166,7 +1166,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException
         {
-        	if (environmentType.equalsIgnoreCase("Saucelabs")) {
+        	if (environmentType.equalsIgnoreCase("saucelabs")) {
         		
             String[] values= getSauceconnect(aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
 
@@ -1181,6 +1181,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
                  return new ListBoxModel(options);
         	}
+        	
         	return new ListBoxModel();
         }
 
@@ -1349,12 +1350,13 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	            	 for (Environment t1:d)
 	            	 {
 	            		 String z = t1.getenvironmentType(); 	
-	            		 if(z.equalsIgnoreCase("Zalenium"))
+	            		 if(!z.equalsIgnoreCase("Zalenium"))
 	            		 {
-	            			 z="Remote";
-	            		 }   
-	            		 EnvironmentType[i]=z;
+	            			 //z="Remote";
+	            			 EnvironmentType[i]=z;
 		            		 i++;
+	            		 }   
+	            		 
 	            	 }
 	            	
 				}  
