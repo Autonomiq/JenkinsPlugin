@@ -41,7 +41,7 @@ class RunSuiteExecutions {
 
     public Boolean runSuites(String platform,
                              String browser,
-                             String runSuiteList,String executionMode) throws PluginException, InterruptedException {
+                             String runSuiteList,String executionMode,String environmentType,String browserVersion,String platformVersion,String sauceConnectProxy) throws PluginException, InterruptedException {
 
 
         AiqUtil.ItemListFromString itemsObj = AiqUtil.getItemListFromString(runSuiteList);
@@ -64,7 +64,7 @@ class RunSuiteExecutions {
 
         logTestSuiteNames();
 
-        return handleSuiteExecutions(platform, browser,executionMode);
+        return handleSuiteExecutions(platform, browser,executionMode,environmentType,browserVersion,platformVersion,sauceConnectProxy);
 
     }
 
@@ -102,7 +102,7 @@ class RunSuiteExecutions {
         }
     }
 
-    private Boolean handleSuiteExecutions(String platform, String browser,String executionMode) throws PluginException, InterruptedException {
+    private Boolean handleSuiteExecutions(String platform, String browser,String executionMode,String environmentType,String browserVersion,String platformVersion,String sauceConnectProxy) throws PluginException, InterruptedException {
 
         log.println();
         log.printf("==== Starting suite executions for project %s\n", pd.getProjectName());
@@ -110,7 +110,7 @@ class RunSuiteExecutions {
 
         try {
             // runTestsData gets updated with execution ids
-            runSuiteExecutions(testDataList, platform, browser,executionMode);
+            runSuiteExecutions(testDataList, platform, browser,executionMode,environmentType,browserVersion,platformVersion,sauceConnectProxy);
         } catch (ServiceException e) {
             log.println("Exception running test executions.");
             log.println(AiqUtil.getExceptionTrace(e));
@@ -185,17 +185,35 @@ class RunSuiteExecutions {
     }
 
     private void runSuiteExecutions(List<TestSuiteData> runTestsData, String platform,
-                                   String browser,String executionMode) throws PluginException, ServiceException {
-
+                                   String browser,String executionMode,String environmentType,String browserVersion,String platformVersion,String sauceConnectProxy) throws PluginException, ServiceException {
+    	
+    	if(browser.equalsIgnoreCase("Chrome (headless)")|| browser.equalsIgnoreCase("Firefox (headless)"))
+        {
+        	String[] splited = browser.split(" ");
+        	log.printf("list of platform version inside loop '%s'\n",splited[0]);
+        	browser=splited[0].toLowerCase();	
+        	//environmentType="Local";
+        
+        }
+    	if(browser.equalsIgnoreCase("Chrome (headful)") || browser.equalsIgnoreCase("Firefox (headful)"))
+        {
+        	String[] splited = browser.split(" ");
+        	log.printf("list of platform version inside loop '%s'\n",splited[0]);
+        	
+        	browser=splited[0].toLowerCase();	
+        	environmentType="zalenium";
+        }
+    	
         for (TestSuiteData t : runTestsData) {
 
             ExecuteSuiteResponse resp = svc.runTestSuite(t.getTestSuiteId(),
                     platform,  browser,
-                    null, executionType,
+                    browserVersion, executionType,
                     executionMode, false,
                     null,
-                    new HashMap<>());
-
+                    new HashMap<>(),environmentType,platformVersion,sauceConnectProxy);
+           
+            
             //since we are running in only 1 browser platform combination we need to set only 1 job id here.
             t.setJobId(resp.getJob_id()[0]);
         }

@@ -8,9 +8,11 @@ public class PlatformBrowserDetails {
     private String appiumVersion;
     private String deviceName;
     private String deviceOrientation;
+    private String environmentType;
+    private String tunnelID;
 
     public PlatformBrowserDetails(String browser, String browserVersion, String platform, String platformVersion,
-    		String appiumVersion, String deviceName, String deviceOrientation) {
+    		String appiumVersion, String deviceName, String deviceOrientation,String environmentType,String tunnelID) {
         this.browser = browser;
         this.browserVersion = browserVersion;
         this.platform = platform;
@@ -18,10 +20,15 @@ public class PlatformBrowserDetails {
         this.appiumVersion = appiumVersion;
         this.deviceName = deviceName;
         this.deviceOrientation = deviceOrientation;
+        this.environmentType = environmentType;
+        this.tunnelID=tunnelID;
     }
 
     public String getBrowser() {
         return browser;
+    }
+    public void setBrowserVersion(String browserVersion) {
+        this.browserVersion = browserVersion;
     }
 
     public String getBrowserVersion() {
@@ -35,13 +42,13 @@ public class PlatformBrowserDetails {
 	public void setPlatform(String platform) {
 		this.platform = platform;
 	}
-
-	public String getPlatformVersion() {
-		return platformVersion;
-	}
-
+	
 	public void setPlatformVersion(String platformVersion) {
 		this.platformVersion = platformVersion;
+	}
+	
+	public String getPlatformVersion() {
+		return platformVersion;
 	}
 
 	public String getAppiumVersion() {
@@ -67,4 +74,21 @@ public class PlatformBrowserDetails {
 	public void setDeviceOrientation(String deviceOrientation) {
 		this.deviceOrientation = deviceOrientation;
 	}
+	
+	 public String getEnvironmentType() {
+			return environmentType;
+	}
+
+		public void setEnvironmentType(String environmentType) {
+			this.environmentType = environmentType;
+	}
+		public String getTunnelID() {
+			return tunnelID;
+	}
+
+	public void setTunnelID(String tunnelID) {
+		this.tunnelID = tunnelID;
+	}
+		
+	
 }
