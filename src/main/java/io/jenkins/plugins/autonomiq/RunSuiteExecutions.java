@@ -203,12 +203,7 @@ class RunSuiteExecutions {
         	browser=splited[0].toLowerCase();	
         	environmentType="zalenium";
         }
-    	log.printf("browser version of chrome :'%s'\n",browser);
-    	log.printf("browser version of platform :'%s'\n",platform);
-    	log.printf("browser version of environmentType :'%s'\n",environmentType);
-    	log.printf("browser version of browserVersion :'%s'\n",browserVersion);
-    	log.printf("browser version of platformVersion :'%s'\n",platformVersion);
-    	log.printf("browser version of sauceConnectProxy :'%s'\n",sauceConnectProxy);
+    	
         for (TestSuiteData t : runTestsData) {
 
             ExecuteSuiteResponse resp = svc.runTestSuite(t.getTestSuiteId(),
