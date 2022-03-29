@@ -13,6 +13,7 @@ public class Environment2{
     	this.platformDetails=platformDetails;
     	this.saucePassword=saucePassword;
     	this.sauceUsername=sauceUsername;
+    	this.sauceDataCentreName=sauceDataCentreName;
     }
     
     public ArrayList<PlatformDetail> getplatformDetails()
