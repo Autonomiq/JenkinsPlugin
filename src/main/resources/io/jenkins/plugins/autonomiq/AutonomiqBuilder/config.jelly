@@ -2,66 +2,65 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:c="/lib/credentials" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
 	 <f:optionalBlock inline="true" field="httpProxy" title="${%HttpProxy}" >
-	 
 	    <f:entry title="${%ProxyHost}" field="proxyHost">
-	        <f:textbox  />
+	        <f:textbox checkMethod="post" />
 	    </f:entry>
 	     <f:entry title="${%ProxyPort}" field="proxyPort">
-	        <f:textbox  />
+	        <f:textbox  checkMethod="post" />
 	    </f:entry>
 	     <f:entry title="${%ProxyUser}" field="proxyUser">
-	        <f:textbox  />
+	        <f:textbox checkMethod="post" />
 	    </f:entry>
 	     <f:entry title="${%ProxyPassword}" field="proxyPassword">
-	        <f:password  />
+	        <f:password checkMethod="post" />
 	    </f:entry>
     </f:optionalBlock>
     
     
     <f:entry title="${%AiqUrl}" field="aiqUrl">
-        <f:textbox  />
+        <f:textbox checkMethod="post" />
     </f:entry>
 
     <f:entry title="${%Login}" field="login">
-        <f:textbox  />
+        <f:textbox checkMethod="post" />
     </f:entry>
 
     <f:entry title="${%Password}" field="password">
-        <f:password  />
+        <f:password  checkMethod="post"/>
     </f:entry>
 
     <f:entry title="${%Project}" field="project">
-        <f:select />
+        <f:select checkMethod="post"/>
     </f:entry>
 
     <f:optionalBlock inline="true" field="genScripts" title="${%GenScripts}" >
 
         <f:entry title="${%GenCaseList}" field="genCaseList">
-            <f:textarea />
+            <f:textarea checkMethod="post" />
         </f:entry>
 
     </f:optionalBlock>
 
     <f:optionalBlock inline="true" field="runTestCases" title="${%RunTestCases}" >
 
-	<f:entry title="${%EnvironmentType}" field="environmentTypeTestcases">
+      <f:entry title="${%EnvironmentType}" field="environmentTypeTestcases">
             <f:select checkMethod="post" style="width:15em;"/>
         </f:entry>
 
         <f:entry title="${%Platform}" field="platformTestCases">
-            <f:select style="width:15em;" />
+            <f:select style="width:15em;" checkMethod="post"/>
         </f:entry>
 
         <f:entry title="${%Browser}" field="browserTestCases">
-            <f:select style="width:15em;" />
+            <f:select style="width:15em;" checkMethod="post" />
         </f:entry>
-	
+
 	 <f:entry title="${%BrowserVersion}" field="browserVersionTestcases">
-            <f:select style="width:15em;" />
+            <f:select style="width:15em;" checkMethod="post"/>
         </f:entry>
-        
+
         <f:entry title="${%SauceConnectProxy}" field="sauceConnectProxyTestcases">
-            <f:select style="width:15em;" />
+            <f:select style="width:15em;" checkMethod="post"/>
         </f:entry>
 
          <f:entry title="${%RunCaseList}" field="runCaseList">
@@ -71,34 +70,31 @@
     </f:optionalBlock>
 
     <f:optionalBlock inline="true" field="runTestSuites" title="${%RunTestSuites}" >
-        
-        <f:entry title="${%EnvironmentType}" field="environmentType">
-            <f:select checkMethod="post" style="width:15em;"/>
+
+       <f:entry title="${%EnvironmentType}" field="environmentType">
+            <f:select  style="width:15em;" checkMethod="post"/>
         </f:entry>
-        
         <f:entry title="${%Platform}" field="platformTestSuites">
-            <f:select style="width:15em;"/>
-        </f:entry>
-        
-        <f:entry title="${%Browser}" field="browserTestSuites">
-            <f:select style="width:15em;"/>
-        </f:entry>
-        
-        <f:entry title="${%BrowserVersion}" field="browserVersion">
-            <f:select style="width:15em;" />
-        </f:entry>
-        
-        <f:entry title="${%SauceConnectProxy}" field="sauceConnectProxy">
-            <f:select style="width:15em;" />
-        </f:entry>
-        
-        <f:entry title="${%ExecutionMode}" field="executionMode">
-            <f:select checkMethod="post" style="width:15em;"/>
+            <f:select style="width:15em;" checkMethod="post"/>
         </f:entry>
 
+        <f:entry title="${%Browser}" field="browserTestSuites">
+            <f:select style="width:15em;" checkMethod="post"/>
+        </f:entry>
+
+        <f:entry title="${%BrowserVersion}" field="browserVersion">
+            <f:select style="width:15em;" checkMethod="post"/>
+        </f:entry>
+        <f:entry title="${%SauceConnectProxy}" field="sauceConnectProxy">
+            <f:select style="width:15em;" checkMethod="post"/>
+        </f:entry>
+
+        <f:entry title="${%ExecutionMode}" field="executionMode">
+            <f:select  style="width:15em;" checkMethod="post"/>
+        </f:entry>
 
         <f:entry title="${%RunSuiteList}" field="runSuiteList">
-            <f:textarea style="width:15em;" />
+            <f:textarea style="width:15em;" checkMethod="post" />
         </f:entry>
 
     </f:optionalBlock>
