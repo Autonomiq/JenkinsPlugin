@@ -38,11 +38,11 @@ class RunTests {
                             String browserTestSuites,
                             String genCaseList,
                             String runCaseList,
-                            String runSuiteList,String executionMode) throws PluginException, InterruptedException {
+                            String runSuiteList,String executionMode,String environmentType,String browserVersion,String platformVersion,String sauceConnectProxy,String environmentTypeTestcases,String browserVersionTestcases,String sauceConnectProxyTestcases) throws PluginException, InterruptedException {
 
 
         if (!(generateScripts || runTestCases || runTestSuites)) {
-            log.println("Neither generate scripts nor run test cases nor run test suites selected, no work to do.");
+            log.println("Neither generate scripts nor run test cases nor run test suites selected, no work to do");
             return true;
         }
 
@@ -59,7 +59,7 @@ class RunTests {
         if (runTestCases) {
 
             RunTestExecutions run = new RunTestExecutions(svc, log, pd, pollingIntervalMs);
-            boolean result = run.runTests(platformTestCases, browserTestCases, runCaseList);
+            boolean result = run.runTests(platformTestCases, browserTestCases, runCaseList,environmentTypeTestcases,browserVersionTestcases,sauceConnectProxyTestcases);
             if (!result) {
                 return result;
             }
@@ -68,7 +68,7 @@ class RunTests {
         if (runTestSuites) {
 
             RunSuiteExecutions run = new RunSuiteExecutions(svc, log, pd, pollingIntervalMs);
-            boolean result = run.runSuites(platformTestSuites, browserTestSuites, runSuiteList,executionMode);
+            boolean result = run.runSuites(platformTestSuites, browserTestSuites, runSuiteList,executionMode,environmentType,browserVersion,platformVersion,sauceConnectProxy);
             if (!result) {
                 return result;
             }

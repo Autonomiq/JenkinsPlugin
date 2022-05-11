@@ -25,7 +25,8 @@ public class ServiceAccess {
     private static final String getTestSuitesPath = "%s/platform/testSuites/%d/%d/getTestSuites"; // accountId, projectId
     private static final String executeTestSuitePath = "%s/platform/v1/testsuite/%s/execute"; // testSuiteId
     private static final String getJobPath = "%s/platform/v1/jobs/%d/get_job"; // jobId
-
+    private  static final String getExecutionenverinoment="%s/platform/v1/accounts/executionenvironment";
+    private  static final String getsauceconnectids="%s/platform/v1/getsauceconnectids";
     private static final String websocketPath = "%s/ws?accountId=%d";
 
     private final String aiqUrl;
@@ -65,6 +66,23 @@ public class ServiceAccess {
         } catch (Exception e) {
             throw new ServiceException("Exception in authentication", e);
         }
+    }
+    public List<ExecutionEnvironment> executionEnvironment() throws ServiceException{
+    	
+    	String url = String.format(getExecutionenverinoment, aiqUrl);
+    	
+    	 try {
+             String resp = web.get(url, token);
+             
+             
+             List<ExecutionEnvironment> envInfo = AiqUtil.gson.fromJson(resp,
+                     new TypeToken<List<ExecutionEnvironment>>() {
+                     }.getType());
+            
+             return envInfo;
+         } catch (Exception e) {
+             throw new ServiceException("Exception getting test case info ", e);
+         }	
     }
 
     public TestCaseInfo getTestCaseInfo(Long testCaseId, TestCaseInfoType type) throws ServiceException {
@@ -116,7 +134,7 @@ public class ServiceAccess {
         String url = String.format(runTestCasesPath, aiqUrl, projectId);
 
         List<PlatformBrowserDetails> browserDetails = new LinkedList<>();
-        browserDetails.add(new PlatformBrowserDetails(browser, null, platform, null, null, null, null));
+        browserDetails.add(new PlatformBrowserDetails(browser, null, platform, null, null, null, null,null,null));
         ExecuteTaskRequest body = new ExecuteTaskRequest(sessionId, testExecutionName, scriptIds, executionType,
                 browserDetails, false, null, null);
         String json = AiqUtil.gson.toJson(body);
@@ -137,7 +155,7 @@ public class ServiceAccess {
     public ExecutedTaskResponse runTestCase(Long projectId, Long scriptId,
                                             String testExecutionName,
                                             String platform, String browser,
-                                            String executionType) throws ServiceException {
+                                            String executionType,String environmentTypeTestcases,String browserVersionTestcases,String sauceConnectProxyTestcases) throws ServiceException {
 
         String sessionId = createSession();
 
@@ -150,7 +168,7 @@ public class ServiceAccess {
         	sauceConnectProxyTestcases= "";
         }
         List<PlatformBrowserDetails> browserDetails = new LinkedList<>();
-        browserDetails.add(new PlatformBrowserDetails(browser, null, platform, null, null, null, null));
+        browserDetails.add(new PlatformBrowserDetails(browser, browserVersionTestcases, platform, null, null, null,null,environmentTypeTestcases,sauceConnectProxyTestcases));
         ExecuteTaskRequest body = new ExecuteTaskRequest(sessionId, testExecutionName, scriptList, executionType,
                 browserDetails, false, null, null);
 
@@ -174,7 +192,7 @@ public class ServiceAccess {
                                              String browserVersion, String executionType,
                                              String executionMode, boolean isRemoteDriver,
                                              String remoteDriverUrl,
-                                             Map<Long, String> caseSessionMap) throws ServiceException {
+                                             Map<Long, String> caseSessionMap,String environmentType,String platformVersion,String sauceConnectProxy) throws ServiceException {
 
         String url = String.format(executeTestSuitePath, aiqUrl, testSuiteId);
 
@@ -183,7 +201,7 @@ public class ServiceAccess {
         	sauceConnectProxy= ""; 
         }
         List<PlatformBrowserDetails> details = new LinkedList<>();
-        details.add(new PlatformBrowserDetails(browser, null, platform, null, null, null, null));
+        details.add(new PlatformBrowserDetails(browser, browserVersion, platform, platformVersion, null, null, null,environmentType,sauceConnectProxy));
         ExecuteTestSuiteRequest body = new ExecuteTestSuiteRequest(
                 details, executionType, executionMode,
                 isRemoteDriver, remoteDriverUrl, caseSessionMap);
@@ -191,16 +209,28 @@ public class ServiceAccess {
         String json = AiqUtil.gson.toJson(body);
 
         try {
-
             String resp = web.post(url, json, token);
 
             ExecuteSuiteResponse respExec = AiqUtil.gson.fromJson(resp, ExecuteSuiteResponse.class);
-
+           
             return respExec;
 
         } catch (Exception e) {
             throw new ServiceException(String.format("Exception running test suite id %d", testSuiteId), e);
         }
+    }
+    public GetSauceConnect getsauceconnect() throws ServiceException  
+    {
+    	String url = String.format(getsauceconnectids, aiqUrl);
+    	try {
+            String resp = web.get(url, token);
+            GetSauceConnect getsauceid = AiqUtil.gson.fromJson(resp, GetSauceConnect.class);
+            
+            return getsauceid;
+        } catch (Exception e) {
+            throw new ServiceException("Exception getting getsauceconnect ", e);
+        }
+    	
     }
 
     private <T> List<T> listForItem(T item) {
