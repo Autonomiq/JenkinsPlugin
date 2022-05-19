@@ -59,6 +59,7 @@ class RunTests {
         if (runTestCases) {
 
             RunTestExecutions run = new RunTestExecutions(svc, log, pd, pollingIntervalMs);
+            environmentTypeTestcases=environmentTypeTestcases.toLowerCase(); 
             boolean result = run.runTests(platformTestCases, browserTestCases, runCaseList,environmentTypeTestcases,browserVersionTestcases,sauceConnectProxyTestcases);
             if (!result) {
                 return result;
@@ -68,6 +69,7 @@ class RunTests {
         if (runTestSuites) {
 
             RunSuiteExecutions run = new RunSuiteExecutions(svc, log, pd, pollingIntervalMs);
+            environmentType=environmentType.toLowerCase();
             boolean result = run.runSuites(platformTestSuites, browserTestSuites, runSuiteList,executionMode,environmentType,browserVersion,platformVersion,sauceConnectProxy);
             if (!result) {
                 return result;
