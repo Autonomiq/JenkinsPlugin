@@ -207,7 +207,6 @@ public class ServiceAccess {
                 isRemoteDriver, remoteDriverUrl, caseSessionMap);
 
         String json = AiqUtil.gson.toJson(body);
-
         try {
             String resp = web.post(url, json, token);
 
