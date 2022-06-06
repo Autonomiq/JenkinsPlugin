@@ -925,21 +925,19 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter String proxyUser,
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException {
-
+        	
+        	
+        	
         	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs"))
         	{
-        		if(browserTestCases.equalsIgnoreCase("chrome") || browserTestCases.equalsIgnoreCase("firefox") || browserTestCases.equalsIgnoreCase("safari") || browserTestCases.equalsIgnoreCase("MicrosoftEdge"))
-        			{
-
-                         String[] values= getBrowserVersion(platformTestCases,browserTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
-                         Option[] options = buildSimpleOptions(values);
-                         return new ListBoxModel(options);
-             	   		}
+        		 String[] values= getBrowserVersion(platformTestCases,browserTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+                 Option[] options = buildSimpleOptions(values);
+                 return new ListBoxModel(options);
 
         	}
         	else if (environmentTypeTestcases.equalsIgnoreCase("Local"))
         	{
-        		if((platformTestCases.equalsIgnoreCase("Linux"))&&(browserTestCases.equalsIgnoreCase("Chrome (headless)") || browserTestCases.equalsIgnoreCase("Firefox (headless)") || browserTestCases.equalsIgnoreCase("Chrome (headful)") || browserTestCases.equalsIgnoreCase("Firefox (headful)")))
+				if((platformTestCases.equalsIgnoreCase("Linux"))&&(browserTestCases.equalsIgnoreCase("Chrome (headless)") || browserTestCases.equalsIgnoreCase("Firefox (headless)") || browserTestCases.equalsIgnoreCase("Chrome (headful)") || browserTestCases.equalsIgnoreCase("Firefox (headful)") || browserTestCases.equalsIgnoreCase("Chrome") || browserTestCases.length()==0))
         		{
              		String[] values = {"NotApplicable"};  //, "Windows"};
                     Option[] options = buildSimpleOptions(values);
@@ -1118,25 +1116,24 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException {
 
+        	System.out.println("env type"+environmentType);
+        	System.out.println("browser testsuites"+browserTestSuites);
 
         	if (environmentType.equalsIgnoreCase("Saucelabs"))
         	{
-        		if(browserTestSuites.equalsIgnoreCase("chrome") || browserTestSuites.equalsIgnoreCase("firefox") || browserTestSuites.equalsIgnoreCase("safari") || browserTestSuites.equalsIgnoreCase("MicrosoftEdge"))
-        			{
-
-                         String[] values= getBrowserVersion(platformTestSuites,browserTestSuites,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
-                         Option[] options = buildSimpleOptions(values);
-                         return new ListBoxModel(options);
-             	   		}
+        		 String[] values= getBrowserVersion(platformTestSuites,browserTestSuites,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+                 Option[] options = buildSimpleOptions(values);
+                 return new ListBoxModel(options);
 
         	}
         	else if (environmentType.equalsIgnoreCase("Local"))
         	{
         		try {
-					if((platformTestSuites.equalsIgnoreCase("Linux"))&&(browserTestSuites.equalsIgnoreCase("Chrome (headless)") || browserTestSuites.equalsIgnoreCase("Firefox (headless)") || browserTestSuites.equalsIgnoreCase("Chrome (headful)") || browserTestSuites.equalsIgnoreCase("Firefox (headful)")))
+					if((platformTestSuites.equalsIgnoreCase("Linux"))&&(browserTestSuites.equalsIgnoreCase("Chrome (headless)") || browserTestSuites.equalsIgnoreCase("Firefox (headless)") || browserTestSuites.equalsIgnoreCase("Chrome (headful)") || browserTestSuites.equalsIgnoreCase("Firefox (headful)") || browserTestSuites.equalsIgnoreCase("Chrome") || browserTestSuites.length()==0))
 					{
 						String[] values = {"NotApplicable"};  //, "Windows"};
 					    Option[] options = buildSimpleOptions(values);
+					    
 					    return new ListBoxModel(options);
 
      	  }
