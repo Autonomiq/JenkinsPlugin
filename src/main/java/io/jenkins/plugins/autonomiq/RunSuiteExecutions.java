@@ -41,11 +41,12 @@ class RunSuiteExecutions {
 
     public Boolean runSuites(String platform,
                              String browser,
-                             String runSuiteList,String executionMode,String environmentType,String browserVersion,String platformVersion,String sauceConnectProxy) throws PluginException, InterruptedException {
+                             String runSuiteList,String executionMode,String environmentType,String browserVersion,String platformVersion,String sauceConnectProxy,
+                             String mobileplatformTestSuites,String mobilePlatformVersion,String deviceName,String mobileSauceConnectProxy,String mobileExecutionMode,String deviceOrientation,String enableAnimations,String autoGrantPermission,Boolean mobileDevice,Boolean crossBrowser,String value) throws PluginException, InterruptedException {
 
-
+    	System.out.println("list"+runSuiteList);
         AiqUtil.ItemListFromString itemsObj = AiqUtil.getItemListFromString(runSuiteList);
-
+        
         if (itemsObj.getError() != null) {
             log.printf("Error getting item list from run test suite list '%s'\n", itemsObj.getError());
             return false;
@@ -64,7 +65,7 @@ class RunSuiteExecutions {
 
         logTestSuiteNames();
 
-        return handleSuiteExecutions(platform, browser,executionMode,environmentType,browserVersion,platformVersion,sauceConnectProxy);
+        return handleSuiteExecutions(platform, browser,executionMode,environmentType,browserVersion,platformVersion,sauceConnectProxy,mobileplatformTestSuites,mobilePlatformVersion,deviceName,mobileSauceConnectProxy,mobileExecutionMode,deviceOrientation,enableAnimations,autoGrantPermission,mobileDevice,crossBrowser,value);
 
     }
 
@@ -102,7 +103,8 @@ class RunSuiteExecutions {
         }
     }
 
-    private Boolean handleSuiteExecutions(String platform, String browser,String executionMode,String environmentType,String browserVersion,String platformVersion,String sauceConnectProxy) throws PluginException, InterruptedException {
+    private Boolean handleSuiteExecutions(String platform, String browser,String executionMode,String environmentType,String browserVersion,String platformVersion,String sauceConnectProxy,String mobileplatformTestSuites,String mobilePlatformVersion,String deviceName,String mobileSauceConnectProxy,String mobileExecutionMode,String deviceOrientation,String enableAnimations,String autoGrantPermission,Boolean mobileDevice,Boolean crossBrowser,String value
+) throws PluginException, InterruptedException {
 
         log.println();
         log.printf("==== Starting suite executions for project %s\n", pd.getProjectName());
@@ -110,7 +112,7 @@ class RunSuiteExecutions {
 
         try {
             // runTestsData gets updated with execution ids
-            runSuiteExecutions(testDataList, platform, browser,executionMode,environmentType,browserVersion,platformVersion,sauceConnectProxy);
+            runSuiteExecutions(testDataList, platform, browser,executionMode,environmentType,browserVersion,platformVersion,sauceConnectProxy,mobileplatformTestSuites,mobilePlatformVersion,deviceName,mobileSauceConnectProxy,mobileExecutionMode,deviceOrientation,enableAnimations,autoGrantPermission,mobileDevice,crossBrowser,value);
         } catch (ServiceException e) {
             log.println("Exception running test executions.");
             log.println(AiqUtil.getExceptionTrace(e));
@@ -185,7 +187,7 @@ class RunSuiteExecutions {
     }
 
     private void runSuiteExecutions(List<TestSuiteData> runTestsData, String platform,
-                                   String browser,String executionMode,String environmentType,String browserVersion,String platformVersion,String sauceConnectProxy) throws PluginException, ServiceException {
+                                   String browser,String executionMode,String environmentType,String browserVersion,String platformVersion,String sauceConnectProxy,String mobileplatformTestSuites,String mobilePlatformVersion,String deviceName,String mobileSauceConnectProxy,String mobileExecutionMode,String deviceOrientation,String enableAnimations,String autoGrantPermission,Boolean mobileDevice,Boolean crossBrowser,String value) throws PluginException, ServiceException {
     	
     	if(browser.equalsIgnoreCase("Chrome (headless)")|| browser.equalsIgnoreCase("Firefox (headless)"))
         {
@@ -206,12 +208,13 @@ class RunSuiteExecutions {
     	
         for (TestSuiteData t : runTestsData) {
 
+        	System.out.println(t.getTestSuiteId());
             ExecuteSuiteResponse resp = svc.runTestSuite(t.getTestSuiteId(),
                     platform,  browser,
                     browserVersion, executionType,
                     executionMode, false,
                     null,
-                    new HashMap<>(),environmentType,platformVersion,sauceConnectProxy);
+                    new HashMap<>(),environmentType,platformVersion,sauceConnectProxy,mobileplatformTestSuites,mobilePlatformVersion,deviceName,mobileSauceConnectProxy,mobileExecutionMode,deviceOrientation,enableAnimations,autoGrantPermission,mobileDevice,crossBrowser,value);
            
             
             //since we are running in only 1 browser platform combination we need to set only 1 job id here.

@@ -1,4 +1,4 @@
-<?jelly escape-by-default='true'?>
+	<?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:c="/lib/credentials" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
 	 <f:optionalBlock inline="true" field="httpProxy" title="${%HttpProxy}" >
@@ -35,13 +35,23 @@
 
     <f:optionalBlock inline="true" field="genScripts" title="${%GenScripts}" >
 
+	<f:optionalBlock inline="true" field="crossBrowsergenScripts" title="${%CrossBrowser}" >
+
         <f:entry title="${%GenCaseList}" field="genCaseList">
             <f:textarea checkMethod="post" />
         </f:entry>
 
     </f:optionalBlock>
+   
+   <f:optionalBlock inline="true" field="mobileDevicegenScripts" title="${%MobileDevice}">
+
+    </f:optionalBlock>
+
+    </f:optionalBlock>
 
     <f:optionalBlock inline="true" field="runTestCases" title="${%RunTestCases}" >
+
+    <f:optionalBlock inline="true" field="crossBrowserTestcases" title="${%CrossBrowser}" >
 
       <f:entry title="${%EnvironmentType}" field="environmentTypeTestcases">
             <f:select checkMethod="post" style="width:15em;"/>
@@ -66,10 +76,52 @@
          <f:entry title="${%RunCaseList}" field="runCaseList">
             <f:textarea value="${descriptor.getDefaultGenScriptsList()}" checkMethod="post" />
          </f:entry>
+    
+    </f:optionalBlock>
+
+	 <f:optionalBlock inline="true" field="mobileDeviceTestcases" title="${%MobileDevice}">
+
+	<f:entry title="${%Platform}" field="mobileplatformTestcases">
+           <f:select style="width:15em;" checkMethod="post"/>
+      </f:entry>
+
+        <f:entry title="${%PlatformVersion}" field="mobilePlatformVersionTc">
+            <f:select style="width:15em;" checkMethod="post"/>
+      </f:entry>
+
+	
+     <f:entry title="${%DeviceName}" field="deviceNameTestcases">
+          <f:select style="width:15em;" checkMethod="post"/>
+      </f:entry>
+    
+     <f:entry title="${%SauceConnectProxy}" field="mobileSauceConnectProxyTc">
+            <f:select style="width:15em;" checkMethod="post"/>
+        </f:entry>
+
+
+     <f:entry title="${%DeviceOrientation}" field="deviceOrientationTc">
+          <f:select style="width:15em;" checkMethod="post"/>
+      </f:entry>
+
+    <f:entry title="${%EnableAnimations}" field="enableAnimationsTc">
+          <f:select style="width:15em;" checkMethod="post"/>
+      </f:entry>
+
+    <f:entry title="${%AutoGrantPermission}" field="autoGrantPermissionTc">
+          <f:select style="width:15em;" checkMethod="post"/>
+      </f:entry>
+    
+    <f:entry title="${%RunSuiteList}" field="mobileRunTestcaseList">
+         <f:textarea style="width:15em;" checkMethod="post" />
+    </f:entry>
+
+   </f:optionalBlock>
 
     </f:optionalBlock>
 
     <f:optionalBlock inline="true" field="runTestSuites" title="${%RunTestSuites}" >
+
+	<f:optionalBlock inline="true" field="crossBrowser" title="${%CrossBrowser}" >
 
        <f:entry title="${%EnvironmentType}" field="environmentType">
             <f:select  style="width:15em;" checkMethod="post"/>
@@ -97,6 +149,49 @@
             <f:textarea style="width:15em;" checkMethod="post" />
         </f:entry>
 
-    </f:optionalBlock>
+      </f:optionalBlock>
+	
+   <f:optionalBlock inline="true" field="mobileDevice" title="${%MobileDevice}">
+
+    <f:entry title="${%Platform}" field="mobileplatformTestSuites">
+           <f:select style="width:15em;" checkMethod="post"/>
+      </f:entry>
+
+        <f:entry title="${%PlatformVersion}" field="mobilePlatformVersion">
+            <f:select style="width:15em;" checkMethod="post"/>
+      </f:entry>
+
+	
+     <f:entry title="${%DeviceName}" field="deviceName">
+          <f:select style="width:15em;" checkMethod="post"/>
+      </f:entry>
+    
+     <f:entry title="${%SauceConnectProxy}" field="mobileSauceConnectProxy">
+            <f:select style="width:15em;" checkMethod="post"/>
+        </f:entry>
+
+    <f:entry title="${%ExecutionMode}" field="mobileExecutionMode">
+            <f:select  style="width:15em;" checkMethod="post"/>
+        </f:entry>
+
+     <f:entry title="${%DeviceOrientation}" field="deviceOrientation">
+          <f:select style="width:15em;" checkMethod="post"/>
+      </f:entry>
+
+    <f:entry title="${%EnableAnimations}" field="enableAnimations">
+          <f:select style="width:15em;" checkMethod="post"/>
+      </f:entry>
+
+    <f:entry title="${%AutoGrantPermission}" field="autoGrantPermission">
+          <f:select style="width:15em;" checkMethod="post"/>
+      </f:entry>
+    
+    <f:entry title="${%RunSuiteList}" field="mobileRunSuiteList">
+         <f:textarea style="width:15em;" checkMethod="post" />
+    </f:entry>
+
+   </f:optionalBlock>
+
+  </f:optionalBlock>
 
 </j:jelly>
