@@ -33,9 +33,11 @@ import io.jenkins.plugins.autonomiq.service.types.Environment;
 
 import javax.servlet.ServletException;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -1262,11 +1264,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter String proxyPort,
                 @QueryParameter String proxyUser,
                 @QueryParameter Secret proxyPassword,
-                @QueryParameter Boolean httpProxy) throws ServiceException {
-
-
+                @QueryParameter Boolean httpProxy) throws ServiceException, InvocationTargetException {
+        	
         	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs")) {
-
+        		
         		String[] values= getplatformType(environmentTypeTestcases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
 
         		Option[] options = buildSimpleOptions(values);
@@ -1274,7 +1275,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         		return new ListBoxModel(options);
         	}
         	else if (environmentTypeTestcases.equalsIgnoreCase("Local")) {
-        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+        	
         		 String[] values = {"Linux"};  //, "Windows"};
 
                  Option[] options = buildSimpleOptions(values);
@@ -1286,7 +1287,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
          		String[] values= getplatformType(environmentTypeTestcases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
 
-                 Option[] options = buildSimpleOptions(values);
+                Option[] options = buildSimpleOptions(values);
+                 //String[] values = {"Windows 10","macOS 11.00","macOS 10.15"};  //, "Windows"};
+
+                 //Option[] options = buildSimpleOptions(values);
 
                  return  new ListBoxModel(options);
         	}
@@ -1453,8 +1457,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter String proxyPort,
                 @QueryParameter String proxyUser,
                 @QueryParameter Secret proxyPassword,
-                @QueryParameter Boolean httpProxy) throws ServiceException {
+                @QueryParameter Boolean httpProxy) throws ServiceException, InvocationTargetException {
 
+        	
 
         	if (environmentType.equalsIgnoreCase("Saucelabs")) {
 
@@ -1465,7 +1470,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         		return new ListBoxModel(options);
         	}
         	else if (environmentType.equalsIgnoreCase("Local")) {
-        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+        	
         		 String[] values = {"Linux"};  //, "Windows"};
 
                  Option[] options = buildSimpleOptions(values);
@@ -1542,8 +1547,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException {
 
-        	System.out.println("env type"+environmentType);
-        	System.out.println("browser testsuites"+browserTestSuites);
+        	//System.out.println("env type"+environmentType);
+        	//System.out.println("browser testsuites"+browserTestSuites);
 
         	if (environmentType.equalsIgnoreCase("Saucelabs"))
         	{
@@ -2017,54 +2022,51 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return ret;
         }
 //  fetching platform  dropdown values
-
         private String[] getplatformType(String environmentType,String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
             int i =0;
-        	String[] platform1= new String[12];
-
+        	String[] platform1= new String[100];
+        	
         	//platform1[0]="--select platform--";
-
-            try {
+        		try {
                 ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
-
+               
             	List<ExecutionEnvironment> envInfo=svc.executionEnvironment();
-
+            	
+            
 				for (ExecutionEnvironment t:envInfo) {
+					
 
 	            	 Integer a=t.getaccountId();
+	            
 	            	 ArrayList<Environment> d=t.getenvironments();
-
+	            	 
 	            	 for (Environment t1:d)
 	            	 {
-
+	            		
 	            		 String z = t1.getenvironmentType();
-
+	            		
 	            		 	if(z.equalsIgnoreCase("Saucelabs"))
 	            		 	{
-
 	            		 		Environment2 env2=t1.getenvironment();
-
+	            		 		
 	   	            		 ArrayList<PlatformDetail> td = env2.getplatformDetails();
+	   	            		
 	   	            		  	 String  sdc = env2.getsauceDataCentreName();
 	   	            		     String sp=env2.getsaucePassword();
 	   	            		     String su=env2.getsauceUsername();
-
 	   	            		     for(PlatformDetail pD:td) {
-	   	            		    	String platform=pD.getplatform();
+	   	            		    	String platform=pD.getplatform();    		    	
 	   	            		    	platform1[i]=platform;
-	   	   	            		 	i++;
-
+	   	   	            		 	i++;   
 	            		 	}
-
-	            		     }
-
+	                    }
 	            	 }
 
 				}
+              } catch (Exception e) {
+            throw new ServiceException("Exception in getting platform");
+        }
 
-            } catch (Exception e) {
-                throw new ServiceException("Exception in getting platform");
-            }
             LinkedHashSet<String> lhSetColors =
                     new LinkedHashSet<String>(Arrays.asList(platform1));
             lhSetColors.remove(null);
@@ -2076,7 +2078,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         private String[] getBrowser(String environmentType,String platformTestSuites,String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
             int i =0;
-        	String[] Browser= new String[12];
+        	String[] Browser= new String[100];
         	//Browser[0]="--select browser--";
             try {
                 ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
@@ -2135,10 +2137,11 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
        	 String[] newArray = lhSetColors.toArray(new String[ lhSetColors.size() ]);
             return newArray;
         }
+        
 // fetch  environment type dropdown values:
         private String[] getEnvironmentType(String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
             int i =0;
-        	String[] EnvironmentType= new String[5];
+        	String[] EnvironmentType= new String[10];
         	//EnvironmentType[0]="--select environmenttype--";
 
             try {
@@ -2150,7 +2153,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	            	 for (Environment t1:d)
 	            	 {
 	            		 String z = t1.getenvironmentType();
-	            		 if(!z.equalsIgnoreCase("Zalenium"))
+	            		 if(!z.equalsIgnoreCase("Zalenium") && !z.equalsIgnoreCase("saucelab_devices"))
 	            		 {
 	            			 //z="Remote";
 	            			 EnvironmentType[i]=z;
@@ -2170,7 +2173,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             for(String s : EnvironmentType) {
                if(s != null && s.length() > 0) {
-                  list.add(s);
+                  list.add(s);     
+                  Collections.sort(list, Collections.reverseOrder());
+                  
                }
             }
             EnvironmentType = list.toArray(new String[list.size()]);
@@ -2182,7 +2187,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         private String[] getBrowserVersion(String platformTestSuites,String browserTestSuites,String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
             int i =0;
-        	String[] BrowserVersion= new String[12];
+        	String[] BrowserVersion= new String[100];
 
             try {
                 ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
@@ -2277,9 +2282,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 // mobile version Fetch      
         
         private String[] getMobileversion(String mobileplatform,String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
-            System.out.println("value in mobile version"+mobileplatform);
+            //System.out.println("value in mobile version"+mobileplatform);
         	int i =0;
-        	String[] Mobileplatformversion= new String[12];
+        	String[] Mobileplatformversion= new String[100];
         	//Browser[0]="--select browser--";
             try {
                 ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
@@ -2310,8 +2315,6 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	            		    	 
 	            		    	 
 	            		     }
-
-	            		     
 	            	 }
 
 				}
@@ -2328,12 +2331,12 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         
   //mobile device name
         private String[] getDevice(String mobileplatform,String mobileVersion,String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
-            System.out.println("value in mobileplatform:-"+mobileplatform);
+           // System.out.println("value in mobileplatform:-"+mobileplatform);
             
-            System.out.println("value in mobileVersion"+mobileVersion);
-            System.out.println("value in mobileVersion length:-"+mobileVersion.length());
+            //System.out.println("value in mobileVersion"+mobileVersion);
+            //System.out.println("value in mobileVersion length:-"+mobileVersion.length());
         	int i =0;
-        	String[] MobileDeviceName= new String[12];
+        	String[] MobileDeviceName= new String[100];
         	//Browser[0]="--select browser--";
             try {
                 ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
@@ -2361,23 +2364,17 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	            		    	 {
 	            		    		 String DN=pD.getdevice();
 	            		    		 MobileDeviceName[i]=DN;
-	            		    		 System.out.println(MobileDeviceName[i]);
+	            		    		// System.out.println(MobileDeviceName[i]);
 		            		    		i++;
 	            		    	 }
 	            		    	 if (platformversion.equalsIgnoreCase(mobileVersion))
 	            		    	 {
 	            		    		 String DN=pD.getdevice();
 	            		    		 MobileDeviceName[i]=DN;
-	            		    		 System.out.println(MobileDeviceName[i]);
+	            		    		// System.out.println(MobileDeviceName[i]);
 		            		    		i++;
-	            		    	 }
-
-	            		    	 
-	            		    	 
-	            		    	 
-	            		     }
-
-	            		     
+	            		    	 }       		    	 
+	            		     }     
 	            	 }
 
 				}
@@ -2392,7 +2389,6 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return newArray;
         }
         
-// device type
        
         
         private Option[] buildSimpleOptions(String[] values) {
