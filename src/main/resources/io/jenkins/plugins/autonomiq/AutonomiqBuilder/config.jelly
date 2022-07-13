@@ -35,17 +35,9 @@
 
     <f:optionalBlock inline="true" field="genScripts" title="${%GenScripts}" >
 
-	<f:optionalBlock inline="true" field="crossBrowsergenScripts" title="${%CrossBrowser}" >
-
         <f:entry title="${%GenCaseList}" field="genCaseList">
             <f:textarea checkMethod="post" />
         </f:entry>
-
-    </f:optionalBlock>
-   
-   <f:optionalBlock inline="true" field="mobileDevicegenScripts" title="${%MobileDevice}">
-
-    </f:optionalBlock>
 
     </f:optionalBlock>
 
@@ -74,7 +66,7 @@
         </f:entry>
 
          <f:entry title="${%RunCaseList}" field="runCaseList">
-            <f:textarea value="${descriptor.getDefaultGenScriptsList()}" checkMethod="post" />
+           <f:textarea style="width:15em;" checkMethod="post" />
          </f:entry>
     
     </f:optionalBlock>
@@ -111,7 +103,7 @@
           <f:select style="width:15em;" checkMethod="post"/>
       </f:entry>
     
-    <f:entry title="${%RunSuiteList}" field="mobileRunTestcaseList">
+    <f:entry title="${%RunCaseList}" field="mobileRunTestcaseList">
          <f:textarea style="width:15em;" checkMethod="post" />
     </f:entry>
 

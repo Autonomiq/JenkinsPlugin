@@ -190,16 +190,12 @@ public class ServiceAccess {
                 browserDetails, false, null, null);
 
         String json = AiqUtil.gson.toJson(body);
-       
-        
+        System.out.println("execute testcase body"+json); 
+        System.out.println("name of device"+deviceNameTestcases);
         if (deviceNameTestcases.contains("GoogleAPI Emulator")){
-        	 String autoAcceptAlerts1="GoogleAPI Emulator";
-            String json1="{\"scripts\":"+scriptList+",\"testExecutionName\":\""+testExecutionName+"\",\"extraData\":{},\"executionType\":\"smoke\",\"platformBrowserDetails\":[{\"environmentType\":\"saucelab_devices\",\"platform\":\""+mobileplatformTestcases+"\",\"platformVersion\":\""+mobilePlatformVersionTc+"\",\"browser\":\"Chrome\",\"browserVersion\":\"\",\"testcaseSessionIdMap\":{\"15177\":\"kH7kdpenR\"},\"appiumVersion\":\"1.22.1\",\"deviceName\":\""+deviceNameTestcases+"\",\"deviceOrientation\":\""+deviceOrientationTc+"\",\"extraCapabilities\":[],\"autoAcceptAlerts\":false,\"autoGrantPermission\":"+enableAnimationsTc+",\"enableAnimations\":"+autoGrantPermissionTc+",\"sauceConnectId\":\""+mobileSauceConnectProxyTc+"\",\"deviceType\":\""+autoAcceptAlerts1+"\"}]}";
-
-           
-            
-            if (mobileDeviceTestcases) {
-            	
+        	 String autoAcceptAlerts1="emulator";
+            String json1="{\"scripts\":"+scriptList+",\"testExecutionName\":\""+testExecutionName+"\",\"extraData\":{},\"executionType\":\"smoke\",\"platformBrowserDetails\":[{\"environmentType\":\"saucelab_devices\",\"platform\":\""+mobileplatformTestcases+"\",\"platformVersion\":\""+mobilePlatformVersionTc+"\",\"browser\":\"Chrome\",\"browserVersion\":\"\",\"testcaseSessionIdMap\":{\"15177\":\"kH7kdpenR\"},\"appiumVersion\":\"1.22.1\",\"deviceName\":\""+deviceNameTestcases+"\",\"deviceOrientation\":\""+deviceOrientationTc+"\",\"extraCapabilities\":[],\"autoAcceptAlerts\":false,\"autoGrantPermission\":"+enableAnimationsTc+",\"enableAnimations\":"+autoGrantPermissionTc+",\"sauceConnectId\":\""+mobileSauceConnectProxyTc+"\",\"deviceType\":\""+autoAcceptAlerts1+"\"}]}";          
+            if (mobileDeviceTestcases) {          	
          	   try {
 
                     String resp = web.post(url, json1, token);
@@ -212,7 +208,6 @@ public class ServiceAccess {
                     throw new ServiceException("Exception running test case", e);
                 }
          }
-
           if (crossBrowserTestcases) {
          	 
          	   try {
@@ -226,7 +221,7 @@ public class ServiceAccess {
                 } catch (Exception e) {
                     throw new ServiceException("Exception running test case", e);
                 }
-         }
+            }
         }
         
         if (deviceNameTestcases.contains("_real_us")){
@@ -287,7 +282,7 @@ public class ServiceAccess {
                 isRemoteDriver, remoteDriverUrl, caseSessionMap);
         
         String json = AiqUtil.gson.toJson(body);
-        
+        System.out.println("body of api"+json);
         if (mobileDevice && crossBrowser) {
         	if(value.equalsIgnoreCase("cross"))
         	{
@@ -305,7 +300,7 @@ public class ServiceAccess {
         
         if (deviceName.contains("GoogleAPI Emulator")){
            
-            String autoAcceptAlerts1="GoogleAPI Emulator";
+            String autoAcceptAlerts1="emulator";
             String json1 = "{\"executionMode\":\""+ executionMode +"\",\"executionType\":\"smoke\",\"platformBrowserDetails\":[{\"environmentType\":\"saucelab_devices\",\"platform\":\""+mobileplatformTestSuites+"\",\"platformVersion\":\""+mobilePlatformVersion+"\",\"browser\":\"Chrome\",\"browserVersion\":\"\",\"testcaseSessionIdMap\":{\"1432\":\"ASFBZReng\"},\"appiumVersion\":\"1.22.1\",\"deviceName\":\""+deviceName+"\",\"deviceOrientation\":\""+deviceOrientation+"\",\"extraCapabilities\":[],\"autoAcceptAlerts\":false,\"autoGrantPermission\":"+autoGrantPermission+",\"enableAnimations\":"+enableAnimations+",\"sauceConnectId\":\""+mobileSauceConnectProxy+"\",\"deviceType\":\""+autoAcceptAlerts1+"\"}]}";
             
             if (mobileDevice) {

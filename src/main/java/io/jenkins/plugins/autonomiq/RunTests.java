@@ -51,7 +51,7 @@ class RunTests {
             return true;
         }
 
-        if (generateScripts && crossBrowsergenScripts) {
+        if (generateScripts) {
 
             RunGenScripts gen = new RunGenScripts(svc, log, pd, pollingIntervalMs);
             boolean result = gen.genScripts(genCaseList);
@@ -66,6 +66,7 @@ class RunTests {
             RunTestExecutions run = new RunTestExecutions(svc, log, pd, pollingIntervalMs);
             environmentTypeTestcases=environmentTypeTestcases.toLowerCase(); 
             String value= "cross";
+            System.out.println("run tests"+browserTestCases);
             boolean result = run.runTests(platformTestCases, browserTestCases, runCaseList,environmentTypeTestcases,browserVersionTestcases,sauceConnectProxyTestcases,mobileplatformTestcases,mobilePlatformVersionTc,deviceNameTestcases,mobileSauceConnectProxyTc,deviceOrientationTc,enableAnimationsTc,autoGrantPermissionTc,mobileDeviceTestcases,crossBrowserTestcases,value);
             if (!result) {
                 return result;
