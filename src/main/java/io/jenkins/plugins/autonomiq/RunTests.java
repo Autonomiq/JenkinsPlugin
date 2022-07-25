@@ -46,6 +46,23 @@ class RunTests {
                             String runCaseList,
                             String runSuiteList,String executionMode,String environmentType,String browserVersion,String platformVersion,String sauceConnectProxy,String environmentTypeTestcases,String browserVersionTestcases,String sauceConnectProxyTestcases,String mobileplatformTestSuites,String mobilePlatformVersion,String deviceName,String mobileSauceConnectProxy,String mobileExecutionMode,String deviceOrientation,String enableAnimations,String autoGrantPermission,String mobileRunSuiteList,String mobileplatformTestcases,String mobilePlatformVersionTc,String deviceNameTestcases,String mobileSauceConnectProxyTc,String deviceOrientationTc,String enableAnimationsTc,String autoGrantPermissionTc,String mobileRunTestcaseList) throws PluginException, InterruptedException {
     	
+    	System.out.println("in runtestcases class"+runTestCases);
+    	System.out.println("in runtestcases mobile testcases"+mobileplatformTestcases);
+    	System.out.println("in runtestcases cross testcases"+crossBrowserTestcases);
+    	System.out.println("in runtestcases mobile device testcases"+mobileDeviceTestcases);
+    	System.out.println("in runtestcases platform testcases"+platformTestCases);
+    	crossBrowserTestcases=false;
+    	mobileDeviceTestcases=false;
+    	
+    	if (platformTestCases.equalsIgnoreCase("macOS 11.00") || platformTestCases.equalsIgnoreCase("macOS 10.15")||platformTestCases.equalsIgnoreCase("Windows 10") ||platformTestCases.equalsIgnoreCase("Linux"))
+    	{
+    		crossBrowserTestcases=true;
+    	}
+    	if (platformTestCases.equalsIgnoreCase("Android"))
+    	{
+    		mobileDeviceTestcases=true;
+    	}
+    	
         if (!(generateScripts || runTestCases || runTestSuites)) {
             log.println("Neither generate scripts nor run test cases nor run test suites selected, no work to do");
             return true;
@@ -60,8 +77,7 @@ class RunTests {
             }
 
         }
-
-        if (runTestCases && crossBrowserTestcases ) {
+        if (runTestCases) {
 
             RunTestExecutions run = new RunTestExecutions(svc, log, pd, pollingIntervalMs);
             environmentTypeTestcases=environmentTypeTestcases.toLowerCase(); 
@@ -72,20 +88,9 @@ class RunTests {
                 return result;
             }
         }
-        if (runTestCases && mobileDeviceTestcases ) {
+        
 
-            RunTestExecutions run = new RunTestExecutions(svc, log, pd, pollingIntervalMs);
-            environmentTypeTestcases=environmentTypeTestcases.toLowerCase(); 
-           
-            runCaseList=mobileRunTestcaseList;
-            String value= "mobile";
-            boolean result = run.runTests(platformTestCases, browserTestCases, runCaseList,environmentTypeTestcases,browserVersionTestcases,sauceConnectProxyTestcases,mobileplatformTestcases,mobilePlatformVersionTc,deviceNameTestcases,mobileSauceConnectProxyTc,deviceOrientationTc,enableAnimationsTc,autoGrantPermissionTc,mobileDeviceTestcases,crossBrowserTestcases,value);
-            if (!result) {
-                return result;
-            }
-        }
-
-        if (runTestSuites && crossBrowser) {
+        if (runTestSuites) {
 
             RunSuiteExecutions run = new RunSuiteExecutions(svc, log, pd, pollingIntervalMs);
             environmentType=environmentType.toLowerCase();
@@ -93,18 +98,6 @@ class RunTests {
             String value= "cross";
             boolean result = run.runSuites(platformTestSuites, browserTestSuites, runSuiteList,executionMode,environmentType,browserVersion,platformVersion,sauceConnectProxy,mobileplatformTestSuites,mobilePlatformVersion,deviceName,mobileSauceConnectProxy,mobileExecutionMode,deviceOrientation,enableAnimations,autoGrantPermission,mobileDevice,crossBrowser,value);
             
-            if (!result) {
-                return result;
-            }
-        }
-        
-        if (runTestSuites && mobileDevice) {
-            RunSuiteExecutions run = new RunSuiteExecutions(svc, log, pd, pollingIntervalMs);
-            environmentType=environmentType.toLowerCase();
-           
-            runSuiteList=mobileRunSuiteList;
-            String value= "mobile";
-            boolean result = run.runSuites(platformTestSuites, browserTestSuites, runSuiteList,executionMode,environmentType,browserVersion,platformVersion,sauceConnectProxy,mobileplatformTestSuites,mobilePlatformVersion,deviceName,mobileSauceConnectProxy,mobileExecutionMode,deviceOrientation,enableAnimations,autoGrantPermission,mobileDevice,crossBrowser,value);
             if (!result) {
                 return result;
             }

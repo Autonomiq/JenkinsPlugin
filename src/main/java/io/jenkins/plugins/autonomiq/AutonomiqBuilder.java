@@ -1,6 +1,7 @@
 package io.jenkins.plugins.autonomiq;
 
 import hudson.Launcher;
+import hudson.XmlFile;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.*;
@@ -24,6 +25,7 @@ import io.jenkins.plugins.autonomiq.util.AiqUtil;
 import io.jenkins.plugins.autonomiq.util.TimeStampedLogger;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.verb.POST;
 
 import io.jenkins.plugins.autonomiq.service.types.Environment;
@@ -51,7 +53,6 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundSetter;
 
 public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
-
     private String aiqUrl;
     private String login;
     private Secret password;
@@ -102,11 +103,11 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     private String enableAnimationsTc;
     private String autoGrantPermission;
     private String autoGrantPermissionTc;
-    
     private static Long pollingIntervalMs = 10000L;
 
     @DataBoundConstructor
     public AutonomiqBuilder(String aiqUrl, String login, Secret password, String project,
+    		               
                             Boolean genScripts,
                             Boolean runTestCases,
                             Boolean runTestSuites,
@@ -157,6 +158,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         this.login = login;
         this.password = password;
         this.project = project;
+       
         this.genScripts = genScripts;
         this.runTestCases = runTestCases;
         this.runTestSuites = runTestSuites;
@@ -205,13 +207,14 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	    this.autoGrantPermissionTc=autoGrantPermissionTc;
 	    
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setAiqUrl(String aiqUrl) {
+    	
         this.aiqUrl = aiqUrl;
     }
-
+    
     @SuppressWarnings("unused")
     public String getAiqUrl() {
         return aiqUrl;
@@ -269,6 +272,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
     @SuppressWarnings("unused")
     public Boolean getRunTestCases() {
+    	//System.out.println("testcases value inside methods databounders"+ runTestCases);
         return runTestCases;
     }
 
@@ -280,9 +284,12 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
     @SuppressWarnings("unused")
     public Boolean getRunTestSuites() {
+    	//System.out.println("testsuites value inside methods databounders"+ runTestSuites);
         return runTestSuites;
     }
+    
   // mobile Data Bounder start
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setMobileDevice(Boolean mobileDevice) {
@@ -302,7 +309,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
     @SuppressWarnings("unused")
     public Boolean getCrossBrowser() {
-        return crossBrowser;
+    	System.out.println("value inside methods databounders"+ crossBrowser);
+        return true;
     }
     
     @SuppressWarnings("unused")
@@ -501,7 +509,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getMobileRunTestcaseList() {
         return mobileRunTestcaseList;
     }
+    
 // mobile Data Bounder ends
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setPlatformTestCases(String platform) {
@@ -552,6 +562,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
     @SuppressWarnings("unused")
     public String getRunCaseList() {
+    	
         return runCaseList;
     }
 
@@ -581,7 +592,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     @SuppressWarnings("unused")
     @DataBoundSetter
     public String getRunSuiteList() {
-        return runSuiteList;
+    	        return runSuiteList;
     }
     
     @SuppressWarnings("unused")
@@ -662,6 +673,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
     @SuppressWarnings("unused")
     public String getEnvironmentType() {
+    	//System.out.println("values of env inside data bounders:-"+ environmentType);
         return environmentType;
     }
 
@@ -675,7 +687,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getEnvironmentTypeTestcases() {
         return environmentTypeTestcases;
     }
-
+    
 
     @SuppressWarnings("unused")
     @DataBoundSetter
@@ -753,13 +765,6 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         return sauceConnectProxyTestcases;
     }
 
-    @SuppressWarnings("unused")
-    public String getMyString()
-    {
-        return "Hello Jenkins!";
-    }
-
-
 
     private static ServiceAccess getServiceAccess(String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword,
     		String aiqUrl, String login, Secret password, Boolean httpProxy) throws ServiceException {
@@ -832,21 +837,34 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     @SuppressWarnings("unused")
     @Symbol("greet")
     @Extension
-    public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
-
-        @SuppressWarnings("unused")
+    public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {	
+    
+    	
+    	
+    	@SuppressWarnings("unused")
+        @POST
+        public FormValidation doCheckGenScripts(@QueryParameter String value, @QueryParameter String genScripts)
+                throws IOException, ServletException {
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+        	
+       
+            return FormValidation.ok();
+        }
+    	
+    	@SuppressWarnings("unused")
         @POST
         public FormValidation doCheckAiqUrl(@QueryParameter String value, @QueryParameter String aiqUrl)
                 throws IOException, ServletException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+        	
             if (value.length() == 0)
                 return FormValidation.error(Messages.AutonomiqBuilder_DescriptorImpl_errors_missingAiqUrl());
             if (!(value.startsWith("http://") || value.startsWith("https://")))
                 return FormValidation.warning(Messages.AutonomiqBuilder_DescriptorImpl_errors_notUrl());
-
+            
             return FormValidation.ok();
         }
-
+        
         @SuppressWarnings("unused")
         @POST
         public FormValidation doCheckLogin(@QueryParameter String value, @QueryParameter String login)
@@ -880,7 +898,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             if (value.length() == 0)
                 return FormValidation.error(Messages.AutonomiqBuilder_DescriptorImpl_errors_missingProject());
- 
+            
             return FormValidation.ok();
         }
         @POST
@@ -1254,7 +1272,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         	return new ListBoxModel();
         }
-
+        
+       
         @SuppressWarnings("unused")
         @POST
         public ListBoxModel doFillPlatformTestCasesItems(@QueryParameter String environmentTypeTestcases,@QueryParameter String aiqUrl,
@@ -1311,7 +1330,16 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Boolean httpProxy) throws ServiceException {
 
 
-        	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs"))
+        	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
+        	{
+        		//String[] values= getMobileversion(platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+   				String[] values = {"NotApplicable"};
+   				Option[] options = buildSimpleOptions(values);
+
+   				return new ListBoxModel(options);
+        	}
+        	
+        	else if ((environmentTypeTestcases.equalsIgnoreCase("Saucelabs")) && (platformTestCases.equalsIgnoreCase("macOS 11.00") || platformTestCases.equalsIgnoreCase("macOS 10.15")||platformTestCases.equalsIgnoreCase("Windows 10")))
         	{
        				String[] values= getBrowser(environmentTypeTestcases,platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
        				Option[] options = buildSimpleOptions(values);
@@ -1357,8 +1385,15 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Boolean httpProxy) throws ServiceException {
         	
         	
-        	
-        	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs"))
+        	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
+        	{
+   				//String[] values= getMobileversion(platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+   				String[] values = {"NotApplicable"};
+   				Option[] options = buildSimpleOptions(values);
+
+   				return new ListBoxModel(options);
+    	   }
+        	else if ((environmentTypeTestcases.equalsIgnoreCase("Saucelabs")) && (platformTestCases.equalsIgnoreCase("macOS 11.00") || platformTestCases.equalsIgnoreCase("macOS 10.15")||platformTestCases.equalsIgnoreCase("Windows 10")))
         	{
         		 String[] values= getBrowserVersion(platformTestCases,browserTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
                  Option[] options = buildSimpleOptions(values);
@@ -1441,7 +1476,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             String[] values= getEnvironmentType(aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
         	Option[] options = buildSimpleOptions(values);
-
+        	System.out.println(options);
             return  new ListBoxModel(options);
         	}
 
@@ -1502,7 +1537,15 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException {
 
-        	if (environmentType.equalsIgnoreCase("Saucelabs"))
+        	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
+        	{
+       				//String[] values= getBrowser(environmentType,platformTestSuites,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+        		    String[] values = {"NotApplicable"};
+        		    Option[] options = buildSimpleOptions(values);
+
+       				return new ListBoxModel(options);
+        	}
+        	else if ((environmentType.equalsIgnoreCase("Saucelabs")) && (platformTestSuites.equalsIgnoreCase("macOS 11.00") || platformTestSuites.equalsIgnoreCase("macOS 10.15")|| platformTestSuites.equalsIgnoreCase("Windows 10")))
         	{
        				String[] values= getBrowser(environmentType,platformTestSuites,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
        				Option[] options = buildSimpleOptions(values);
@@ -1550,13 +1593,22 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	//System.out.println("env type"+environmentType);
         	//System.out.println("browser testsuites"+browserTestSuites);
 
-        	if (environmentType.equalsIgnoreCase("Saucelabs"))
+        	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
+        	{
+        		 //String[] values= getBrowserVersion(platformTestSuites,browserTestSuites,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+        		String[] values = {"NotApplicable"}; 
+        		Option[] options = buildSimpleOptions(values);
+                 return new ListBoxModel(options);
+        	}
+        	
+        	else if ((environmentType.equalsIgnoreCase("Saucelabs")) && (platformTestSuites.equalsIgnoreCase("macOS 11.00") || platformTestSuites.equalsIgnoreCase("macOS 10.15")||platformTestSuites.equalsIgnoreCase("Windows 10")))
         	{
         		 String[] values= getBrowserVersion(platformTestSuites,browserTestSuites,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
                  Option[] options = buildSimpleOptions(values);
                  return new ListBoxModel(options);
 
         	}
+        	
         	else if (environmentType.equalsIgnoreCase("Local"))
         	{
         		try {
@@ -1693,7 +1745,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         
         @SuppressWarnings("unused")
         @POST
-        public ListBoxModel doFillMobileplatformTestSuitesItems(@QueryParameter String aiqUrl,
+        public ListBoxModel doFillMobileplatformTestSuitesItems(@QueryParameter String aiqUrl,@QueryParameter Boolean mobileplatformTestSuites,
                 @QueryParameter String login,
                 @QueryParameter Secret password,
                 @QueryParameter String proxyHost,
@@ -1702,9 +1754,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+        	System.out.println("values of boolean"+mobileplatformTestSuites);
         	if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
         	
-
+            
             String[] values = {"Android"};
 
             Option[] options = buildSimpleOptions(values);
@@ -1761,7 +1814,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         
         @SuppressWarnings("unused")
         @POST
-        public ListBoxModel doFillMobilePlatformVersionItems(@QueryParameter String mobileplatformTestSuites,@QueryParameter String aiqUrl,
+        public ListBoxModel doFillMobilePlatformVersionItems(@QueryParameter String environmentType,@QueryParameter String platformTestSuites,@QueryParameter String mobileplatformTestSuites,@QueryParameter String aiqUrl,
                 @QueryParameter String login,
                 @QueryParameter Secret password,
                 @QueryParameter String proxyHost,
@@ -1770,92 +1823,221 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-        	if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
-        	
+        	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
+        	{
+       				String[] values= getMobileversion(platformTestSuites,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+       				Option[] options = buildSimpleOptions(values);
 
-        	String[] values= getMobileversion(mobileplatformTestSuites,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
-				Option[] options = buildSimpleOptions(values);
-            //String[] values = {"11","12"};
-
-            //Option[] options = buildSimpleOptions(values);
-
-            return new ListBoxModel(options);
-        }
-        	return new ListBoxModel();
-        }
-        
-        @SuppressWarnings("unused")
-        @POST
-        public ListBoxModel doFillMobilePlatformVersionTcItems(@QueryParameter String mobileplatformTestcases,@QueryParameter String aiqUrl,
-                @QueryParameter String login,
-                @QueryParameter Secret password,
-                @QueryParameter String proxyHost,
-                @QueryParameter String proxyPort,
-                @QueryParameter String proxyUser,
-                @QueryParameter Secret proxyPassword,
-                @QueryParameter Boolean httpProxy) throws ServiceException {
-        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-        	if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
-        	
-
-        	String[] values= getMobileversion(mobileplatformTestcases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
-				Option[] options = buildSimpleOptions(values);
-            //String[] values = {"11","12"};
-
-            //Option[] options = buildSimpleOptions(values);
-
-            return new ListBoxModel(options);
-        }
-        	return new ListBoxModel();
-        }
-        
-        @SuppressWarnings("unused")
-        @POST
-        public ListBoxModel doFillDeviceNameItems(@QueryParameter String mobileplatformTestSuites,@QueryParameter String mobilePlatformVersion,@QueryParameter String aiqUrl,
-                @QueryParameter String login,
-                @QueryParameter Secret password,
-                @QueryParameter String proxyHost,
-                @QueryParameter String proxyPort,
-                @QueryParameter String proxyUser,
-                @QueryParameter Secret proxyPassword,
-                @QueryParameter Boolean httpProxy) throws ServiceException {
-        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-        	if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
-        	
-
-        	String[] values= getDevice(mobileplatformTestSuites,mobilePlatformVersion,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
-			Option[] options = buildSimpleOptions(values);
-
-            return new ListBoxModel(options);
-        }
-        	return new ListBoxModel();
-        }
-        
-        @SuppressWarnings("unused")
-        @POST
-        public ListBoxModel doFillDeviceNameTestcasesItems(@QueryParameter String mobileplatformTestcases,@QueryParameter String mobilePlatformVersionTc,@QueryParameter String aiqUrl,
-                @QueryParameter String login,
-                @QueryParameter Secret password,
-                @QueryParameter String proxyHost,
-                @QueryParameter String proxyPort,
-                @QueryParameter String proxyUser,
-                @QueryParameter Secret proxyPassword,
-                @QueryParameter Boolean httpProxy) throws ServiceException {
-        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-
-        	if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
-
-
-        	String[] values= getDevice(mobileplatformTestcases,mobilePlatformVersionTc,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
-			Option[] options = buildSimpleOptions(values);
-            
-            return new ListBoxModel(options);
+       				return new ListBoxModel(options);
         	}
-          return new ListBoxModel();
+        	else if ((environmentType.equalsIgnoreCase("Saucelabs")) && (platformTestSuites.equalsIgnoreCase("macOS 11.00") || platformTestSuites.equalsIgnoreCase("macOS 10.15")||platformTestSuites.equalsIgnoreCase("Windows 10")))
+        	{
+       				//String[] values= getMobileversion(platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+       				String[] values = {"NotApplicable"};
+       				Option[] options = buildSimpleOptions(values);
+
+       				return new ListBoxModel(options);
+        	}
+        	else if (environmentType.equalsIgnoreCase("Local"))
+        	{
+
+        	   if (platformTestSuites.equalsIgnoreCase("Linux"))
+        	   {
+        		   String[] values = {"NotApplicable"};
+       			//String[] values = {"Chrome (headless)","Firefox (headless)","Chrome (headful)","Firefox (headful)"};  //, "Windows"};
+                Option[] options = buildSimpleOptions(values);
+
+                return new ListBoxModel(options);
+        	   }
+        	}
+        	else if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0)
+        	{
+
+   			 String[] values = {"NotApplicable"};
+                Option[] options = buildSimpleOptions(values);
+
+                return  new ListBoxModel(options);
+        	}
+        	else
+        	{
+        		return new ListBoxModel();
+        	}
+            return new ListBoxModel();
+        }
+        
+        @SuppressWarnings("unused")
+        @POST
+        public ListBoxModel doFillMobilePlatformVersionTcItems(@QueryParameter String environmentTypeTestcases,@QueryParameter String platformTestCases,@QueryParameter String mobileplatformTestcases,@QueryParameter String aiqUrl,
+                @QueryParameter String login,
+                @QueryParameter Secret password,
+                @QueryParameter String proxyHost,
+                @QueryParameter String proxyPort,
+                @QueryParameter String proxyUser,
+                @QueryParameter Secret proxyPassword,
+                @QueryParameter Boolean httpProxy) throws ServiceException {
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+        	//System.out.println(environmentTypeTestcases+"values of ev and PTc's :-"+platformTestCases);
+        	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
+        	{
+       				String[] values= getMobileversion(platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+       				Option[] options = buildSimpleOptions(values);
+
+       				return new ListBoxModel(options);
+        	}
+        	else if ((environmentTypeTestcases.equalsIgnoreCase("Saucelabs")) && (platformTestCases.equalsIgnoreCase("macOS 11.00") || platformTestCases.equalsIgnoreCase("macOS 10.15")||platformTestCases.equalsIgnoreCase("Windows 10")))
+        	{
+       				//String[] values= getMobileversion(platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+       				String[] values = {"NotApplicable"};
+       				Option[] options = buildSimpleOptions(values);
+
+       				return new ListBoxModel(options);
+        	}
+
+        	else if (environmentTypeTestcases.equalsIgnoreCase("Local"))
+        	{
+
+        	   if (platformTestCases.equalsIgnoreCase("Linux"))
+        	   {
+        		   String[] values = {"NotApplicable"};
+       			//String[] values = {"Chrome (headless)","Firefox (headless)","Chrome (headful)","Firefox (headful)"};  //, "Windows"};
+                Option[] options = buildSimpleOptions(values);
+
+                return new ListBoxModel(options);
+        	   }
+        	}
+        	
+        	else if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0)
+        	{
+
+   			 String[] values = {"NotApplicable"};
+                Option[] options = buildSimpleOptions(values);
+
+                return  new ListBoxModel(options);
+        	}
+        	else
+        	{
+        		return new ListBoxModel();
+        	}
+            return new ListBoxModel();
+        }
+        
+        
+        
+        @SuppressWarnings("unused")
+        @POST
+        public ListBoxModel doFillDeviceNameItems(@QueryParameter String environmentType,@QueryParameter String platformTestSuites,@QueryParameter String mobilePlatformVersion,@QueryParameter String aiqUrl,
+                @QueryParameter String login,
+                @QueryParameter Secret password,
+                @QueryParameter String proxyHost,
+                @QueryParameter String proxyPort,
+                @QueryParameter String proxyUser,
+                @QueryParameter Secret proxyPassword,
+                @QueryParameter Boolean httpProxy) throws ServiceException {
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+        	
+        	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
+        	{ 
+        		 
+       				String[] values= getDevice(platformTestSuites,mobilePlatformVersion,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+       				Option[] options = buildSimpleOptions(values);
+
+       				return new ListBoxModel(options);
+        	}
+        	else if ((environmentType.equalsIgnoreCase("Saucelabs")) && (platformTestSuites.equalsIgnoreCase("macOS 11.00") || platformTestSuites.equalsIgnoreCase("macOS 10.15")||platformTestSuites.equalsIgnoreCase("Windows 10")))
+        	{
+       				//String[] values= getMobileversion(platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+       				String[] values = {"NotApplicable"};
+       				Option[] options = buildSimpleOptions(values);
+
+       				return new ListBoxModel(options);
+        	}
+        	else if (environmentType.equalsIgnoreCase("Local"))
+        	{
+
+        	   if (platformTestSuites.equalsIgnoreCase("Linux"))
+        	   {
+        		   String[] values = {"NotApplicable"};
+       			//String[] values = {"Chrome (headless)","Firefox (headless)","Chrome (headful)","Firefox (headful)"};  //, "Windows"};
+                Option[] options = buildSimpleOptions(values);
+
+                return new ListBoxModel(options);
+        	   }
+        	}
+        	else if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0)
+        	{
+
+   			    String[] values = {"NotApplicable"};
+                Option[] options = buildSimpleOptions(values);
+
+                return  new ListBoxModel(options);
+        	}
+        	else
+        	{
+        		return new ListBoxModel();
+        	}
+            return new ListBoxModel();
+        }
+        
+        @SuppressWarnings("unused")
+        @POST
+        public ListBoxModel doFillDeviceNameTestcasesItems(
+        		@QueryParameter String environmentTypeTestcases,@QueryParameter String platformTestCases,@QueryParameter String mobilePlatformVersionTc,@QueryParameter String aiqUrl,
+                @QueryParameter String login,
+                @QueryParameter Secret password,
+                @QueryParameter String proxyHost,
+                @QueryParameter String proxyPort,
+                @QueryParameter String proxyUser,
+                @QueryParameter Secret proxyPassword,
+                @QueryParameter Boolean httpProxy) throws ServiceException {
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+
+
+           if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
+        	{
+       				String[] values= getDevice(platformTestCases,mobilePlatformVersionTc,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+       				Option[] options = buildSimpleOptions(values);
+
+       				return new ListBoxModel(options);
+        	}
+        	else if ((environmentTypeTestcases.equalsIgnoreCase("Saucelabs")) && (platformTestCases.equalsIgnoreCase("macOS 11.00") || platformTestCases.equalsIgnoreCase("macOS 10.15")||platformTestCases.equalsIgnoreCase("Windows 10")))
+        	{
+       				//String[] values= getMobileversion(platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+       				String[] values = {"NotApplicable"};
+       				Option[] options = buildSimpleOptions(values);
+
+       				return new ListBoxModel(options);
+        	}
+
+        	else if (environmentTypeTestcases.equalsIgnoreCase("Local"))
+        	{
+
+        	   if (platformTestCases.equalsIgnoreCase("Linux"))
+        	   {
+        		   String[] values = {"NotApplicable"};
+       			//String[] values = {"Chrome (headless)","Firefox (headless)","Chrome (headful)","Firefox (headful)"};  //, "Windows"};
+                Option[] options = buildSimpleOptions(values);
+
+                return new ListBoxModel(options);
+        	   }
+        	}
+        	
+        	else if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0)
+        	{
+
+   			    String[] values = {"NotApplicable"};
+                Option[] options = buildSimpleOptions(values);
+
+                return  new ListBoxModel(options);
+        	}
+        	else
+        	{
+        		return new ListBoxModel();
+        	}
+            return new ListBoxModel();
         }
         @SuppressWarnings("unused")
         @POST
-        public ListBoxModel doFillDeviceOrientationItems(
+        public ListBoxModel doFillDeviceOrientationItems(@QueryParameter String environmentType,@QueryParameter String platformTestSuites,
         		@QueryParameter String aiqUrl,
                 @QueryParameter String login,
                 @QueryParameter Secret password,
@@ -1865,21 +2047,51 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-        	if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
-        	
+        	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
+        	{
+    			  String[] values = {"Portrait","Landscape"};
 
-            String[] values = {"Portrait","Landscape"};
+    	            Option[] options = buildSimpleOptions(values);
 
-            Option[] options = buildSimpleOptions(values);
+    	            return new ListBoxModel(options);
+        	}
+    		else if ((environmentType.equalsIgnoreCase("Saucelabs")) && (platformTestSuites.equalsIgnoreCase("macOS 11.00") || platformTestSuites.equalsIgnoreCase("macOS 10.15")||platformTestSuites.equalsIgnoreCase("Windows 10")))
+        	{
+       				//String[] values= getMobileversion(platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+       				String[] values = {"NotApplicable"};
+       				Option[] options = buildSimpleOptions(values);
 
-            return new ListBoxModel(options);
-        }
-        	return new ListBoxModel();
+       				return new ListBoxModel(options);
+        	}
+    		else if (environmentType.equalsIgnoreCase("Local"))
+        	{
+
+        	   if (environmentType.equalsIgnoreCase("Linux"))
+        	   {
+        		   String[] values = {"NotApplicable"};
+       			//String[] values = {"Chrome (headless)","Firefox (headless)","Chrome (headful)","Firefox (headful)"};  //, "Windows"};
+                Option[] options = buildSimpleOptions(values);
+
+                return new ListBoxModel(options);
+        	   }
+        	}
+    		else if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0)
+        	{
+    			 String[] values = {"NotApplicable"};
+                 Option[] options = buildSimpleOptions(values);
+
+                 return  new ListBoxModel(options);
+        	}
+    		else
+        	{
+        		return new ListBoxModel();
+        	}
+            return new ListBoxModel();	
         }
         
         @SuppressWarnings("unused")
         @POST
-        public ListBoxModel doFillDeviceOrientationTcItems(
+        public ListBoxModel doFillDeviceOrientationTcItems(@QueryParameter String environmentTypeTestcases,@QueryParameter String platformTestCases,
         		@QueryParameter String aiqUrl,
                 @QueryParameter String login,
                 @QueryParameter Secret password,
@@ -1889,42 +2101,53 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-        	if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
-            String[] values = {"Portrait","Landscape"};
+        		if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
+            	{
+        			  String[] values = {"Portrait","Landscape"};
 
-            Option[] options = buildSimpleOptions(values);
+        	            Option[] options = buildSimpleOptions(values);
 
-            return new ListBoxModel(options);
-        	}
-        	return new ListBoxModel();
-        }
-        
+        	            return new ListBoxModel(options);
+            	}
+        		else if ((environmentTypeTestcases.equalsIgnoreCase("Saucelabs")) && (platformTestCases.equalsIgnoreCase("macOS 11.00") || platformTestCases.equalsIgnoreCase("macOS 10.15")||platformTestCases.equalsIgnoreCase("Windows 10")))
+            	{
+           				//String[] values= getMobileversion(platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+           				String[] values = {"NotApplicable"};
+           				Option[] options = buildSimpleOptions(values);
 
-        @SuppressWarnings("unused")
-        @POST
-        public ListBoxModel doFillEnableAnimationsItems(@QueryParameter String aiqUrl,
-                @QueryParameter String login,
-                @QueryParameter Secret password,
-                @QueryParameter String proxyHost,
-                @QueryParameter String proxyPort,
-                @QueryParameter String proxyUser,
-                @QueryParameter Secret proxyPassword,
-                @QueryParameter Boolean httpProxy) {
-        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-        	if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
+           				return new ListBoxModel(options);
+            	}
+        		else if (environmentTypeTestcases.equalsIgnoreCase("Local"))
+            	{
+
+            	   if (platformTestCases.equalsIgnoreCase("Linux"))
+            	   {
+            		   String[] values = {"NotApplicable"};
+           			//String[] values = {"Chrome (headless)","Firefox (headless)","Chrome (headful)","Firefox (headful)"};  //, "Windows"};
+                    Option[] options = buildSimpleOptions(values);
+
+                    return new ListBoxModel(options);
+            	   }
+            	}
+        		else if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0)
+            	{
+        			 String[] values = {"NotApplicable"};
+                     Option[] options = buildSimpleOptions(values);
+
+                     return  new ListBoxModel(options);
+            	}
+        		else
+            	{
+            		return new ListBoxModel();
+            	}
+                return new ListBoxModel();
         	
-
-            String[] values = {"false","true"};
-            Option[] options = buildSimpleOptions(values);
-
-            return new ListBoxModel(options);
-        }
-        	return new ListBoxModel();
         }
         
+
         @SuppressWarnings("unused")
         @POST
-        public ListBoxModel doFillEnableAnimationsTcItems(@QueryParameter String aiqUrl,
+        public ListBoxModel doFillEnableAnimationsItems(@QueryParameter String environmentType,@QueryParameter String platformTestSuites,@QueryParameter String aiqUrl,
                 @QueryParameter String login,
                 @QueryParameter Secret password,
                 @QueryParameter String proxyHost,
@@ -1933,18 +2156,50 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-        	if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
-            String[] values = {"false","true"};
-            Option[] options = buildSimpleOptions(values);
+        	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
+        	{
+    			   String[] values = {"false","true"};
+                               Option[] options = buildSimpleOptions(values);
+                                 return new ListBoxModel(options);
+        	}
+    		else if ((environmentType.equalsIgnoreCase("Saucelabs")) && (platformTestSuites.equalsIgnoreCase("macOS 11.00") || platformTestSuites.equalsIgnoreCase("macOS 10.15")||platformTestSuites.equalsIgnoreCase("Windows 10")))
+        	{
+       				//String[] values= getMobileversion(platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+       				String[] values = {"NotApplicable"};
+       				Option[] options = buildSimpleOptions(values);
 
-            return new ListBoxModel(options);
-        }
-        	return new ListBoxModel();
+       				return new ListBoxModel(options);
+        	}
+    		else if (environmentType.equalsIgnoreCase("Local"))
+        	{
+
+        	   if (platformTestSuites.equalsIgnoreCase("Linux"))
+        	   {
+        		   String[] values = {"NotApplicable"};
+       			//String[] values = {"Chrome (headless)","Firefox (headless)","Chrome (headful)","Firefox (headful)"};  //, "Windows"};
+                Option[] options = buildSimpleOptions(values);
+
+                return new ListBoxModel(options);
+        	   }
+        	}
+    		else if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0)
+        	{
+    			 String[] values = {"NotApplicable"};
+                 Option[] options = buildSimpleOptions(values);
+
+                 return  new ListBoxModel(options);
+        	}
+    		else
+        	{
+        		return new ListBoxModel();
+        	}
+            return new ListBoxModel(); 
         }
         
         @SuppressWarnings("unused")
         @POST
-        public ListBoxModel doFillAutoGrantPermissionItems(@QueryParameter String aiqUrl,
+        public ListBoxModel doFillEnableAnimationsTcItems(
+        		@QueryParameter String environmentTypeTestcases,@QueryParameter String platformTestCases,@QueryParameter String aiqUrl,
                 @QueryParameter String login,
                 @QueryParameter Secret password,
                 @QueryParameter String proxyHost,
@@ -1953,18 +2208,50 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-        	if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
-            String[] values = {"false","true"};
-            Option[] options = buildSimpleOptions(values);
+        	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
+        	{
+    			   String[] values = {"false","true"};
+                               Option[] options = buildSimpleOptions(values);
+                                 return new ListBoxModel(options);
+        	}
+    		else if ((environmentTypeTestcases.equalsIgnoreCase("Saucelabs")) && (platformTestCases.equalsIgnoreCase("macOS 11.00") || platformTestCases.equalsIgnoreCase("macOS 10.15")||platformTestCases.equalsIgnoreCase("Windows 10")))
+        	{
+       				//String[] values= getMobileversion(platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+       				String[] values = {"NotApplicable"};
+       				Option[] options = buildSimpleOptions(values);
 
-            return new ListBoxModel(options);
-        }
-        	return new ListBoxModel();
-        }
+       				return new ListBoxModel(options);
+        	}
+    		else if (environmentTypeTestcases.equalsIgnoreCase("Local"))
+        	{
+
+        	   if (platformTestCases.equalsIgnoreCase("Linux"))
+        	   {
+        		   String[] values = {"NotApplicable"};
+       			//String[] values = {"Chrome (headless)","Firefox (headless)","Chrome (headful)","Firefox (headful)"};  //, "Windows"};
+                Option[] options = buildSimpleOptions(values);
+
+                return new ListBoxModel(options);
+        	   }
+        	}
+    		else if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0)
+        	{
+    			 String[] values = {"NotApplicable"};
+                 Option[] options = buildSimpleOptions(values);
+
+                 return  new ListBoxModel(options);
+        	}
+    		else
+        	{
+        		return new ListBoxModel();
+        	}
+            return new ListBoxModel();    	
+    }
+
         
         @SuppressWarnings("unused")
         @POST
-        public ListBoxModel doFillAutoGrantPermissionTcItems(@QueryParameter String aiqUrl,
+        public ListBoxModel doFillAutoGrantPermissionItems(@QueryParameter String environmentType,@QueryParameter String platformTestSuites,@QueryParameter String aiqUrl,
                 @QueryParameter String login,
                 @QueryParameter Secret password,
                 @QueryParameter String proxyHost,
@@ -1973,14 +2260,98 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-        	if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
-            String[] values = {"false","true"};
-            Option[] options = buildSimpleOptions(values);
+        	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
+        	{
+    			   String[] values = {"false","true"};
+                               Option[] options = buildSimpleOptions(values);
+                                 return new ListBoxModel(options);
+        	}
+    		else if ((environmentType.equalsIgnoreCase("Saucelabs")) && (platformTestSuites.equalsIgnoreCase("macOS 11.00") || platformTestSuites.equalsIgnoreCase("macOS 10.15")||platformTestSuites.equalsIgnoreCase("Windows 10")))
+        	{
+       				//String[] values= getMobileversion(platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+       				String[] values = {"NotApplicable"};
+       				Option[] options = buildSimpleOptions(values);
 
-            return new ListBoxModel(options);
+       				return new ListBoxModel(options);
+        	}
+    		else if (environmentType.equalsIgnoreCase("Local"))
+        	{
+
+        	   if (platformTestSuites.equalsIgnoreCase("Linux"))
+        	   {
+        		   String[] values = {"NotApplicable"};
+       			//String[] values = {"Chrome (headless)","Firefox (headless)","Chrome (headful)","Firefox (headful)"};  //, "Windows"};
+                Option[] options = buildSimpleOptions(values);
+
+                return new ListBoxModel(options);
+        	   }
+        	}
+    		else if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0)
+        	{
+    			 String[] values = {"NotApplicable"};
+                 Option[] options = buildSimpleOptions(values);
+
+                 return  new ListBoxModel(options);
+        	}
+    		else
+        	{
+        		return new ListBoxModel();
+        	}
+            return new ListBoxModel();
         }
-        	return new ListBoxModel();
-        }
+        
+        @SuppressWarnings("unused")
+        @POST
+        public ListBoxModel doFillAutoGrantPermissionTcItems(@QueryParameter String environmentTypeTestcases,@QueryParameter String platformTestCases,@QueryParameter String aiqUrl,
+                @QueryParameter String login,
+                @QueryParameter Secret password,
+                @QueryParameter String proxyHost,
+                @QueryParameter String proxyPort,
+                @QueryParameter String proxyUser,
+                @QueryParameter Secret proxyPassword,
+                @QueryParameter Boolean httpProxy) {
+        	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+        	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
+        	{
+    			   String[] values = {"false","true"};
+                               Option[] options = buildSimpleOptions(values);
+                                 return new ListBoxModel(options);
+        	}
+    		else if ((environmentTypeTestcases.equalsIgnoreCase("Saucelabs")) && (platformTestCases.equalsIgnoreCase("macOS 11.00") || platformTestCases.equalsIgnoreCase("macOS 10.15")||platformTestCases.equalsIgnoreCase("Windows 10")))
+        	{
+       				//String[] values= getMobileversion(platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
+       				String[] values = {"NotApplicable"};
+       				Option[] options = buildSimpleOptions(values);
+
+       				return new ListBoxModel(options);
+        	}
+    		else if (environmentTypeTestcases.equalsIgnoreCase("Local"))
+        	{
+
+        	   if (platformTestCases.equalsIgnoreCase("Linux"))
+        	   {
+        		   String[] values = {"NotApplicable"};
+       			//String[] values = {"Chrome (headless)","Firefox (headless)","Chrome (headful)","Firefox (headful)"};  //, "Windows"};
+                Option[] options = buildSimpleOptions(values);
+
+                return new ListBoxModel(options);
+        	   }
+        	}
+    		else if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0)
+        	{
+    			 String[] values = {"NotApplicable"};
+                 Option[] options = buildSimpleOptions(values);
+
+                 return  new ListBoxModel(options);
+        	}
+    		else
+        	{
+        		return new ListBoxModel();
+        	}
+            return new ListBoxModel();
+    	
+    }
+
         
 
         private Option[] getProjectOptions(String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
@@ -2045,7 +2416,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	            		
 	            		 String z = t1.getenvironmentType();
 	            		
-	            		 	if(z.equalsIgnoreCase("Saucelabs"))
+	            		 	if(z.equalsIgnoreCase("Saucelabs")
+	            		 			|| z.equalsIgnoreCase("saucelab_devices"))
 	            		 	{
 	            		 		Environment2 env2=t1.getenvironment();
 	            		 		
@@ -2055,7 +2427,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	   	            		     String sp=env2.getsaucePassword();
 	   	            		     String su=env2.getsauceUsername();
 	   	            		     for(PlatformDetail pD:td) {
-	   	            		    	String platform=pD.getplatform();    		    	
+	   	            		    	String platform=pD.getplatform(); 
 	   	            		    	platform1[i]=platform;
 	   	   	            		 	i++;   
 	            		 	}
@@ -2092,7 +2464,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	            	 for (Environment t1:d)
 	            	 {
 	            		 String z = t1.getenvironmentType();
-	            		 if(z.equalsIgnoreCase("Saucelabs"))
+	            		 if(z.equalsIgnoreCase("Saucelabs") || z.equalsIgnoreCase("saucelab_devices") )
 	            		 {
 	            		 Environment2 env2=t1.getenvironment();
 
@@ -2102,6 +2474,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	            		     String su=env2.getsauceUsername();
 	            		     for(PlatformDetail pD:td) {
 	            		    	 String platform=pD.getplatform();
+	            		    	 //System.out.println("value of platform"+platform);
+	            		    	 //System.out.println("value of platform nextsteps:-"+platformTestSuites);
 	            		    	 if (platform.equalsIgnoreCase(platformTestSuites))
 	            		    	 {
 
@@ -2142,8 +2516,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         private String[] getEnvironmentType(String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
             int i =0;
         	String[] EnvironmentType= new String[10];
+        	
         	//EnvironmentType[0]="--select environmenttype--";
-
             try {
                 ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
             	List<ExecutionEnvironment> envInfo=svc.executionEnvironment();
@@ -2153,6 +2527,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	            	 for (Environment t1:d)
 	            	 {
 	            		 String z = t1.getenvironmentType();
+	            		 //System.out.println("environment values:-"+z);
+	            		 //EnvironmentTypefilter[i]=z;
 	            		 if(!z.equalsIgnoreCase("Zalenium") && !z.equalsIgnoreCase("saucelab_devices"))
 	            		 {
 	            			 //z="Remote";
@@ -2178,9 +2554,15 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                   
                }
             }
+            
             EnvironmentType = list.toArray(new String[list.size()]);
             return EnvironmentType;
         }
+        
+        
+   ///////////////////     
+      
+///////////////////////
 
  // fetch browser version dropdown values:
 
@@ -2306,7 +2688,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	            		     String su=env2.getsauceUsername();
 	            		     for(PlatformDetail pD:td) {
 	            		    	 String platform=pD.getplatform();
-	            		    	 if (platform.equalsIgnoreCase("Android"))
+	            		    	 if (platform.equalsIgnoreCase(mobileplatform))
 	            		    	 {
 	            		    		 String pv=pD.getplatformVersion();
 	            		    		 Mobileplatformversion[i]=pv;

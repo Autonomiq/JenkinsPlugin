@@ -41,148 +41,137 @@
 
     </f:optionalBlock>
 
-    <f:optionalBlock inline="true" field="runTestCases" title="${%RunTestCases}" >
 
-    <f:optionalBlock inline="true" field="crossBrowserTestcases" title="${%CrossBrowser}" >
+<f:optionalBlock inline="true" field="runTestCases" title="${%RunTestCases}" >
 
-      <f:entry title="${%EnvironmentType}" field="environmentTypeTestcases">
-            <f:select checkMethod="post" style="width:15em;"/>
-        </f:entry>
+      <f:entry >
+            <label>Environment Type:</label>
+            &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+            <f:select title="${%EnvironmentType}" field="environmentTypeTestcases" checkMethod="post" style="width:15em;"/>
+            &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; 
 
-        <f:entry title="${%Platform}" field="platformTestCases">
-            <f:select style="width:15em;" checkMethod="post"/>
-        </f:entry>
+            <label>Choose Platform:</label>
+            &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+            <f:select title="${%Platform}" field="platformTestCases" style="width:15em;" checkMethod="post"/>
+            &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp;           
+      </f:entry> 
+      <f:entry >
+           <label>Choose Browser:</label>
+            &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+           <f:select title="${%Browser}" field="browserTestCases" style="width:15em;" checkMethod="post" />
+           &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; 
 
-        <f:entry title="${%Browser}" field="browserTestCases">
-            <f:select style="width:15em;" checkMethod="post" />
-        </f:entry>
+           <label>Browser Version:</label>
+           &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+           <f:select title="${%BrowserVersion}" field="browserVersionTestcases" style="width:15em;" checkMethod="post"/>
+	   &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; 
+      </f:entry>
+      <f:entry >
+	   <label>Sauce Connect Proxy:</label>
+           &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+           <f:select title="${%SauceConnectProxy}" field="sauceConnectProxyTestcases" style="width:15em;" checkMethod="post"/>
+           &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp;
+           
+          <label>Platform Version:</label>
+          &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+          <f:select title="${%PlatformVersion}" field="mobilePlatformVersionTc" style="width:15em;" checkMethod="post"/>
+          &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp;
+     </f:entry>	
+     <f:entry >
+          <label>Device Name:</label>
+	  &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+          <f:select title="${%DeviceName}" field="deviceNameTestcases" style="width:15em;" checkMethod="post"/>
+          &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp;         
 
-	 <f:entry title="${%BrowserVersion}" field="browserVersionTestcases">
-            <f:select style="width:15em;" checkMethod="post"/>
-        </f:entry>
+          <label>Device Orientation:</label>
+	  &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+          <f:select title="${%DeviceOrientation}" field="deviceOrientationTc" style="width:15em;" checkMethod="post"/>
+          &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp;
+     </f:entry>
+     <f:entry >
+          <label>Enable Animations:</label>
+          &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+          <f:select title="${%EnableAnimations}" field="enableAnimationsTc" style="width:15em;" checkMethod="post"/>
+          &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp;  
 
-        <f:entry title="${%SauceConnectProxy}" field="sauceConnectProxyTestcases">
-            <f:select style="width:15em;" checkMethod="post"/>
-        </f:entry>
-
-         <f:entry title="${%RunCaseList}" field="runCaseList">
-           <f:textarea style="width:15em;" checkMethod="post" />
-         </f:entry>
-    
-    </f:optionalBlock>
-
-	 <f:optionalBlock inline="true" field="mobileDeviceTestcases" title="${%MobileDevice}">
-
-	<f:entry title="${%Platform}" field="mobileplatformTestcases">
-           <f:select style="width:15em;" checkMethod="post"/>
+          <label>Auto Grant Permission:</label>
+          <f:select title="${%AutoGrantPermission}" field="autoGrantPermissionTc" style="width:15em;" checkMethod="post"/>
+          &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp;  
+      </f:entry>
+      <f:entry >
+           <label>Enter Testcases to Run:</label>
+           &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+           <f:textarea title="${%RunCaseList}" field="runCaseList" style="width:15em;" checkMethod="post" />
       </f:entry>
 
-        <f:entry title="${%PlatformVersion}" field="mobilePlatformVersionTc">
-            <f:select style="width:15em;" checkMethod="post"/>
+     </f:optionalBlock>
+
+ <f:optionalBlock inline="true" field="runTestSuites" title="${%RunTestSuites}" >
+
+      <f:entry >
+            <label>Environment Type:</label>
+            &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+            <f:select title="${%EnvironmentType}" field="environmentType" checkMethod="post" style="width:15em;"/>
+            &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; 
+
+            <label>Choose Platform:</label>
+            &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+            <f:select title="${%Platform}" field="platformTestSuites" style="width:15em;" checkMethod="post"/>
+            &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp;           
+      </f:entry> 
+      <f:entry >
+           <label>Choose Browser:</label>
+            &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+           <f:select title="${%Browser}" field="browserTestSuites" style="width:15em;" checkMethod="post" />
+           &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; 
+
+           <label>Browser Version:</label>
+           &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+           <f:select title="${%BrowserVersion}" field="browserVersion" style="width:15em;" checkMethod="post"/>
+	   &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; 
       </f:entry>
+     <f:entry >
+	   <label>Sauce Connect Proxy:</label>
+           &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+           <f:select title="${%SauceConnectProxy}" field="sauceConnectProxy" style="width:15em;" checkMethod="post"/>
+           &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp;
+           
+          <label>Platform Version:</label>
+          &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+          <f:select title="${%PlatformVersion}" field="mobilePlatformVersion" style="width:15em;" checkMethod="post"/>
+          &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp;
+     </f:entry>	
+    <f:entry >
+          <label>Device Name:</label>
+	  &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+          <f:select title="${%DeviceName}" field="deviceName" style="width:15em;" checkMethod="post"/>
+          &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp;         
 
-	
-     <f:entry title="${%DeviceName}" field="deviceNameTestcases">
-          <f:select style="width:15em;" checkMethod="post"/>
+          <label>Device Orientation:</label>
+	  &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+          <f:select title="${%DeviceOrientation}" field="deviceOrientation" style="width:15em;" checkMethod="post"/>
+          &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp;
+     </f:entry>
+     <f:entry >
+          <label>Enable Animations:</label>
+          &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+          <f:select title="${%EnableAnimations}" field="enableAnimations" style="width:15em;" checkMethod="post"/>
+          &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp;  
+
+          <label>Auto Grant Permission:</label>
+          <f:select title="${%AutoGrantPermission}" field="autoGrantPermission" style="width:15em;" checkMethod="post"/>
+          &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp;  
       </f:entry>
-    
-     <f:entry title="${%SauceConnectProxy}" field="mobileSauceConnectProxyTc">
-            <f:select style="width:15em;" checkMethod="post"/>
-        </f:entry>
+      <f:entry >
+          <label>Enable Animations:</label>
+          &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+          <f:select title="${%ExecutionMode}" field="executionMode" style="width:15em;" checkMethod="post"/>
+          &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp; &amp;nbsp;&amp;nbsp;  
 
-
-     <f:entry title="${%DeviceOrientation}" field="deviceOrientationTc">
-          <f:select style="width:15em;" checkMethod="post"/>
+         <label>Enter TestSuites to Run:</label>
+           &amp;nbsp;
+           <f:textarea title="${%RunSuiteList}" field="runSuiteList" style="width:15em;" checkMethod="post" />
       </f:entry>
-
-    <f:entry title="${%EnableAnimations}" field="enableAnimationsTc">
-          <f:select style="width:15em;" checkMethod="post"/>
-      </f:entry>
-
-    <f:entry title="${%AutoGrantPermission}" field="autoGrantPermissionTc">
-          <f:select style="width:15em;" checkMethod="post"/>
-      </f:entry>
-    
-    <f:entry title="${%RunCaseList}" field="mobileRunTestcaseList">
-         <f:textarea style="width:15em;" checkMethod="post" />
-    </f:entry>
-
-   </f:optionalBlock>
-
-    </f:optionalBlock>
-
-    <f:optionalBlock inline="true" field="runTestSuites" title="${%RunTestSuites}" >
-
-	<f:optionalBlock inline="true" field="crossBrowser" title="${%CrossBrowser}" >
-
-       <f:entry title="${%EnvironmentType}" field="environmentType">
-            <f:select  style="width:15em;" checkMethod="post"/>
-        </f:entry>
-        <f:entry title="${%Platform}" field="platformTestSuites">
-            <f:select style="width:15em;" checkMethod="post"/>
-        </f:entry>
-
-        <f:entry title="${%Browser}" field="browserTestSuites">
-            <f:select style="width:15em;" checkMethod="post"/>
-        </f:entry>
-
-        <f:entry title="${%BrowserVersion}" field="browserVersion">
-            <f:select style="width:15em;" checkMethod="post"/>
-        </f:entry>
-        <f:entry title="${%SauceConnectProxy}" field="sauceConnectProxy">
-            <f:select style="width:15em;" checkMethod="post"/>
-        </f:entry>
-
-        <f:entry title="${%ExecutionMode}" field="executionMode">
-            <f:select  style="width:15em;" checkMethod="post"/>
-        </f:entry>
-
-        <f:entry title="${%RunSuiteList}" field="runSuiteList">
-            <f:textarea style="width:15em;" checkMethod="post" />
-        </f:entry>
-
-      </f:optionalBlock>
-	
-   <f:optionalBlock inline="true" field="mobileDevice" title="${%MobileDevice}">
-
-    <f:entry title="${%Platform}" field="mobileplatformTestSuites">
-           <f:select style="width:15em;" checkMethod="post"/>
-      </f:entry>
-
-        <f:entry title="${%PlatformVersion}" field="mobilePlatformVersion">
-            <f:select style="width:15em;" checkMethod="post"/>
-      </f:entry>
-
-	
-     <f:entry title="${%DeviceName}" field="deviceName">
-          <f:select style="width:15em;" checkMethod="post"/>
-      </f:entry>
-    
-     <f:entry title="${%SauceConnectProxy}" field="mobileSauceConnectProxy">
-            <f:select style="width:15em;" checkMethod="post"/>
-        </f:entry>
-
-    <f:entry title="${%ExecutionMode}" field="mobileExecutionMode">
-            <f:select  style="width:15em;" checkMethod="post"/>
-        </f:entry>
-
-     <f:entry title="${%DeviceOrientation}" field="deviceOrientation">
-          <f:select style="width:15em;" checkMethod="post"/>
-      </f:entry>
-
-    <f:entry title="${%EnableAnimations}" field="enableAnimations">
-          <f:select style="width:15em;" checkMethod="post"/>
-      </f:entry>
-
-    <f:entry title="${%AutoGrantPermission}" field="autoGrantPermission">
-          <f:select style="width:15em;" checkMethod="post"/>
-      </f:entry>
-    
-    <f:entry title="${%RunSuiteList}" field="mobileRunSuiteList">
-         <f:textarea style="width:15em;" checkMethod="post" />
-    </f:entry>
-
-   </f:optionalBlock>
 
   </f:optionalBlock>
 
