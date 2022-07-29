@@ -9,10 +9,10 @@ public class PlatformBrowserDetails {
     private String deviceName;
     private String deviceOrientation;
     private String environmentType;
-    private String tunnelID;
+    private String sauceConnectId;
 
     public PlatformBrowserDetails(String browser, String browserVersion, String platform, String platformVersion,
-    		String appiumVersion, String deviceName, String deviceOrientation,String environmentType,String tunnelID) {
+    		String appiumVersion, String deviceName, String deviceOrientation,String environmentType,String sauceConnectId) {
         this.browser = browser;
         this.browserVersion = browserVersion;
         this.platform = platform;
@@ -21,7 +21,7 @@ public class PlatformBrowserDetails {
         this.deviceName = deviceName;
         this.deviceOrientation = deviceOrientation;
         this.environmentType = environmentType;
-        this.tunnelID=tunnelID;
+        this.sauceConnectId=sauceConnectId;
     }
 
     public String getBrowser() {
@@ -82,13 +82,11 @@ public class PlatformBrowserDetails {
 		public void setEnvironmentType(String environmentType) {
 			this.environmentType = environmentType;
 	}
-		public String getTunnelID() {
-			return tunnelID;
+		public String getSauceConnectId() {
+			return sauceConnectId;
 	}
 
-	public void setTunnelID(String tunnelID) {
-		this.tunnelID = tunnelID;
+	public void setSauceConnectId(String sauceConnectId) {
+		this.sauceConnectId = sauceConnectId;
 	}
-		
-	
 }

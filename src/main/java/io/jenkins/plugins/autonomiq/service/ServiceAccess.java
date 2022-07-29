@@ -162,6 +162,7 @@ public class ServiceAccess {
 
         String url = String.format(runTestCasesPath, aiqUrl, projectId);
         System.out.println("execute testcase"+url);
+        System.out.println("execute testcase"+deviceNameTestcases);
         List<Long> scriptList = listForItem(scriptId);
 
         if(sauceConnectProxyTestcases.equalsIgnoreCase("Tunnel id not available"))
@@ -179,6 +180,7 @@ public class ServiceAccess {
             ExecuteTaskRequest body = new ExecuteTaskRequest(sessionId, testExecutionName, scriptList, executionType,
                     browserDetails, false, null, null);
         	String json = AiqUtil.gson.toJson(body);
+        	System.out.println("for sauce/local"+json);
         try {
         	
             String resp = web.post(url, json, token);
@@ -196,7 +198,7 @@ public class ServiceAccess {
         if (deviceNameTestcases.contains("GoogleAPI Emulator")){
         	System.out.println("name of device"+deviceNameTestcases);
        	 String autoAcceptAlerts1="emulator";
-           String json1="{\"scripts\":"+scriptList+",\"testExecutionName\":\""+testExecutionName+"\",\"extraData\":{},\"executionType\":\"smoke\",\"platformBrowserDetails\":[{\"environmentType\":\"saucelab_devices\",\"platform\":\""+platform+"\",\"platformVersion\":\""+mobilePlatformVersionTc+"\",\"browser\":\"Chrome\",\"browserVersion\":\"\",\"testcaseSessionIdMap\":{\"15177\":\"kH7kdpenR\"},\"appiumVersion\":\"1.22.1\",\"deviceName\":\""+deviceNameTestcases+"\",\"deviceOrientation\":\""+deviceOrientationTc+"\",\"extraCapabilities\":[],\"autoAcceptAlerts\":false,\"autoGrantPermission\":"+enableAnimationsTc+",\"enableAnimations\":"+autoGrantPermissionTc+",\"sauceConnectId\":\""+mobileSauceConnectProxyTc+"\",\"deviceType\":\""+autoAcceptAlerts1+"\"}]}";          
+           String json1="{\"scripts\":"+scriptList+",\"testExecutionName\":\""+testExecutionName+"\",\"extraData\":{},\"executionType\":\"smoke\",\"platformBrowserDetails\":[{\"environmentType\":\"saucelab_devices\",\"platform\":\""+platform+"\",\"platformVersion\":\""+mobilePlatformVersionTc+"\",\"browser\":\"Chrome\",\"browserVersion\":\"\",\"testcaseSessionIdMap\":{\"15177\":\"kH7kdpenR\"},\"appiumVersion\":\"1.22.1\",\"deviceName\":\""+deviceNameTestcases+"\",\"deviceOrientation\":\""+deviceOrientationTc+"\",\"extraCapabilities\":[],\"autoAcceptAlerts\":false,\"autoGrantPermission\":"+enableAnimationsTc+",\"enableAnimations\":"+autoGrantPermissionTc+",\"sauceConnectId\":\""+sauceConnectProxyTestcases+"\",\"deviceType\":\""+autoAcceptAlerts1+"\"}]}";          
                      	
         	   try {
 
@@ -211,11 +213,10 @@ public class ServiceAccess {
                }
            }
         
-        
-        if (deviceNameTestcases.contains("_real_us")){
+        if ((!deviceNameTestcases.contains("GoogleAPI Emulator"))&&(!deviceNameTestcases.equalsIgnoreCase("NotApplicable"))){
         	System.out.println("name of device"+deviceNameTestcases);
             String autoAcceptAlerts1="real";
-            String json1="{\"scripts\":"+scriptList+",\"testExecutionName\":\""+testExecutionName+"\",\"extraData\":{},\"executionType\":\"smoke\",\"platformBrowserDetails\":[{\"environmentType\":\"saucelab_devices\",\"platform\":\""+platform+"\",\"platformVersion\":\""+mobilePlatformVersionTc+"\",\"browser\":\"Chrome\",\"browserVersion\":\"\",\"testcaseSessionIdMap\":{\"15177\":\"kH7kdpenR\"},\"appiumVersion\":\"1.22.1\",\"deviceName\":\""+deviceNameTestcases+"\",\"deviceOrientation\":\""+deviceOrientationTc+"\",\"extraCapabilities\":[],\"autoAcceptAlerts\":false,\"autoGrantPermission\":"+enableAnimationsTc+",\"enableAnimations\":"+autoGrantPermissionTc+",\"sauceConnectId\":\""+mobileSauceConnectProxyTc+"\",\"deviceType\":\""+autoAcceptAlerts1+"\"}]}";
+            String json1="{\"scripts\":"+scriptList+",\"testExecutionName\":\""+testExecutionName+"\",\"extraData\":{},\"executionType\":\"smoke\",\"platformBrowserDetails\":[{\"environmentType\":\"saucelab_devices\",\"platform\":\""+platform+"\",\"platformVersion\":\""+mobilePlatformVersionTc+"\",\"browser\":\"Chrome\",\"browserVersion\":\"\",\"testcaseSessionIdMap\":{\"15177\":\"kH7kdpenR\"},\"appiumVersion\":\"1.22.1\",\"deviceName\":\""+deviceNameTestcases+"\",\"deviceOrientation\":\""+deviceOrientationTc+"\",\"extraCapabilities\":[],\"autoAcceptAlerts\":false,\"autoGrantPermission\":"+enableAnimationsTc+",\"enableAnimations\":"+autoGrantPermissionTc+",\"sauceConnectId\":\""+sauceConnectProxyTestcases+"\",\"deviceType\":\""+autoAcceptAlerts1+"\"}]}";
             System.out.println("payload for real"+json1);
             	
          	   try {
@@ -251,17 +252,18 @@ public class ServiceAccess {
         {
         	sauceConnectProxy= ""; 
         }
-        List<PlatformBrowserDetails> details = new LinkedList<>();
-        details.add(new PlatformBrowserDetails(browser, browserVersion, platform, platformVersion, null, null, null,environmentType,sauceConnectProxy));
-        ExecuteTestSuiteRequest body = new ExecuteTestSuiteRequest(
-                details, executionType, executionMode,
-                isRemoteDriver, remoteDriverUrl, caseSessionMap);
-        
-        String json = AiqUtil.gson.toJson(body);
-        System.out.println("body of api"+json);
+
         
         if (deviceName.equalsIgnoreCase("NotApplicable"))
         {
+            List<PlatformBrowserDetails> details = new LinkedList<>();
+            details.add(new PlatformBrowserDetails(browser, browserVersion, platform, platformVersion, null, null, null,environmentType,sauceConnectProxy));
+            ExecuteTestSuiteRequest body = new ExecuteTestSuiteRequest(
+                    details, executionType, executionMode,
+                    isRemoteDriver, remoteDriverUrl, caseSessionMap);
+            
+            String json = AiqUtil.gson.toJson(body);
+            System.out.println("body of api"+json);
         try {
 
             String resp = web.post(url, json, token);
@@ -276,10 +278,11 @@ public class ServiceAccess {
     }
        
       if (deviceName.contains("GoogleAPI Emulator")){
-           
+           System.out.println("inside API Emulator"+deviceName);
             String autoAcceptAlerts1="emulator";
-            String json1 = "{\"executionMode\":\""+ executionMode +"\",\"executionType\":\"smoke\",\"platformBrowserDetails\":[{\"environmentType\":\"saucelab_devices\",\"platform\":\""+platform+"\",\"platformVersion\":\""+mobilePlatformVersion+"\",\"browser\":\"Chrome\",\"browserVersion\":\"\",\"testcaseSessionIdMap\":{\"1432\":\"ASFBZReng\"},\"appiumVersion\":\"1.22.1\",\"deviceName\":\""+deviceName+"\",\"deviceOrientation\":\""+deviceOrientation+"\",\"extraCapabilities\":[],\"autoAcceptAlerts\":false,\"autoGrantPermission\":"+autoGrantPermission+",\"enableAnimations\":"+enableAnimations+",\"sauceConnectId\":\""+mobileSauceConnectProxy+"\",\"deviceType\":\""+autoAcceptAlerts1+"\"}]}";
-            	 try {
+            String json1 = "{\"executionMode\":\""+ executionMode +"\",\"executionType\":\"smoke\",\"platformBrowserDetails\":[{\"environmentType\":\"saucelab_devices\",\"platform\":\""+platform+"\",\"platformVersion\":\""+mobilePlatformVersion+"\",\"browser\":\"Chrome\",\"browserVersion\":\"\",\"testcaseSessionIdMap\":{\"1432\":\"ASFBZReng\"},\"appiumVersion\":\"1.22.1\",\"deviceName\":\""+deviceName+"\",\"deviceOrientation\":\""+deviceOrientation+"\",\"extraCapabilities\":[],\"autoAcceptAlerts\":false,\"autoGrantPermission\":"+autoGrantPermission+",\"enableAnimations\":"+enableAnimations+",\"sauceConnectId\":\""+sauceConnectProxy+"\",\"deviceType\":\""+autoAcceptAlerts1+"\"}]}";
+            System.out.println("json response"+json1);	 
+            try {
                      String resp = web.post(url, json1, token);
 
                      ExecuteSuiteResponse respExec = AiqUtil.gson.fromJson(resp, ExecuteSuiteResponse.class);
@@ -292,10 +295,11 @@ public class ServiceAccess {
             
             
          }
-        if (deviceName.contains("_real_us")){
+      if ((!deviceName.contains("GoogleAPI Emulator"))&&(!deviceName.equalsIgnoreCase("NotApplicable"))){
+        	System.out.println("inside Real Device"+deviceName);
             String autoAcceptAlerts1="real";
-            String json1 = "{\"executionMode\":\""+ executionMode +"\",\"executionType\":\"smoke\",\"platformBrowserDetails\":[{\"environmentType\":\"saucelab_devices\",\"platform\":\""+platform+"\",\"platformVersion\":\""+mobilePlatformVersion+"\",\"browser\":\"Chrome\",\"browserVersion\":\"\",\"testcaseSessionIdMap\":{\"1432\":\"ASFBZReng\"},\"appiumVersion\":\"1.22.1\",\"deviceName\":\""+deviceName+"\",\"deviceOrientation\":\""+deviceOrientation+"\",\"extraCapabilities\":[],\"autoAcceptAlerts\":false,\"autoGrantPermission\":"+autoGrantPermission+",\"enableAnimations\":"+enableAnimations+",\"sauceConnectId\":\""+mobileSauceConnectProxy+"\",\"deviceType\":\""+autoAcceptAlerts1+"\"}]}";
-          
+            String json1 = "{\"executionMode\":\""+ executionMode +"\",\"executionType\":\"smoke\",\"platformBrowserDetails\":[{\"environmentType\":\"saucelab_devices\",\"platform\":\""+platform+"\",\"platformVersion\":\""+mobilePlatformVersion+"\",\"browser\":\"Chrome\",\"browserVersion\":\"\",\"testcaseSessionIdMap\":{\"1432\":\"ASFBZReng\"},\"appiumVersion\":\"1.22.1\",\"deviceName\":\""+deviceName+"\",\"deviceOrientation\":\""+deviceOrientation+"\",\"extraCapabilities\":[],\"autoAcceptAlerts\":false,\"autoGrantPermission\":"+autoGrantPermission+",\"enableAnimations\":"+enableAnimations+",\"sauceConnectId\":\""+sauceConnectProxy+"\",\"deviceType\":\""+autoAcceptAlerts1+"\"}]}";
+            System.out.println("json response"+json1);
             
             	 try {
                      String resp = web.post(url, json1, token);

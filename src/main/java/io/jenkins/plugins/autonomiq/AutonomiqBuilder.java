@@ -288,7 +288,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         return runTestSuites;
     }
     
-  // mobile Data Bounder start
+ // mobile Data Bounder start
     
     @SuppressWarnings("unused")
     @DataBoundSetter
@@ -846,7 +846,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         public FormValidation doCheckGenScripts(@QueryParameter String value, @QueryParameter String genScripts)
                 throws IOException, ServletException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-        	
+        	System.out.println("value of mystring param0:"+value.length());
        
             return FormValidation.ok();
         }
@@ -2691,8 +2691,17 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	            		    	 if (platform.equalsIgnoreCase(mobileplatform))
 	            		    	 {
 	            		    		 String pv=pD.getplatformVersion();
-	            		    		 Mobileplatformversion[i]=pv;
+	            		    		 if (pv.contains("0")){
+	            		    	           int index = pv.indexOf(".");
+	            		    	        String pv1  = pv.substring(0,index);
+	            		    	        Mobileplatformversion[i]=pv1;
 		            		    		i++;
+	            		    	           
+	            		    	       }else{
+	            		    	    	   Mobileplatformversion[i]=pv;
+			            		    		i++;
+	            		    	       }
+	            		    		 
 	            		    	 }
 	            		    	 
 	            		    	 
@@ -2715,7 +2724,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         private String[] getDevice(String mobileplatform,String mobileVersion,String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
            // System.out.println("value in mobileplatform:-"+mobileplatform);
             
-            //System.out.println("value in mobileVersion"+mobileVersion);
+            System.out.println("value in mobileVersion"+mobileVersion);
             //System.out.println("value in mobileVersion length:-"+mobileVersion.length());
         	int i =0;
         	String[] MobileDeviceName= new String[100];
@@ -2739,9 +2748,11 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	            		     String sp=env2.getsaucePassword();
 	            		     String su=env2.getsauceUsername();
 	            		     for(PlatformDetail pD:td) {
+	            		    	 
 	            		    	 String platformversion=pD.getplatformVersion();
 	            		    	 String platformversion1=pD.getdevice();
 	            		    	 String platform=pD.getplatform();
+	            		  
 	            		    	 if (platform.equalsIgnoreCase("Android") && mobileVersion.length()==0)
 	            		    	 {
 	            		    		 String DN=pD.getdevice();
@@ -2749,8 +2760,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	            		    		// System.out.println(MobileDeviceName[i]);
 		            		    		i++;
 	            		    	 }
-	            		    	 if (platformversion.equalsIgnoreCase(mobileVersion))
+	            		    	 if (platformversion.contains(mobileVersion))
 	            		    	 {
+	            		    		 
 	            		    		 String DN=pD.getdevice();
 	            		    		 MobileDeviceName[i]=DN;
 	            		    		// System.out.println(MobileDeviceName[i]);
