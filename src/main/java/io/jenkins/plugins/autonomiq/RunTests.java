@@ -51,6 +51,15 @@ class RunTests {
     	System.out.println("in runtestcases cross testcases"+crossBrowserTestcases);
     	System.out.println("in runtestcases mobile device testcases"+mobileDeviceTestcases);
     	System.out.println("in runtestcases platform testcases"+platformTestCases);
+
+        if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
+      	  platformTestCases="Android";
+        }
+        System.out.println("in runtestcases platform testcases"+platformTestCases);
+        if(platformTestSuites.equalsIgnoreCase("Android (Beta)")){
+        	platformTestSuites="Android";
+        }
+        System.out.println("in runtestcases platform testcases"+platformTestSuites);
     	crossBrowserTestcases=false;
     	mobileDeviceTestcases=false;
 

@@ -815,6 +815,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             	log.printf("list of pd '%s'\n",pd);
             	log.printf("list of logs '%s'\n",log);
                 RunTests rt = new RunTests(svc, log, pd, pollingIntervalMs);
+                System.out.println("in aiq builder"+platformTestCases);
+                System.out.println("in aiq builder"+platformTestSuites);
                 ok = rt.runTests(genScripts, runTestCases, runTestSuites,crossBrowser,mobileDevice,crossBrowserTestcases,mobileDeviceTestcases,crossBrowsergenScripts,mobileDevicegenScripts,
                         platformTestCases, browserTestCases,
                         platformTestSuites, browserTestSuites,
@@ -1328,7 +1330,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter String proxyUser,
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException {
-
+        	
+              if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
+            	  platformTestCases="Android";
+              }
 
         	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
         	{
@@ -1383,7 +1388,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter String proxyUser,
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException {
-
+        	
+        	  if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
+            	  platformTestCases="Android";
+              }
 
         	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
         	{
@@ -1536,6 +1544,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter String proxyUser,
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException {
+        	
+        	  if(platformTestSuites.equalsIgnoreCase("Android (Beta)")){
+        		  platformTestSuites="Android";
+              }
 
         	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
         	{
@@ -1592,7 +1604,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         	//System.out.println("env type"+environmentType);
         	//System.out.println("browser testsuites"+browserTestSuites);
-
+      	  if(platformTestSuites.equalsIgnoreCase("Android (Beta)")){
+    		  platformTestSuites="Android";
+          }    	
         	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
         	{
         		 //String[] values= getBrowserVersion(platformTestSuites,browserTestSuites,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
@@ -1823,6 +1837,11 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+      	  
+        	if(platformTestSuites.equalsIgnoreCase("Android (Beta)")){
+    		  platformTestSuites="Android";
+          }
+        	
         	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
         	{
        				String[] values= getMobileversion(platformTestSuites,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
@@ -1877,6 +1896,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Boolean httpProxy) throws ServiceException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         	//System.out.println(environmentTypeTestcases+"values of ev and PTc's :-"+platformTestCases);
+      	  if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
+      		platformTestCases="Android";
+          }
+        	
         	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
         	{
        				String[] values= getMobileversion(platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
@@ -1934,7 +1957,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-
+        	if(platformTestSuites.equalsIgnoreCase("Android (Beta)")){
+        		platformTestSuites="Android";
+              }
         	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
         	{
 
@@ -1991,7 +2016,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Boolean httpProxy) throws ServiceException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 
-
+        	if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
+        		platformTestCases="Android";
+              }
            if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
         	{
        				String[] values= getDevice(platformTestCases,mobilePlatformVersionTc,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
@@ -2047,6 +2074,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+        	if(platformTestSuites.equalsIgnoreCase("Android (Beta)")){
+        		platformTestSuites="Android";
+              }
+        	
         	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
         	{
     			  String[] values = {"Portrait","Landscape"};
@@ -2101,7 +2132,12 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-        		if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
+        	if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
+        		platformTestCases="Android";
+              }
+        		
+        	
+        	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
             	{
         			  String[] values = {"Portrait","Landscape"};
 
@@ -2156,6 +2192,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+        	if(platformTestSuites.equalsIgnoreCase("Android (Beta)")){
+        		platformTestSuites="Android";
+              }
+        	
         	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
         	{
     			   String[] values = {"false","true"};
@@ -2208,6 +2248,11 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+        	if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
+        		platformTestCases="Android";
+              }
+        	
+        	
         	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
         	{
     			   String[] values = {"false","true"};
@@ -2260,6 +2305,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+        	if(platformTestSuites.equalsIgnoreCase("Android (Beta)")){
+        		platformTestSuites="Android";
+              }
+        	
         	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
         	{
     			   String[] values = {"false","true"};
@@ -2311,6 +2360,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+        	if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
+        		platformTestCases="Android";
+              }
+        	
         	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
         	{
     			   String[] values = {"false","true"};
@@ -2427,7 +2480,11 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	   	            		     String sp=env2.getsaucePassword();
 	   	            		     String su=env2.getsauceUsername();
 	   	            		     for(PlatformDetail pD:td) {
+	   	            		    	 
 	   	            		    	String platform=pD.getplatform();
+	   	            		    	if (platform.equalsIgnoreCase("Android")) {
+	   	            		    		platform="Android (Beta)";
+	   	            		    	}
 	   	            		    	platform1[i]=platform;
 	   	   	            		 	i++;
 	            		 	}
@@ -2723,7 +2780,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
   //mobile device name
         private String[] getDevice(String mobileplatform,String mobileVersion,String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
            // System.out.println("value in mobileplatform:-"+mobileplatform);
-
+        	if(mobileplatform.equalsIgnoreCase("Android (Beta)")){
+        		mobileplatform="Android";
+              }
             System.out.println("value in mobileVersion"+mobileVersion);
             //System.out.println("value in mobileVersion length:-"+mobileVersion.length());
         	int i =0;
