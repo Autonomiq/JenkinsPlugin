@@ -63,6 +63,14 @@ class RunTests {
     		mobileDeviceTestcases=true;
     	}
     	
+    	if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
+        	  platformTestCases="Android";
+          }
+          System.out.println("in runtestcases platform testcases"+platformTestCases);
+          if(platformTestSuites.equalsIgnoreCase("Android (Beta)")){
+          	platformTestSuites="Android";
+          }
+    	
         if (!(generateScripts || runTestCases || runTestSuites)) {
             log.println("Neither generate scripts nor run test cases nor run test suites selected, no work to do");
             return true;
