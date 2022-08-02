@@ -4,18 +4,20 @@ public class PlatformDetail{
     public String appiumVersion;
     public String browser;
     public String browserVersion;
-    public String deviceName;
+    public String device;
+    public String deviceType;
     public String deviceOrientation;
     public String platform;
     public String platformVersion;
     public boolean isDefault;
     
-    public PlatformDetail(String appiumVersion,String browser,String browserVersion,String deviceName,String deviceOrientation,String platform,
+    public PlatformDetail(String appiumVersion,String browser,String browserVersion,String device,String deviceType,String deviceOrientation,String platform,
     		String platformVersion,boolean isDefault) {
     	this.appiumVersion=appiumVersion;
     	this.browser=browser;
     	this.browserVersion=browserVersion;
-    	this.deviceName=deviceName;
+    	this.device=device;
+    	this.deviceType=deviceType;
     	this.deviceOrientation=deviceOrientation;
     	this.platform=platform;
     	this.platformVersion=platformVersion;
@@ -38,9 +40,14 @@ public class PlatformDetail{
     	return browserVersion;
     }
     
-    public String getdeviceName()
+    public String getdeviceType()
     {
-    	return deviceName;
+    	return deviceType;
+    }
+    
+    public String getdevice()
+    {
+    	return device;
     }
     
     public String getdeviceOrientation()
