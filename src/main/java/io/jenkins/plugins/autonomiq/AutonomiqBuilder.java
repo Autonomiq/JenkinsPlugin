@@ -107,7 +107,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
     @DataBoundConstructor
     public AutonomiqBuilder(String aiqUrl, String login, Secret password, String project,
-
+    		               
                             Boolean genScripts,
                             Boolean runTestCases,
                             Boolean runTestSuites,
@@ -158,7 +158,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         this.login = login;
         this.password = password;
         this.project = project;
-
+       
         this.genScripts = genScripts;
         this.runTestCases = runTestCases;
         this.runTestSuites = runTestSuites;
@@ -205,16 +205,16 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	    this.enableAnimationsTc=enableAnimationsTc;
 	    this.autoGrantPermission=autoGrantPermission;
 	    this.autoGrantPermissionTc=autoGrantPermissionTc;
-
+	    
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setAiqUrl(String aiqUrl) {
-
+    	
         this.aiqUrl = aiqUrl;
     }
-
+    
     @SuppressWarnings("unused")
     public String getAiqUrl() {
         return aiqUrl;
@@ -287,9 +287,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     	//System.out.println("testsuites value inside methods databounders"+ runTestSuites);
         return runTestSuites;
     }
-
+    
  // mobile Data Bounder start
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setMobileDevice(Boolean mobileDevice) {
@@ -300,7 +300,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public Boolean getMobileDevice() {
         return mobileDevice;
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setCrossBrowser(Boolean crossBrowser) {
@@ -312,7 +312,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     	System.out.println("value inside methods databounders"+ crossBrowser);
         return true;
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setMobileDeviceTestcases(Boolean mobileDeviceTestcases) {
@@ -333,7 +333,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public Boolean getCrossBrowserTestcases() {
         return crossBrowserTestcases;
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setMobileDevicegenScripts(Boolean mobileDevicegenScripts) {
@@ -344,7 +344,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public Boolean getMobileDevicegenScripts() {
         return mobileDevicegenScripts;
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setCrossBrowsergenScripts(Boolean crossBrowsergenScripts) {
@@ -355,7 +355,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public Boolean getCrossBrowsergenScripts() {
         return crossBrowsergenScripts;
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setDeviceName(String deviceName) {
@@ -366,7 +366,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getDeviceName() {
         return deviceName;
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setDeviceNameTestcases(String deviceNameTestcases) {
@@ -377,7 +377,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getDeviceNameTestcases() {
         return deviceNameTestcases;
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setDeviceOrientation(String deviceOrientation) {
@@ -388,7 +388,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getDeviceOrientation() {
         return deviceOrientation;
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setDeviceOrientationTc(String deviceOrientationTc) {
@@ -399,7 +399,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getDeviceOrientationTc() {
         return deviceOrientationTc;
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setEnableAnimations(String enableAnimations) {
@@ -410,7 +410,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getEnableAnimations() {
         return enableAnimations;
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setEnableAnimationsTc(String enableAnimationsTc) {
@@ -421,7 +421,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getEnableAnimationsTc() {
         return enableAnimationsTc;
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setAutoGrantPermission(String autoGrantPermission) {
@@ -432,7 +432,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getAutoGrantPermission() {
         return autoGrantPermission;
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setAutoGrantPermissionTc(String autoGrantPermissionTc) {
@@ -453,7 +453,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getMobileplatformTestSuites() {
         return mobileplatformTestSuites;
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setMobileplatformTestcasess(String mobileplatformTestcases) {
@@ -484,7 +484,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getMobilePlatformVersionTc() {
         return mobilePlatformVersionTc;
     }
-
+    
 
     @SuppressWarnings("unused")
     @DataBoundSetter
@@ -497,7 +497,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getMobileRunSuiteList() {
         return mobileRunSuiteList;
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setMobileRunTestcaseList(String mobileRunTestcaseList) {
@@ -509,9 +509,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getMobileRunTestcaseList() {
         return mobileRunTestcaseList;
     }
-
+    
 // mobile Data Bounder ends
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setPlatformTestCases(String platform) {
@@ -562,7 +562,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
     @SuppressWarnings("unused")
     public String getRunCaseList() {
-
+    	
         return runCaseList;
     }
 
@@ -687,7 +687,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getEnvironmentTypeTestcases() {
         return environmentTypeTestcases;
     }
-
+    
 
     @SuppressWarnings("unused")
     @DataBoundSetter
@@ -699,7 +699,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getPlatformVersion() {
         return platformVersion;
     }
-
+    
    // sauceConnectProxy
     @SuppressWarnings("unused")
     @DataBoundSetter
@@ -732,7 +732,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getSauceConnectProxy() {
         return sauceConnectProxy;
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setMobileSauceConnectProxy(String mobileSauceConnectProxy) {
@@ -743,7 +743,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     public String getMobileSauceConnectProxy() {
         return mobileSauceConnectProxy;
     }
-
+    
     @SuppressWarnings("unused")
     @DataBoundSetter
     public void setMobileSauceConnectProxyTc(String mobileSauceConnectProxyTc) {
@@ -813,10 +813,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             try {
             	log.printf("list of svc '%s'\n",svc);
             	log.printf("list of pd '%s'\n",pd);
-            	log.printf("list of logs '%s'\n",log);
+            	log.printf("list of logs '%s'\n",log);                 
                 RunTests rt = new RunTests(svc, log, pd, pollingIntervalMs);
-                System.out.println("in aiq builder"+platformTestCases);
-                System.out.println("in aiq builder"+platformTestSuites);
                 ok = rt.runTests(genScripts, runTestCases, runTestSuites,crossBrowser,mobileDevice,crossBrowserTestcases,mobileDeviceTestcases,crossBrowsergenScripts,mobileDevicegenScripts,
                         platformTestCases, browserTestCases,
                         platformTestSuites, browserTestSuites,
@@ -839,34 +837,34 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
     @SuppressWarnings("unused")
     @Symbol("greet")
     @Extension
-    public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
-
-
-
+    public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {	
+    
+    	
+    	
     	@SuppressWarnings("unused")
         @POST
         public FormValidation doCheckGenScripts(@QueryParameter String value, @QueryParameter String genScripts)
                 throws IOException, ServletException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         	System.out.println("value of mystring param0:"+value.length());
-
+       
             return FormValidation.ok();
         }
-
+    	
     	@SuppressWarnings("unused")
         @POST
         public FormValidation doCheckAiqUrl(@QueryParameter String value, @QueryParameter String aiqUrl)
                 throws IOException, ServletException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-
+        	
             if (value.length() == 0)
                 return FormValidation.error(Messages.AutonomiqBuilder_DescriptorImpl_errors_missingAiqUrl());
             if (!(value.startsWith("http://") || value.startsWith("https://")))
                 return FormValidation.warning(Messages.AutonomiqBuilder_DescriptorImpl_errors_notUrl());
-
+            
             return FormValidation.ok();
         }
-
+        
         @SuppressWarnings("unused")
         @POST
         public FormValidation doCheckLogin(@QueryParameter String value, @QueryParameter String login)
@@ -900,7 +898,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             if (value.length() == 0)
                 return FormValidation.error(Messages.AutonomiqBuilder_DescriptorImpl_errors_missingProject());
-
+            
             return FormValidation.ok();
         }
         @POST
@@ -991,7 +989,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return FormValidation.ok();
 
         }
-
+        
         //mobile
         @POST
         public FormValidation doCheckMobileRunSuiteList(@QueryParameter String value,
@@ -1048,7 +1046,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             return FormValidation.ok();
         }
-
+        
         @POST
         public FormValidation doCheckmobileRunTestcaseList(@QueryParameter String value,
                                                   @QueryParameter String aiqUrl,
@@ -1104,7 +1102,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             return FormValidation.ok();
         }
-
+        
 
         private FormValidation checkTestCasesFromText(String value,
                                                       String aiqUrl,
@@ -1274,8 +1272,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         	return new ListBoxModel();
         }
-
-
+        
+       
         @SuppressWarnings("unused")
         @POST
         public ListBoxModel doFillPlatformTestCasesItems(@QueryParameter String environmentTypeTestcases,@QueryParameter String aiqUrl,
@@ -1286,9 +1284,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter String proxyUser,
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException, InvocationTargetException {
-
+        	
         	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs")) {
-
+        		
         		String[] values= getplatformType(environmentTypeTestcases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
 
         		Option[] options = buildSimpleOptions(values);
@@ -1296,7 +1294,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         		return new ListBoxModel(options);
         	}
         	else if (environmentTypeTestcases.equalsIgnoreCase("Local")) {
-
+        	
         		 String[] values = {"Linux"};  //, "Windows"};
 
                  Option[] options = buildSimpleOptions(values);
@@ -1330,10 +1328,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter String proxyUser,
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException {
-        	
-              if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
-            	  platformTestCases="Android";
-              }
+
+        	 if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
+           	  platformTestCases="Android";
+             }
 
         	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
         	{
@@ -1343,7 +1341,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
    				return new ListBoxModel(options);
         	}
-
+        	
         	else if ((environmentTypeTestcases.equalsIgnoreCase("Saucelabs")) && (platformTestCases.equalsIgnoreCase("macOS 11.00") || platformTestCases.equalsIgnoreCase("macOS 10.15")||platformTestCases.equalsIgnoreCase("Windows 10")))
         	{
        				String[] values= getBrowser(environmentTypeTestcases,platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
@@ -1388,11 +1386,11 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter String proxyUser,
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException {
-        	
-        	  if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
-            	  platformTestCases="Android";
-              }
 
+        	if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
+           	  platformTestCases="Android";
+             }
+        	
         	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
         	{
    				//String[] values= getMobileversion(platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
@@ -1502,7 +1500,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException, InvocationTargetException {
 
-
+        	
 
         	if (environmentType.equalsIgnoreCase("Saucelabs")) {
 
@@ -1513,7 +1511,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         		return new ListBoxModel(options);
         	}
         	else if (environmentType.equalsIgnoreCase("Local")) {
-
+        	
         		 String[] values = {"Linux"};  //, "Windows"};
 
                  Option[] options = buildSimpleOptions(values);
@@ -1544,10 +1542,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter String proxyUser,
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException {
-        	
-        	  if(platformTestSuites.equalsIgnoreCase("Android (Beta)")){
-        		  platformTestSuites="Android";
-              }
+
+      	  if(platformTestSuites.equalsIgnoreCase("Android (Beta)")){
+    		  platformTestSuites="Android";
+          }
 
         	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
         	{
@@ -1606,15 +1604,16 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	//System.out.println("browser testsuites"+browserTestSuites);
       	  if(platformTestSuites.equalsIgnoreCase("Android (Beta)")){
     		  platformTestSuites="Android";
-          }    	
+          }
+
         	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
         	{
         		 //String[] values= getBrowserVersion(platformTestSuites,browserTestSuites,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
-        		String[] values = {"NotApplicable"};
+        		String[] values = {"NotApplicable"}; 
         		Option[] options = buildSimpleOptions(values);
                  return new ListBoxModel(options);
         	}
-
+        	
         	else if ((environmentType.equalsIgnoreCase("Saucelabs")) && (platformTestSuites.equalsIgnoreCase("macOS 11.00") || platformTestSuites.equalsIgnoreCase("macOS 10.15")||platformTestSuites.equalsIgnoreCase("Windows 10")))
         	{
         		 String[] values= getBrowserVersion(platformTestSuites,browserTestSuites,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
@@ -1622,7 +1621,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                  return new ListBoxModel(options);
 
         	}
-
+        	
         	else if (environmentType.equalsIgnoreCase("Local"))
         	{
         		try {
@@ -1630,7 +1629,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 					{
 						String[] values = {"NotApplicable"};  //, "Windows"};
 					    Option[] options = buildSimpleOptions(values);
-
+					    
 					    return new ListBoxModel(options);
 
      	  }
@@ -1711,9 +1710,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         	return new ListBoxModel();
         }
-
+        
        // mobile starts
-
+        
         @SuppressWarnings("unused")
         @POST
         public ListBoxModel doFillMobileSauceConnectProxyItems(@QueryParameter String aiqUrl,
@@ -1734,7 +1733,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
         	return new ListBoxModel();
         }
-
+        
         @SuppressWarnings("unused")
         @POST
         public ListBoxModel doFillMobileSauceConnectProxyTcItems(@QueryParameter String aiqUrl,
@@ -1747,7 +1746,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Boolean httpProxy) throws ServiceException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         	if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
-
+        	
             String[] values= getSauceconnect(aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
 
             Option[] options = buildSimpleOptions(values);
@@ -1756,7 +1755,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	}
         	return new ListBoxModel();
           }
-
+        
         @SuppressWarnings("unused")
         @POST
         public ListBoxModel doFillMobileplatformTestSuitesItems(@QueryParameter String aiqUrl,@QueryParameter Boolean mobileplatformTestSuites,
@@ -1770,8 +1769,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         	System.out.println("values of boolean"+mobileplatformTestSuites);
         	if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
-
-
+        	
+            
             String[] values = {"Android"};
 
             Option[] options = buildSimpleOptions(values);
@@ -1780,7 +1779,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	}
         	return new ListBoxModel();
         }
-
+        
         @SuppressWarnings("unused")
         @POST
         public ListBoxModel doFillMobileplatformTestcasesItems(@QueryParameter String aiqUrl,
@@ -1793,8 +1792,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Boolean httpProxy) {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         	if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0) {
-
-
+        	
+        	
             String[] values = {"Android"};
 
             Option[] options = buildSimpleOptions(values);
@@ -1803,7 +1802,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         }
         	return new ListBoxModel();
         }
-
+        
         @SuppressWarnings("unused")
         @POST
         public ListBoxModel doFillMobileExecutionModeItems(@QueryParameter String aiqUrl,
@@ -1825,7 +1824,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
         	return new ListBoxModel();
         }
-
+        
         @SuppressWarnings("unused")
         @POST
         public ListBoxModel doFillMobilePlatformVersionItems(@QueryParameter String environmentType,@QueryParameter String platformTestSuites,@QueryParameter String mobileplatformTestSuites,@QueryParameter String aiqUrl,
@@ -1837,11 +1836,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-      	  
+
         	if(platformTestSuites.equalsIgnoreCase("Android (Beta)")){
-    		  platformTestSuites="Android";
-          }
-        	
+      		  platformTestSuites="Android";
+            }
         	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
         	{
        				String[] values= getMobileversion(platformTestSuites,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
@@ -1883,7 +1881,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	}
             return new ListBoxModel();
         }
-
+        
         @SuppressWarnings("unused")
         @POST
         public ListBoxModel doFillMobilePlatformVersionTcItems(@QueryParameter String environmentTypeTestcases,@QueryParameter String platformTestCases,@QueryParameter String mobileplatformTestcases,@QueryParameter String aiqUrl,
@@ -1895,11 +1893,11 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+
+        	if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
+        		platformTestCases="Android";
+            }
         	//System.out.println(environmentTypeTestcases+"values of ev and PTc's :-"+platformTestCases);
-      	  if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
-      		platformTestCases="Android";
-          }
-        	
         	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
         	{
        				String[] values= getMobileversion(platformTestCases,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
@@ -1928,7 +1926,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 return new ListBoxModel(options);
         	   }
         	}
-
+        	
         	else if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0)
         	{
 
@@ -1943,9 +1941,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	}
             return new ListBoxModel();
         }
-
-
-
+        
+        
+        
         @SuppressWarnings("unused")
         @POST
         public ListBoxModel doFillDeviceNameItems(@QueryParameter String environmentType,@QueryParameter String platformTestSuites,@QueryParameter String mobilePlatformVersion,@QueryParameter String aiqUrl,
@@ -1957,12 +1955,14 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) throws ServiceException {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+
         	if(platformTestSuites.equalsIgnoreCase("Android (Beta)")){
         		platformTestSuites="Android";
               }
-        	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
-        	{
 
+        	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
+        	{ 
+        		 
        				String[] values= getDevice(platformTestSuites,mobilePlatformVersion,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
        				Option[] options = buildSimpleOptions(values);
 
@@ -2002,7 +2002,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	}
             return new ListBoxModel();
         }
-
+        
         @SuppressWarnings("unused")
         @POST
         public ListBoxModel doFillDeviceNameTestcasesItems(
@@ -2019,6 +2019,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
         		platformTestCases="Android";
               }
+
            if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
         	{
        				String[] values= getDevice(platformTestCases,mobilePlatformVersionTc,aiqUrl, login, password, proxyHost, proxyPort, proxyUser, proxyPassword, httpProxy);
@@ -2047,7 +2048,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 return new ListBoxModel(options);
         	   }
         	}
-
+        	
         	else if (aiqUrl.length() > 0 && login.length() > 0 && Secret.toString(password).length() > 0)
         	{
 
@@ -2074,10 +2075,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
                 @QueryParameter Secret proxyPassword,
                 @QueryParameter Boolean httpProxy) {
         	Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+
         	if(platformTestSuites.equalsIgnoreCase("Android (Beta)")){
         		platformTestSuites="Android";
               }
-        	
         	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
         	{
     			  String[] values = {"Portrait","Landscape"};
@@ -2117,9 +2118,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	{
         		return new ListBoxModel();
         	}
-            return new ListBoxModel();
+            return new ListBoxModel();	
         }
-
+        
         @SuppressWarnings("unused")
         @POST
         public ListBoxModel doFillDeviceOrientationTcItems(@QueryParameter String environmentTypeTestcases,@QueryParameter String platformTestCases,
@@ -2135,9 +2136,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
         		platformTestCases="Android";
               }
-        		
-        	
-        	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
+        		if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
             	{
         			  String[] values = {"Portrait","Landscape"};
 
@@ -2177,9 +2176,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             		return new ListBoxModel();
             	}
                 return new ListBoxModel();
-
+        	
         }
-
+        
 
         @SuppressWarnings("unused")
         @POST
@@ -2195,7 +2194,6 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	if(platformTestSuites.equalsIgnoreCase("Android (Beta)")){
         		platformTestSuites="Android";
               }
-        	
         	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
         	{
     			   String[] values = {"false","true"};
@@ -2233,9 +2231,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	{
         		return new ListBoxModel();
         	}
-            return new ListBoxModel();
+            return new ListBoxModel(); 
         }
-
+        
         @SuppressWarnings("unused")
         @POST
         public ListBoxModel doFillEnableAnimationsTcItems(
@@ -2251,8 +2249,6 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
         		platformTestCases="Android";
               }
-        	
-        	
         	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
         	{
     			   String[] values = {"false","true"};
@@ -2290,10 +2286,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	{
         		return new ListBoxModel();
         	}
-            return new ListBoxModel();
+            return new ListBoxModel();    	
     }
 
-
+        
         @SuppressWarnings("unused")
         @POST
         public ListBoxModel doFillAutoGrantPermissionItems(@QueryParameter String environmentType,@QueryParameter String platformTestSuites,@QueryParameter String aiqUrl,
@@ -2308,7 +2304,6 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	if(platformTestSuites.equalsIgnoreCase("Android (Beta)")){
         		platformTestSuites="Android";
               }
-        	
         	if (environmentType.equalsIgnoreCase("Saucelabs") && platformTestSuites.equalsIgnoreCase("Android"))
         	{
     			   String[] values = {"false","true"};
@@ -2348,7 +2343,7 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	}
             return new ListBoxModel();
         }
-
+        
         @SuppressWarnings("unused")
         @POST
         public ListBoxModel doFillAutoGrantPermissionTcItems(@QueryParameter String environmentTypeTestcases,@QueryParameter String platformTestCases,@QueryParameter String aiqUrl,
@@ -2363,7 +2358,6 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         	if(platformTestCases.equalsIgnoreCase("Android (Beta)")){
         		platformTestCases="Android";
               }
-        	
         	if (environmentTypeTestcases.equalsIgnoreCase("Saucelabs") && platformTestCases.equalsIgnoreCase("Android"))
         	{
     			   String[] values = {"false","true"};
@@ -2402,10 +2396,10 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         		return new ListBoxModel();
         	}
             return new ListBoxModel();
-
+    	
     }
 
-
+        
 
         private Option[] getProjectOptions(String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
 
@@ -2449,44 +2443,43 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
         private String[] getplatformType(String environmentType,String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
             int i =0;
         	String[] platform1= new String[100];
-
+        	
         	//platform1[0]="--select platform--";
         		try {
                 ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
-
+               
             	List<ExecutionEnvironment> envInfo=svc.executionEnvironment();
-
-
+            	
+            
 				for (ExecutionEnvironment t:envInfo) {
-
+					
 
 	            	 Integer a=t.getaccountId();
-
+	            
 	            	 ArrayList<Environment> d=t.getenvironments();
-
+	            	 
 	            	 for (Environment t1:d)
 	            	 {
-
+	            		
 	            		 String z = t1.getenvironmentType();
-
+	            		
 	            		 	if(z.equalsIgnoreCase("Saucelabs")
 	            		 			|| z.equalsIgnoreCase("saucelab_devices"))
 	            		 	{
 	            		 		Environment2 env2=t1.getenvironment();
-
+	            		 		
 	   	            		 ArrayList<PlatformDetail> td = env2.getplatformDetails();
-
+	   	            		
 	   	            		  	 String  sdc = env2.getsauceDataCentreName();
 	   	            		     String sp=env2.getsaucePassword();
 	   	            		     String su=env2.getsauceUsername();
 	   	            		     for(PlatformDetail pD:td) {
-	   	            		    	 
 	   	            		    	String platform=pD.getplatform();
 	   	            		    	if (platform.equalsIgnoreCase("Android")) {
 	   	            		    		platform="Android (Beta)";
 	   	            		    	}
 	   	            		    	platform1[i]=platform;
-	   	   	            		 	i++;
+	   	   	            		 	i++;   
 	            		 	}
 	                    }
 	            	 }
@@ -2568,12 +2561,12 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
        	 String[] newArray = lhSetColors.toArray(new String[ lhSetColors.size() ]);
             return newArray;
         }
-
+        
 // fetch  environment type dropdown values:
         private String[] getEnvironmentType(String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
             int i =0;
         	String[] EnvironmentType= new String[10];
-
+        	
         	//EnvironmentType[0]="--select environmenttype--";
             try {
                 ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
@@ -2606,19 +2599,19 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 
             for(String s : EnvironmentType) {
                if(s != null && s.length() > 0) {
-                  list.add(s);
+                  list.add(s);     
                   Collections.sort(list, Collections.reverseOrder());
-
+                  
                }
             }
-
+            
             EnvironmentType = list.toArray(new String[list.size()]);
             return EnvironmentType;
         }
-
-
-   ///////////////////
-
+        
+        
+   ///////////////////     
+      
 ///////////////////////
 
  // fetch browser version dropdown values:
@@ -2718,8 +2711,8 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             return newArray;
         }
 
-// mobile version Fetch
-
+// mobile version Fetch      
+        
         private String[] getMobileversion(String mobileplatform,String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
             //System.out.println("value in mobile version"+mobileplatform);
         	int i =0;
@@ -2753,15 +2746,15 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	            		    	        String pv1  = pv.substring(0,index);
 	            		    	        Mobileplatformversion[i]=pv1;
 		            		    		i++;
-
+	            		    	           
 	            		    	       }else{
 	            		    	    	   Mobileplatformversion[i]=pv;
 			            		    		i++;
 	            		    	       }
-
+	            		    		 
 	            		    	 }
-
-
+	            		    	 
+	            		    	 
 	            		     }
 	            	 }
 
@@ -2776,13 +2769,15 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
        	 String[] newArray = lhSetColors.toArray(new String[ lhSetColors.size() ]);
             return newArray;
         }
-
+        
   //mobile device name
         private String[] getDevice(String mobileplatform,String mobileVersion,String aiqUrl, String login, Secret password, String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword, Boolean httpProxy) throws ServiceException {
            // System.out.println("value in mobileplatform:-"+mobileplatform);
+
         	if(mobileplatform.equalsIgnoreCase("Android (Beta)")){
         		mobileplatform="Android";
               }
+
             System.out.println("value in mobileVersion"+mobileVersion);
             //System.out.println("value in mobileVersion length:-"+mobileVersion.length());
         	int i =0;
@@ -2807,11 +2802,11 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	            		     String sp=env2.getsaucePassword();
 	            		     String su=env2.getsauceUsername();
 	            		     for(PlatformDetail pD:td) {
-
+	            		    	 
 	            		    	 String platformversion=pD.getplatformVersion();
 	            		    	 String platformversion1=pD.getdevice();
 	            		    	 String platform=pD.getplatform();
-
+	            		  
 	            		    	 if (platform.equalsIgnoreCase("Android") && mobileVersion.length()==0)
 	            		    	 {
 	            		    		 String DN=pD.getdevice();
@@ -2821,13 +2816,13 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
 	            		    	 }
 	            		    	 if (platformversion.contains(mobileVersion))
 	            		    	 {
-
+	            		    		 
 	            		    		 String DN=pD.getdevice();
 	            		    		 MobileDeviceName[i]=DN;
 	            		    		// System.out.println(MobileDeviceName[i]);
 		            		    		i++;
-	            		    	 }
-	            		     }
+	            		    	 }       		    	 
+	            		     }     
 	            	 }
 
 				}
@@ -2841,9 +2836,9 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
        	 String[] newArray = lhSetColors.toArray(new String[ lhSetColors.size() ]);
             return newArray;
         }
-
-
-
+        
+       
+        
         private Option[] buildSimpleOptions(String[] values) {
 
             Option[] options = new Option[values.length];
