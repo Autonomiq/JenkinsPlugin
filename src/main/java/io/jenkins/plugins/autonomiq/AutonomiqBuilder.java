@@ -2688,16 +2688,28 @@ public class AutonomiqBuilder extends Builder implements SimpleBuildStep {
             try {
                 ServiceAccess svc = AutonomiqBuilder.getServiceAccess(proxyHost, proxyPort, proxyUser, proxyPassword, aiqUrl, login, password, httpProxy);
                 GetSauceConnect sauceid =svc.getsauceconnect();
-
-                if (sauceid.sauce_connect_ids().length == 0)
+                
+                int length=sauceid.sauce_connect_ids().length;
+                int finallength=length+1;
+                if ( finallength == 1)
                 {
-                	sauceconnect[0]="Tunnel id not available";
+                	sauceconnect[0]="None";
                 }
                 else {
-                	for(int j=0;j<sauceid.sauce_connect_ids().length;j++)
+                	for(int j=0;j<finallength;j++)
                 	{
-
-                		sauceconnect[j]=sauceid.sauce_connect_ids()[j];
+                		if(j==0)
+                		{
+                			sauceconnect[j]="None";
+                		}
+                		if(j!=0)
+                		{
+	                		System.out.println(j);
+	                		sauceconnect[j]=sauceid.sauce_connect_ids()[j-1];
+	                		System.out.println(sauceconnect[j]); 
+	                		System.out.println("length of sauceconnect"+sauceid.sauce_connect_ids().length);
+                		}
+                		
                 	}
                 }
 

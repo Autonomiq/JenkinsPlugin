@@ -54,6 +54,20 @@ class RunTests {
     	crossBrowserTestcases=false;
     	mobileDeviceTestcases=false;
     	
+    	if(sauceConnectProxyTestcases.equalsIgnoreCase("None"))
+    	{
+    		sauceConnectProxyTestcases="";
+    		
+    	}
+    	
+    	if(sauceConnectProxy.equalsIgnoreCase("None"))
+    	{
+    		sauceConnectProxy="";
+    		
+    	}
+    	
+    	
+    	
     	if (platformTestCases.equalsIgnoreCase("macOS 11.00") || platformTestCases.equalsIgnoreCase("macOS 10.15")||platformTestCases.equalsIgnoreCase("Windows 10") ||platformTestCases.equalsIgnoreCase("Linux"))
     	{
     		crossBrowserTestcases=true;
