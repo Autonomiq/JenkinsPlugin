@@ -23,6 +23,7 @@ public class WebClient {
     	  return result;
     	}
     
+    
     public WebClient(String proxyHost, String proxyPort, String proxyUser, Secret proxyPassword) {
     	int proxyPortInt = Integer.parseInt(proxyPort);
     	if (!StringUtils.isEmpty(proxyUser) && !StringUtils.isEmpty(Secret.toString(proxyPassword))) {
@@ -85,18 +86,25 @@ public class WebClient {
 
     public String post(String url, String json, String token) throws ServiceException {
         RequestBody body = RequestBody.create(JSON, json);
+        
         Request request = new Request.Builder()
                 .url(url)
                 .addHeader("Authorization", token == null ? "" : "Bearer " + token)
                 .post(body)
                 .build();
         try (Response response = client.newCall(request).execute()) {
+        	
+        	
         	if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+        	
             int code = response.code();
+            
             if (code != 200) {
                 throw new ServiceException(String.format("On request to %s got response code %d with message '%s'",
                         url, code, response.message()));
             }
+            
+
             return response.body().string();
         } catch (Exception e) {
             throw new ServiceException("Exception on POST to " + url, e);

@@ -46,11 +46,7 @@ class RunTests {
                             String runCaseList,
                             String runSuiteList,String executionMode,String environmentType,String browserVersion,String platformVersion,String sauceConnectProxy,String environmentTypeTestcases,String browserVersionTestcases,String sauceConnectProxyTestcases,String mobileplatformTestSuites,String mobilePlatformVersion,String deviceName,String mobileSauceConnectProxy,String mobileExecutionMode,String deviceOrientation,String enableAnimations,String autoGrantPermission,String mobileRunSuiteList,String mobileplatformTestcases,String mobilePlatformVersionTc,String deviceNameTestcases,String mobileSauceConnectProxyTc,String deviceOrientationTc,String enableAnimationsTc,String autoGrantPermissionTc,String mobileRunTestcaseList) throws PluginException, InterruptedException {
     	
-    	System.out.println("in runtestcases class"+runTestCases);
-    	System.out.println("in runtestcases mobile testcases"+mobileplatformTestcases);
-    	System.out.println("in runtestcases cross testcases"+crossBrowserTestcases);
-    	System.out.println("in runtestcases mobile device testcases"+mobileDeviceTestcases);
-    	System.out.println("in runtestcases platform testcases"+platformTestCases);
+  
     	crossBrowserTestcases=false;
     	mobileDeviceTestcases=false;
     	

@@ -391,14 +391,16 @@ public class ServiceAccess {
                 false, true);
         String json = AiqUtil.gson.toJson(body);
         System.out.println("script generation"+json);
+        
 
         try {
-
             String resp = web.post(genUrl, json, token);
+            
+   
             List<TestScriptResponse> tsResponses = AiqUtil.gson.fromJson(resp,
                     new TypeToken<List<TestScriptResponse>>() {
                     }.getType());
-
+         
             return tsResponses;
 
         } catch (Exception e) {
